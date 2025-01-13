@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'dart:math' as math;
+import 'dart:async';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -234,30 +236,388 @@ class _OptionsScreenState extends State<OptionsScreen> {
   }
 }
 
-class GameScreen extends StatelessWidget {
+class GameScreen extends StatefulWidget {
   const GameScreen({super.key});
+
+  @override
+  State<GameScreen> createState() => _GameScreenState();
+}
+
+class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
+  final Player _player = Player();
+  final List<Enemy> _enemies = [];
+  final List<Projectile> _projectiles = [];
+  final List<Asteroid> _asteroids = [];
+  Timer? _gameLoop;
+  int _score = 0;
+  int _level = 1;
+  bool _isGameOver = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _startGame();
+  }
+
+  void _startGame() {
+    _spawnEnemies();
+    _spawnAsteroids();
+    const fps = 60;
+    _gameLoop = Timer.periodic(
+      const Duration(milliseconds: 1000 ~/ fps),
+      _update,
+    );
+  }
+
+  void _spawnEnemies() {
+    _enemies.clear();
+    final random = math.Random();
+    for (int i = 0; i < 10; i++) {
+      _enemies.add(
+        Enemy(
+          position: Offset(
+            random.nextDouble() * 800,
+            random.nextDouble() * 200,
+          ),
+          speed: 2.0 + _level * 0.5,
+          health: 1 + (_level ~/ 2),
+        ),
+      );
+    }
+  }
+
+  void _spawnAsteroids() {
+    _asteroids.clear();
+    final random = math.Random();
+    for (int i = 0; i < 5; i++) {
+      _asteroids.add(
+        Asteroid(
+          position: Offset(
+            random.nextDouble() * 800,
+            random.nextDouble() * 200,
+          ),
+          speed: 1.0 + random.nextDouble() * 2.0,
+        ),
+      );
+    }
+  }
+
+  void _update(Timer timer) {
+    if (_isGameOver) return;
+
+    setState(() {
+      // Update player projectiles
+      for (var projectile in _projectiles) {
+        projectile.update();
+      }
+      _projectiles.removeWhere((projectile) => projectile.position.dy < 0);
+
+      // Update enemies
+      for (var enemy in _enemies) {
+        enemy.update();
+      }
+
+      // Update asteroids
+      for (var asteroid in _asteroids) {
+        asteroid.update();
+      }
+
+      // Check collisions
+      _checkCollisions();
+
+      // Check win condition
+      if (_enemies.isEmpty) {
+        _level++;
+        _spawnEnemies();
+        _spawnAsteroids();
+      }
+    });
+  }
+
+  void _checkCollisions() {
+    // Create lists to track objects to be removed
+    final projectilesToRemove = <Projectile>{};
+    final enemiesToRemove = <Enemy>{};
+
+    // Check projectile hits on enemies
+    for (var projectile in _projectiles) {
+      for (var enemy in _enemies) {
+        if (_checkCollision(projectile.position, enemy.position)) {
+          enemy.health--;
+          projectilesToRemove.add(projectile);
+          if (enemy.health <= 0) {
+            enemiesToRemove.add(enemy);
+            _score += 100;
+          }
+          break;
+        }
+      }
+    }
+
+    // Check player collision with asteroids and enemies
+    bool playerHit = false;
+
+    for (var asteroid in _asteroids) {
+      if (_checkCollision(_player.position, asteroid.position)) {
+        playerHit = true;
+        break;
+      }
+    }
+
+    if (!playerHit) {
+      for (var enemy in _enemies) {
+        if (_checkCollision(_player.position, enemy.position)) {
+          playerHit = true;
+          break;
+        }
+      }
+    }
+
+    // Apply removals after iteration is complete
+    _projectiles.removeWhere((p) => projectilesToRemove.contains(p));
+    _enemies.removeWhere((e) => enemiesToRemove.contains(e));
+
+    if (playerHit) {
+      _gameOver();
+    }
+  }
+
+  bool _checkCollision(Offset a, Offset b) {
+    const hitDistance = 30.0;
+    return (a - b).distance < hitDistance;
+  }
+
+  void _gameOver() {
+    setState(() {
+      _isGameOver = true;
+    });
+    _gameLoop?.cancel();
+  }
+
+  void _shoot() {
+    setState(() {
+      _projectiles.add(
+        Projectile(position: _player.position.translate(0, -20)),
+      );
+    });
+  }
+
+  @override
+  void dispose() {
+    _gameLoop?.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      body: Stack(
-        children: [
-          const Center(
-            child: Text(
-              'Game Area - Coming Soon',
-              style: TextStyle(color: Colors.white, fontSize: 24),
+      body: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onPanUpdate: (details) {
+          setState(() {
+            _player.move(details.delta);
+          });
+        },
+        onTapDown: (_) => _shoot(),
+        child: Stack(
+          children: [
+            // Player
+            Positioned(
+              left: _player.position.dx - 25,
+              top: _player.position.dy - 25,
+              child: const PlayerWidget(),
             ),
-          ),
-          Positioned(
-            top: 20,
-            right: 20,
-            child: IconButton(
-              icon: const Icon(Icons.close, color: Colors.white),
-              onPressed: () => Navigator.of(context).pop(),
+            // Projectiles
+            ..._projectiles.map((projectile) => Positioned(
+                  left: projectile.position.dx - 2,
+                  top: projectile.position.dy - 10,
+                  child: const ProjectileWidget(),
+                )),
+            // Enemies
+            ..._enemies.map((enemy) => Positioned(
+                  left: enemy.position.dx - 20,
+                  top: enemy.position.dy - 20,
+                  child: const EnemyWidget(),
+                )),
+            // Asteroids
+            ..._asteroids.map((asteroid) => Positioned(
+                  left: asteroid.position.dx - 25,
+                  top: asteroid.position.dy - 25,
+                  child: const AsteroidWidget(),
+                )),
+            // Score and Level
+            Positioned(
+              top: 20,
+              left: 20,
+              child: Text(
+                'Score: $_score\nLevel: $_level',
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 20,
+                ),
+              ),
             ),
-          ),
-        ],
+            // Game Over overlay
+            if (_isGameOver)
+              Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text(
+                      'Game Over',
+                      style: TextStyle(
+                        color: Colors.red,
+                        fontSize: 48,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    Text(
+                      'Score: $_score',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 24,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    MenuButton(
+                      text: 'Main Menu',
+                      onPressed: () => Navigator.of(context).pop(),
+                    ),
+                  ],
+                ),
+              ),
+            // Close button
+            Positioned(
+              top: 20,
+              right: 20,
+              child: IconButton(
+                icon: const Icon(Icons.close, color: Colors.white),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class Player {
+  Offset position = const Offset(400, 500);
+
+  void move(Offset delta) {
+    position += delta;
+    position = Offset(
+      position.dx.clamp(25, 775),
+      position.dy.clamp(25, 575),
+    );
+  }
+}
+
+class Enemy {
+  Offset position;
+  double speed;
+  int health;
+
+  Enemy({
+    required this.position,
+    required this.speed,
+    required this.health,
+  });
+
+  void update() {
+    position = Offset(position.dx, position.dy + speed);
+    if (position.dy > 600) {
+      position = Offset(position.dx, -50);
+    }
+  }
+}
+
+class Projectile {
+  Offset position;
+  static const double speed = 10.0;
+
+  Projectile({required this.position});
+
+  void update() {
+    position = Offset(position.dx, position.dy - speed);
+  }
+}
+
+class Asteroid {
+  Offset position;
+  double speed;
+
+  Asteroid({required this.position, required this.speed});
+
+  void update() {
+    position = Offset(position.dx, position.dy + speed);
+    if (position.dy > 600) {
+      position = Offset(position.dx, -50);
+    }
+  }
+}
+
+class PlayerWidget extends StatelessWidget {
+  const PlayerWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 50,
+      height: 50,
+      decoration: BoxDecoration(
+        color: Colors.blue,
+        borderRadius: BorderRadius.circular(25),
+      ),
+      child: const Icon(Icons.rocket, color: Colors.white),
+    );
+  }
+}
+
+class EnemyWidget extends StatelessWidget {
+  const EnemyWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 40,
+      height: 40,
+      decoration: BoxDecoration(
+        color: Colors.red,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: const Icon(Icons.android, color: Colors.white),
+    );
+  }
+}
+
+class ProjectileWidget extends StatelessWidget {
+  const ProjectileWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 4,
+      height: 20,
+      color: Colors.yellow,
+    );
+  }
+}
+
+class AsteroidWidget extends StatelessWidget {
+  const AsteroidWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 50,
+      height: 50,
+      decoration: const BoxDecoration(
+        color: Colors.grey,
+        shape: BoxShape.circle,
       ),
     );
   }
