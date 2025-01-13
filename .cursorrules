@@ -1,0 +1,161 @@
+{
+  "title": "Cursor Operation Rules",
+  "sections": {
+    "edit_handling": {
+      "title": "Edit Handling",
+      "rules": {
+        "single_pass_editing": {
+          "title": "Single-Pass Editing",
+          "items": [
+            "Make all necessary changes in a single pass",
+            "Group related edits together",
+            "Avoid multiple iterations over the same file",
+            "Use clear edit markers and comments",
+            "Use const with the constructor to improve performance",
+            "Try to follow SOLID and DRY principles with focus on single responsibility"
+          ]
+        }
+      }
+    },
+    "edit_format": {
+      "title": "Edit Format",
+      "template": {
+        "format": [
+          "// Format for edit blocks:",
+          "// ... existing code ...",
+          "{{ edited_code }}",
+          "// ... existing code ..."
+        ]
+      }
+    },
+    "tool_usage": {
+      "title": "Tool Usage Guidelines",
+      "categories": {
+        "file_operations": {
+          "title": "File Operations",
+          "rules": [
+            "Verify file exists before attempting operations",
+            "Check file permissions",
+            "Use absolute paths when possible",
+            "Handle file not found scenarios"
+          ]
+        },
+        "search_operations": {
+          "title": "Search Operations",
+          "rules": [
+            "Use specific search terms",
+            "Verify search results before acting",
+            "Handle empty search results gracefully",
+            "Cache search results when appropriate"
+          ]
+        },
+        "code_analysis": {
+          "title": "Code Analysis",
+          "rules": [
+            "Verify syntax before making changes",
+            "Check for dependencies",
+            "Validate type safety",
+            "Ensure consistent formatting"
+          ]
+        }
+      }
+    },
+    "error_prevention": {
+      "title": "Error Prevention",
+      "categories": {
+        "pre_edit_checks": {
+          "title": "Pre-Edit Checks",
+          "rules": [
+            "Verify file context",
+            "Validate syntax",
+            "Check dependencies",
+            "Confirm file permissions"
+          ]
+        },
+        "post_edit_validation": {
+          "title": "Post-Edit Validation",
+          "rules": [
+            "Verify syntax after changes",
+            "Check for introduced errors",
+            "Validate type safety",
+            "Ensure formatting consistency"
+          ]
+        },
+        "performance_optimization": {
+          "title": "Performance Optimization",
+          "operation_batching": {
+            "title": "Operation Batching",
+            "rules": [
+              "Group related operations",
+              "Minimize file reads/writes",
+              "Cache frequently accessed data",
+              "Use bulk operations when possible"
+            ]
+          }
+        },
+        "resource_management": {
+          "title": "Resource Management",
+          "rules": [
+            "Release resources promptly",
+            "Clean up temporary files",
+            "Manage memory efficiently",
+            "Handle large files appropriately"
+          ]
+        },
+        "best_practices": {
+          "title": "Best Practices",
+          "documentation": {
+            "title": "Documentation",
+            "rules": [
+              "Comment all significant changes",
+              "Explain edit rationale",
+              "Mark skipped sections clearly",
+              "Include context when necessary"
+            ]
+          }
+        },
+        "error_handling": {
+          "title": "Error Handling",
+          "rules": [
+            "Provide clear error messages",
+            "Include recovery steps",
+            "Handle edge cases",
+            "Maintain system stability"
+          ]
+        },
+        "version_control": {
+          "title": "Version Control",
+          "rules": [
+            "Respect source control",
+            "Handle conflicts gracefully",
+            "Preserve file history",
+            "Support rollback capability"
+          ]
+        }
+      }
+    },
+    "operational_constraints": {
+      "title": "Operational Constraints",
+      "categories": {
+        "file_limits": {
+          "title": "File Limits",
+          "constraints": {
+            "max_file_size": "10MB",
+            "max_line_count": 10000,
+            "max_edit_size": 1000,
+            "max_search_depth": 5
+          }
+        },
+        "performance_targets": {
+          "title": "Performance Targets",
+          "targets": {
+            "edit_response": "100ms",
+            "search_response": "200ms",
+            "file_operations": "50ms",
+            "validation": "150ms"
+          }
+        }
+      }
+    }
+  }
+}
