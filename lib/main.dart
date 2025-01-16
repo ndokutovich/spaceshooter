@@ -283,15 +283,17 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
   bool _isGameOver = false;
   late Size _screenSize;
   int _novaBlastsRemaining = 2;
-  int _lives = 100;
+  int _lives = 13;
   bool _isInvulnerable = false;
   Timer? _moveTimer;
   final double _playAreaPadding = 120.0;
+  final Set<LogicalKeyboardKey> _pressedKeys = {};
+  Timer? _keyboardMoveTimer;
 
   @override
   void initState() {
     super.initState();
-    RawKeyboard.instance.addListener(_handleKeyPress);
+    RawKeyboard.instance.addListener(_handleKeyEvent);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _screenSize = MediaQuery.of(context).size;
       _player.position = Offset(
@@ -300,13 +302,64 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
       );
       _startGame();
     });
+    // Start keyboard movement timer
+    _keyboardMoveTimer = Timer.periodic(const Duration(milliseconds: 16), (_) {
+      _handleKeyboardMovement();
+    });
   }
 
-  void _handleKeyPress(RawKeyEvent event) {
+  void _handleKeyEvent(RawKeyEvent event) {
     if (event is RawKeyDownEvent) {
+      _pressedKeys.add(event.logicalKey);
+
+      // Handle one-shot keys
       if (event.logicalKey == LogicalKeyboardKey.space) {
         _fireNova();
+      } else if (event.logicalKey == LogicalKeyboardKey.controlLeft ||
+          event.logicalKey == LogicalKeyboardKey.controlRight) {
+        _shoot();
+      } else if (event.logicalKey == LogicalKeyboardKey.escape) {
+        Navigator.of(context).pop();
       }
+    } else if (event is RawKeyUpEvent) {
+      _pressedKeys.remove(event.logicalKey);
+    }
+  }
+
+  void _handleKeyboardMovement() {
+    if (_pressedKeys.isEmpty) return;
+
+    double dx = 0;
+    double dy = 0;
+    const moveSpeed = 5.0;
+
+    // WASD movement
+    if (_pressedKeys.contains(LogicalKeyboardKey.keyW) ||
+        _pressedKeys.contains(LogicalKeyboardKey.arrowUp)) {
+      dy -= moveSpeed;
+    }
+    if (_pressedKeys.contains(LogicalKeyboardKey.keyS) ||
+        _pressedKeys.contains(LogicalKeyboardKey.arrowDown)) {
+      dy += moveSpeed;
+    }
+    if (_pressedKeys.contains(LogicalKeyboardKey.keyA) ||
+        _pressedKeys.contains(LogicalKeyboardKey.arrowLeft)) {
+      dx -= moveSpeed;
+    }
+    if (_pressedKeys.contains(LogicalKeyboardKey.keyD) ||
+        _pressedKeys.contains(LogicalKeyboardKey.arrowRight)) {
+      dx += moveSpeed;
+    }
+
+    if (dx != 0 || dy != 0) {
+      setState(() {
+        final newPosition = _player.position + Offset(dx, dy);
+        _player.position = Offset(
+          newPosition.dx
+              .clamp(_playAreaPadding, _screenSize.width - _playAreaPadding),
+          newPosition.dy.clamp(0, _screenSize.height),
+        );
+      });
     }
   }
 
@@ -525,7 +578,8 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
 
   @override
   void dispose() {
-    RawKeyboard.instance.removeListener(_handleKeyPress);
+    RawKeyboard.instance.removeListener(_handleKeyEvent);
+    _keyboardMoveTimer?.cancel();
     _gameLoop?.cancel();
     _moveTimer?.cancel();
     super.dispose();
