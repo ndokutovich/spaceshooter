@@ -273,6 +273,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
   int _novaBlastsRemaining = 2;
   int _lives = 3;
   bool _isInvulnerable = false;
+  Timer? _moveTimer;
 
   @override
   void initState() {
@@ -297,8 +298,8 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
 
   void _fireNova() {
     if (_novaBlastsRemaining > 0) {
+      HapticFeedback.heavyImpact();
       setState(() {
-        // Fire 8 projectiles in different directions (0°, 45°, 90°, 135°, 180°, 225°, 270°, 315°)
         for (int angle = 0; angle < 360; angle += 45) {
           final radians = angle * math.pi / 180;
           _projectiles.add(
@@ -477,6 +478,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
   }
 
   void _shoot() {
+    HapticFeedback.mediumImpact();
     setState(() {
       _projectiles.add(
         Projectile(position: _player.position.translate(0, -20)),
@@ -484,10 +486,24 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
     });
   }
 
+  void _handleJoystickMove(Offset delta) {
+    _moveTimer?.cancel();
+    if (delta != Offset.zero) {
+      _moveTimer = Timer.periodic(const Duration(milliseconds: 16), (timer) {
+        setState(() {
+          _player.move(delta, _screenSize);
+        });
+      });
+    } else {
+      _moveTimer = null;
+    }
+  }
+
   @override
   void dispose() {
     RawKeyboard.instance.removeListener(_handleKeyPress);
     _gameLoop?.cancel();
+    _moveTimer?.cancel();
     super.dispose();
   }
 
@@ -629,6 +645,36 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                 ),
               ),
             ),
+          // On-screen controls
+          Positioned(
+            left: 40,
+            bottom: 40,
+            child: JoystickController(
+              onMove: _handleJoystickMove,
+            ),
+          ),
+
+          // Action buttons
+          Positioned(
+            right: 40,
+            bottom: 40,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ActionButton(
+                  onPressed: _shoot,
+                  label: 'Fire',
+                  color: Colors.red,
+                ),
+                const SizedBox(height: 30),
+                ActionButton(
+                  onPressed: _fireNova,
+                  label: 'Nova',
+                  color: Colors.yellow,
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );
@@ -869,4 +915,150 @@ class StarPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(StarPainter oldDelegate) => true;
+}
+
+class JoystickController extends StatefulWidget {
+  final Function(Offset) onMove;
+
+  const JoystickController({
+    super.key,
+    required this.onMove,
+  });
+
+  @override
+  State<JoystickController> createState() => _JoystickControllerState();
+}
+
+class _JoystickControllerState extends State<JoystickController> {
+  Offset _stickPosition = Offset.zero;
+  bool _isDragging = false;
+  static const _stickRadius = 40.0;
+  static const _baseRadius = 80.0;
+
+  void _updateStick(Offset position) {
+    final delta = position - Offset(_baseRadius, _baseRadius);
+    if (delta.distance > _baseRadius) {
+      _stickPosition = delta * (_baseRadius / delta.distance);
+    } else {
+      _stickPosition = delta;
+    }
+    HapticFeedback.lightImpact();
+    widget.onMove(_stickPosition / _baseRadius * 5);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: _baseRadius * 2,
+      height: _baseRadius * 2,
+      child: GestureDetector(
+        onPanStart: (details) {
+          _isDragging = true;
+          HapticFeedback.mediumImpact();
+          final box = context.findRenderObject() as RenderBox;
+          final localPosition = box.globalToLocal(details.globalPosition);
+          _updateStick(localPosition);
+        },
+        onPanUpdate: (details) {
+          if (_isDragging) {
+            final box = context.findRenderObject() as RenderBox;
+            final localPosition = box.globalToLocal(details.globalPosition);
+            _updateStick(localPosition);
+          }
+        },
+        onPanEnd: (_) {
+          _isDragging = false;
+          _stickPosition = Offset.zero;
+          widget.onMove(Offset.zero);
+          setState(() {});
+        },
+        child: CustomPaint(
+          painter: JoystickPainter(
+            stickPosition: _stickPosition,
+            stickRadius: _stickRadius,
+            baseRadius: _baseRadius,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class JoystickPainter extends CustomPainter {
+  final Offset stickPosition;
+  final double stickRadius;
+  final double baseRadius;
+
+  JoystickPainter({
+    required this.stickPosition,
+    required this.stickRadius,
+    required this.baseRadius,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = Offset(baseRadius, baseRadius);
+
+    // Draw base
+    final basePaint = Paint()
+      ..color = Colors.white.withOpacity(0.3)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2;
+    canvas.drawCircle(center, baseRadius, basePaint);
+
+    // Draw stick
+    final stickPaint = Paint()
+      ..color = Colors.white.withOpacity(0.5)
+      ..style = PaintingStyle.fill;
+    canvas.drawCircle(center + stickPosition, stickRadius, stickPaint);
+  }
+
+  @override
+  bool shouldRepaint(JoystickPainter oldDelegate) =>
+      stickPosition != oldDelegate.stickPosition;
+}
+
+class ActionButton extends StatelessWidget {
+  final VoidCallback onPressed;
+  final String label;
+  final Color color;
+
+  const ActionButton({
+    super.key,
+    required this.onPressed,
+    required this.label,
+    required this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTapDown: (_) {
+        HapticFeedback.heavyImpact();
+        onPressed();
+      },
+      child: Container(
+        width: 80,
+        height: 80,
+        decoration: BoxDecoration(
+          color: color.withOpacity(0.5),
+          shape: BoxShape.circle,
+          border: Border.all(
+            color: color,
+            width: 3,
+          ),
+        ),
+        child: Center(
+          child: Text(
+            label,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 }
