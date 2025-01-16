@@ -270,16 +270,48 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
   int _level = 1;
   bool _isGameOver = false;
   late Size _screenSize;
+  int _novaBlastsRemaining = 2; // Number of nova blasts available
 
   @override
   void initState() {
     super.initState();
+    // Add keyboard listener
+    RawKeyboard.instance.addListener(_handleKeyPress);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _screenSize = MediaQuery.of(context).size;
       _player.position =
           Offset(_screenSize.width / 2, _screenSize.height * 0.8);
       _startGame();
     });
+  }
+
+  void _handleKeyPress(RawKeyEvent event) {
+    if (event is RawKeyDownEvent) {
+      if (event.logicalKey == LogicalKeyboardKey.space) {
+        _fireNova();
+      }
+    }
+  }
+
+  void _fireNova() {
+    if (_novaBlastsRemaining > 0) {
+      setState(() {
+        // Fire 8 projectiles in different directions (0°, 45°, 90°, 135°, 180°, 225°, 270°, 315°)
+        for (int angle = 0; angle < 360; angle += 45) {
+          final radians = angle * math.pi / 180;
+          _projectiles.add(
+            Projectile(
+              position: _player.position,
+              velocity: Offset(
+                math.cos(radians) * 10,
+                math.sin(radians) * 10,
+              ),
+            ),
+          );
+        }
+        _novaBlastsRemaining--;
+      });
+    }
   }
 
   void _startGame() {
@@ -329,11 +361,15 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
     if (_isGameOver) return;
 
     setState(() {
-      // Update player projectiles
+      // Update projectiles with velocity-based movement
       for (var projectile in _projectiles) {
         projectile.update();
       }
-      _projectiles.removeWhere((projectile) => projectile.position.dy < 0);
+      _projectiles.removeWhere((projectile) =>
+          projectile.position.dy < 0 ||
+          projectile.position.dy > _screenSize.height ||
+          projectile.position.dx < 0 ||
+          projectile.position.dx > _screenSize.width);
 
       // Update enemies
       for (var enemy in _enemies) {
@@ -427,6 +463,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
 
   @override
   void dispose() {
+    RawKeyboard.instance.removeListener(_handleKeyPress);
     _gameLoop?.cancel();
     super.dispose();
   }
@@ -438,6 +475,8 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
       backgroundColor: Colors.black,
       body: Stack(
         children: [
+          // Star Background
+          StarBackground(screenSize: _screenSize),
           GestureDetector(
             behavior: HitTestBehavior.opaque,
             onPanUpdate: (details) {
@@ -488,6 +527,19 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 20,
+                    ),
+                  ),
+                ),
+                // Nova Blasts counter (right side)
+                Positioned(
+                  top: 20,
+                  right: 100,
+                  child: Text(
+                    'Nova Blasts: $_novaBlastsRemaining',
+                    style: const TextStyle(
+                      color: Colors.yellow,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
@@ -577,12 +629,16 @@ class Enemy {
 
 class Projectile {
   Offset position;
+  Offset velocity;
   static const double speed = 10.0;
 
-  Projectile({required this.position});
+  Projectile({
+    required this.position,
+    Offset? velocity,
+  }) : velocity = velocity ?? const Offset(0, -speed);
 
   void update() {
-    position = Offset(position.dx, position.dy - speed);
+    position += velocity;
   }
 }
 
@@ -661,4 +717,117 @@ class AsteroidWidget extends StatelessWidget {
       ),
     );
   }
+}
+
+class Star {
+  Offset position;
+  double size;
+  double opacity;
+  double twinkleSpeed;
+  double maxBrightness;
+
+  Star({
+    required this.position,
+    required this.size,
+    this.opacity = 1.0,
+    required this.twinkleSpeed,
+    required this.maxBrightness,
+  });
+}
+
+class StarBackground extends StatefulWidget {
+  final Size screenSize;
+
+  const StarBackground({
+    super.key,
+    required this.screenSize,
+  });
+
+  @override
+  State<StarBackground> createState() => _StarBackgroundState();
+}
+
+class _StarBackgroundState extends State<StarBackground>
+    with SingleTickerProviderStateMixin {
+  late List<Star> stars;
+  late AnimationController _controller;
+  final random = math.Random();
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeStars();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 2000),
+    )..repeat();
+    _controller.addListener(_updateStars);
+  }
+
+  void _initializeStars() {
+    // Create three layers of stars with different properties
+    stars = [
+      ...List.generate(50, (index) => _createStar(0.3)), // Distant stars
+      ...List.generate(30, (index) => _createStar(0.6)), // Mid-range stars
+      ...List.generate(20, (index) => _createStar(1.0)), // Close stars
+    ];
+  }
+
+  Star _createStar(double brightnessMultiplier) {
+    return Star(
+      position: Offset(
+        random.nextDouble() * widget.screenSize.width,
+        random.nextDouble() * widget.screenSize.height,
+      ),
+      size: (0.5 + random.nextDouble() * 2) * brightnessMultiplier,
+      twinkleSpeed: 0.3 + random.nextDouble() * 2,
+      maxBrightness: 0.3 + (0.7 * brightnessMultiplier),
+    );
+  }
+
+  void _updateStars() {
+    setState(() {
+      for (var star in stars) {
+        // Create a smooth twinkling effect using sine waves
+        star.opacity =
+            (math.sin(_controller.value * math.pi * 2 * star.twinkleSpeed) +
+                    1) /
+                2 *
+                star.maxBrightness;
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomPaint(
+      size: widget.screenSize,
+      painter: StarPainter(stars),
+    );
+  }
+}
+
+class StarPainter extends CustomPainter {
+  final List<Star> stars;
+
+  StarPainter(this.stars);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()..color = Colors.white;
+
+    for (var star in stars) {
+      paint.color = Colors.white.withOpacity(star.opacity);
+      canvas.drawCircle(star.position, star.size, paint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(StarPainter oldDelegate) => true;
 }
