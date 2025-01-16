@@ -270,7 +270,9 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
   int _level = 1;
   bool _isGameOver = false;
   late Size _screenSize;
-  int _novaBlastsRemaining = 2; // Number of nova blasts available
+  int _novaBlastsRemaining = 2;
+  int _lives = 3;
+  bool _isInvulnerable = false;
 
   @override
   void initState() {
@@ -393,6 +395,27 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
     });
   }
 
+  void _handleCollision() {
+    if (!_isInvulnerable) {
+      setState(() {
+        _lives--;
+        if (_lives <= 0) {
+          _gameOver();
+        } else {
+          // Add brief invulnerability
+          _isInvulnerable = true;
+          Future.delayed(const Duration(seconds: 2), () {
+            if (mounted) {
+              setState(() {
+                _isInvulnerable = false;
+              });
+            }
+          });
+        }
+      });
+    }
+  }
+
   void _checkCollisions() {
     // Create lists to track objects to be removed
     final projectilesToRemove = <Projectile>{};
@@ -437,7 +460,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
     _enemies.removeWhere((e) => enemiesToRemove.contains(e));
 
     if (playerHit) {
-      _gameOver();
+      _handleCollision();
     }
   }
 
@@ -475,7 +498,6 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
       backgroundColor: Colors.black,
       body: Stack(
         children: [
-          // Star Background
           StarBackground(screenSize: _screenSize),
           GestureDetector(
             behavior: HitTestBehavior.opaque,
@@ -490,11 +512,14 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
               height: _screenSize.height,
             ),
           ),
-          // Player
+          // Player with opacity for invulnerability effect
           Positioned(
             left: _player.position.dx - 25,
             top: _player.position.dy - 25,
-            child: const PlayerWidget(),
+            child: Opacity(
+              opacity: _isInvulnerable ? 0.5 : 1.0,
+              child: const PlayerWidget(),
+            ),
           ),
           // Projectiles
           ..._projectiles.map((projectile) => Positioned(
@@ -534,13 +559,27 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                 Positioned(
                   top: 20,
                   right: 100,
-                  child: Text(
-                    'Nova Blasts: $_novaBlastsRemaining',
-                    style: const TextStyle(
-                      color: Colors.yellow,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text(
+                        'Nova Blasts: $_novaBlastsRemaining',
+                        style: const TextStyle(
+                          color: Colors.yellow,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        'Lives: $_lives',
+                        style: const TextStyle(
+                          color: Colors.red,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 // Close button
