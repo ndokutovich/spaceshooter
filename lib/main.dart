@@ -84,6 +84,15 @@ class _SplashScreenState extends State<SplashScreen>
     await Future.delayed(const Duration(seconds: 2));
     if (!mounted) return;
 
+    _navigateToMainMenu();
+  }
+
+  void _skipAnimation() {
+    _controller.stop();
+    _navigateToMainMenu();
+  }
+
+  void _navigateToMainMenu() {
     Navigator.of(context).pushReplacement(
       PageRouteBuilder(
         pageBuilder: (context, animation, secondaryAnimation) =>
@@ -106,15 +115,18 @@ class _SplashScreenState extends State<SplashScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      body: Center(
-        child: FadeTransition(
-          opacity: _fadeAnimation,
-          child: Text(
-            _showingPlatform ? 'Flutter Platform' : 'Developer Studio',
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 48,
-              fontWeight: FontWeight.bold,
+      body: GestureDetector(
+        onTapDown: (_) => _skipAnimation(),
+        child: Center(
+          child: FadeTransition(
+            opacity: _fadeAnimation,
+            child: Text(
+              _showingPlatform ? 'Flutter Platform' : 'Developer Studio',
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 48,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
         ),
@@ -274,16 +286,18 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
   int _lives = 3;
   bool _isInvulnerable = false;
   Timer? _moveTimer;
+  final double _playAreaPadding = 60.0;
 
   @override
   void initState() {
     super.initState();
-    // Add keyboard listener
     RawKeyboard.instance.addListener(_handleKeyPress);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _screenSize = MediaQuery.of(context).size;
-      _player.position =
-          Offset(_screenSize.width / 2, _screenSize.height * 0.8);
+      _player.position = Offset(
+        _screenSize.width / 2,
+        _screenSize.height * 0.8,
+      );
       _startGame();
     });
   }
@@ -334,7 +348,9 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
       _enemies.add(
         Enemy(
           position: Offset(
-            random.nextDouble() * _screenSize.width,
+            _playAreaPadding +
+                random.nextDouble() *
+                    (_screenSize.width - 2 * _playAreaPadding),
             random.nextDouble() * _screenSize.height * 0.3,
           ),
           speed: 2.0 + _level * 0.5,
@@ -351,7 +367,9 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
       _asteroids.add(
         Asteroid(
           position: Offset(
-            random.nextDouble() * _screenSize.width,
+            _playAreaPadding +
+                random.nextDouble() *
+                    (_screenSize.width - 2 * _playAreaPadding),
             random.nextDouble() * _screenSize.height * 0.3,
           ),
           speed: 1.0 + random.nextDouble() * 2.0,
@@ -491,7 +509,13 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
     if (delta != Offset.zero) {
       _moveTimer = Timer.periodic(const Duration(milliseconds: 16), (timer) {
         setState(() {
-          _player.move(delta, _screenSize);
+          final newPosition = _player.position + delta;
+          // Constrain to play area
+          _player.position = Offset(
+            newPosition.dx
+                .clamp(_playAreaPadding, _screenSize.width - _playAreaPadding),
+            newPosition.dy.clamp(0, _screenSize.height),
+          );
         });
       });
     } else {
@@ -571,24 +595,21 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                     ),
                   ),
                 ),
-                // Nova Blasts counter (right side)
+                // Lives Counter
                 Positioned(
                   top: 20,
                   right: 100,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text(
-                        'Nova Blasts: $_novaBlastsRemaining',
-                        style: const TextStyle(
-                          color: Colors.yellow,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
+                      const Icon(
+                        Icons.favorite,
+                        color: Colors.red,
+                        size: 24,
                       ),
-                      const SizedBox(height: 10),
+                      const SizedBox(width: 8),
                       Text(
-                        'Lives: $_lives',
+                        'x $_lives',
                         style: const TextStyle(
                           color: Colors.red,
                           fontSize: 20,
@@ -645,19 +666,37 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                 ),
               ),
             ),
-          // On-screen controls
+          // Play area borders
           Positioned(
-            left: 40,
-            bottom: 40,
+            left: _playAreaPadding,
+            top: 0,
+            bottom: 0,
+            child: Container(
+              width: 2,
+              color: Colors.white.withOpacity(0.3),
+            ),
+          ),
+          Positioned(
+            right: _playAreaPadding,
+            top: 0,
+            bottom: 0,
+            child: Container(
+              width: 2,
+              color: Colors.white.withOpacity(0.3),
+            ),
+          ),
+          // Controls
+          Positioned(
+            left: 10,
+            bottom: 20,
             child: JoystickController(
               onMove: _handleJoystickMove,
             ),
           ),
-
           // Action buttons
           Positioned(
-            right: 40,
-            bottom: 40,
+            right: 10,
+            bottom: 20,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -666,11 +705,12 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                   label: 'Fire',
                   color: Colors.red,
                 ),
-                const SizedBox(height: 30),
+                const SizedBox(height: 15),
                 ActionButton(
                   onPressed: _fireNova,
                   label: 'Nova',
                   color: Colors.yellow,
+                  counter: '$_novaBlastsRemaining',
                 ),
               ],
             ),
@@ -932,8 +972,8 @@ class JoystickController extends StatefulWidget {
 class _JoystickControllerState extends State<JoystickController> {
   Offset _stickPosition = Offset.zero;
   bool _isDragging = false;
-  static const _stickRadius = 40.0;
-  static const _baseRadius = 80.0;
+  static const _stickRadius = 20.0;
+  static const _baseRadius = 40.0;
 
   void _updateStick(Offset position) {
     final delta = position - Offset(_baseRadius, _baseRadius);
@@ -1022,12 +1062,14 @@ class ActionButton extends StatelessWidget {
   final VoidCallback onPressed;
   final String label;
   final Color color;
+  final String? counter;
 
   const ActionButton({
     super.key,
     required this.onPressed,
     required this.label,
     required this.color,
+    this.counter,
   });
 
   @override
@@ -1038,24 +1080,40 @@ class ActionButton extends StatelessWidget {
         onPressed();
       },
       child: Container(
-        width: 80,
-        height: 80,
+        width: 40,
+        height: 40,
         decoration: BoxDecoration(
           color: color.withOpacity(0.5),
           shape: BoxShape.circle,
           border: Border.all(
             color: color,
-            width: 3,
+            width: 2,
           ),
         ),
         child: Center(
-          child: Text(
-            label,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                label,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              if (counter != null) ...[
+                const SizedBox(height: 2),
+                Text(
+                  counter!,
+                  style: TextStyle(
+                    color: color,
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ],
           ),
         ),
       ),
