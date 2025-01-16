@@ -10,6 +10,7 @@ import '../entities/asteroid.dart';
 import '../utils/constants.dart';
 import '../widgets/controls.dart';
 import '../widgets/background.dart';
+import '../../utils/app_constants.dart';
 
 class GameScreen extends StatefulWidget {
   const GameScreen({super.key});
@@ -38,14 +39,16 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    RawKeyboard.instance.addListener(_handleKeyEvent);
+    HardwareKeyboard.instance.addHandler(_handleKeyEvent);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _screenSize = MediaQuery.of(context).size;
-      _player.position =
-          Offset(_screenSize.width / 2, _screenSize.height * 0.8);
+      _player.position = Offset(
+        _screenSize.width / 2,
+        _screenSize.height * GameConstants.playerStartHeightRatio,
+      );
       _startGame();
     });
-    _keyboardMoveTimer = Timer.periodic(const Duration(milliseconds: 16), (_) {
+    _keyboardMoveTimer = Timer.periodic(AppConstants.gameLoopDuration, (_) {
       _handleKeyboardMovement();
     });
   }
@@ -53,15 +56,14 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
   void _startGame() {
     _spawnEnemies();
     _spawnAsteroids();
-    const fps = 60;
     _gameLoop = Timer.periodic(
-      const Duration(milliseconds: 1000 ~/ fps),
+      AppConstants.gameLoopDuration,
       _update,
     );
   }
 
-  void _handleKeyEvent(RawKeyEvent event) {
-    if (event is RawKeyDownEvent) {
+  bool _handleKeyEvent(KeyEvent event) {
+    if (event is KeyDownEvent) {
       _pressedKeys.add(event.logicalKey);
 
       if (event.logicalKey == LogicalKeyboardKey.space) {
@@ -72,9 +74,10 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
       } else if (event.logicalKey == LogicalKeyboardKey.escape) {
         Navigator.of(context).pop();
       }
-    } else if (event is RawKeyUpEvent) {
+    } else if (event is KeyUpEvent) {
       _pressedKeys.remove(event.logicalKey);
     }
+    return false;
   }
 
   void _handleKeyboardMovement() {
@@ -123,17 +126,20 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
   void _spawnEnemies() {
     _enemies.clear();
     final random = math.Random();
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < GameConstants.enemyCount; i++) {
       _enemies.add(
         Enemy(
           position: Offset(
             GameConstants.playAreaPadding +
                 random.nextDouble() *
                     (_screenSize.width - 2 * GameConstants.playAreaPadding),
-            random.nextDouble() * _screenSize.height * 0.3,
+            random.nextDouble() *
+                _screenSize.height *
+                GameConstants.enemySpawnHeightRatio,
           ),
-          speed: GameConstants.baseEnemySpeed + _level * 0.5,
-          health: 1 + (_level ~/ 2),
+          speed: GameConstants.baseEnemySpeed +
+              _level * GameConstants.enemyLevelSpeedIncrease,
+          health: 1 + (_level ~/ GameConstants.enemyHealthIncreaseLevel),
         ),
       );
     }
@@ -142,16 +148,19 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
   void _spawnAsteroids() {
     _asteroids.clear();
     final random = math.Random();
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < GameConstants.asteroidCount; i++) {
       _asteroids.add(
         Asteroid(
           position: Offset(
             GameConstants.playAreaPadding +
                 random.nextDouble() *
                     (_screenSize.width - 2 * GameConstants.playAreaPadding),
-            random.nextDouble() * _screenSize.height * 0.3,
+            random.nextDouble() *
+                _screenSize.height *
+                GameConstants.enemySpawnHeightRatio,
           ),
-          speed: GameConstants.baseAsteroidSpeed + random.nextDouble() * 2.0,
+          speed: GameConstants.baseAsteroidSpeed +
+              random.nextDouble() * GameConstants.maxAsteroidSpeedVariation,
         ),
       );
     }
@@ -161,7 +170,9 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
     HapticFeedback.mediumImpact();
     setState(() {
       _projectiles.add(
-        Projectile(position: _player.position.translate(0, -20)),
+        Projectile(
+            position:
+                _player.position.translate(0, -GameConstants.projectileOffset)),
       );
     });
   }
@@ -170,7 +181,9 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
     if (_novaBlastsRemaining > 0) {
       HapticFeedback.heavyImpact();
       setState(() {
-        for (int angle = 0; angle < 360; angle += 45) {
+        for (double angle = 0;
+            angle < 360;
+            angle += GameConstants.novaAngleStep) {
           final radians = angle * math.pi / 180;
           _projectiles.add(
             Projectile(
@@ -195,7 +208,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
           _gameOver();
         } else {
           _isInvulnerable = true;
-          Future.delayed(const Duration(seconds: 2), () {
+          Future.delayed(AppConstants.invulnerabilityDuration, () {
             if (mounted) {
               setState(() {
                 _isInvulnerable = false;
@@ -295,7 +308,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
 
   @override
   void dispose() {
-    RawKeyboard.instance.removeListener(_handleKeyEvent);
+    HardwareKeyboard.instance.removeHandler(_handleKeyEvent);
     _keyboardMoveTimer?.cancel();
     _gameLoop?.cancel();
     _moveTimer?.cancel();
@@ -317,8 +330,9 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
             top: 0,
             bottom: 0,
             child: Container(
-              width: 2,
-              color: Colors.white.withOpacity(0.3),
+              width: GameConstants.borderWidth,
+              color: AppConstants.borderColor
+                  .withValues(red: 255, green: 255, blue: 255, alpha: 77),
             ),
           ),
           Positioned(
@@ -326,15 +340,16 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
             top: 0,
             bottom: 0,
             child: Container(
-              width: 2,
-              color: Colors.white.withOpacity(0.3),
+              width: GameConstants.borderWidth,
+              color: AppConstants.borderColor
+                  .withValues(red: 255, green: 255, blue: 255, alpha: 77),
             ),
           ),
 
           // Player
           Positioned(
-            left: _player.position.dx - 25,
-            top: _player.position.dy - 25,
+            left: _player.position.dx - GameConstants.playerSize / 2,
+            top: _player.position.dy - GameConstants.playerSize / 2,
             child: Opacity(
               opacity: _isInvulnerable ? 0.5 : 1.0,
               child: const PlayerWidget(),
@@ -343,18 +358,20 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
 
           // Game objects
           ..._projectiles.map((projectile) => Positioned(
-                left: projectile.position.dx - 2,
-                top: projectile.position.dy - 10,
+                left:
+                    projectile.position.dx - GameConstants.projectileWidth / 2,
+                top:
+                    projectile.position.dy - GameConstants.projectileHeight / 2,
                 child: const ProjectileWidget(),
               )),
           ..._enemies.map((enemy) => Positioned(
-                left: enemy.position.dx - 20,
-                top: enemy.position.dy - 20,
+                left: enemy.position.dx - GameConstants.enemySize / 2,
+                top: enemy.position.dy - GameConstants.enemySize / 2,
                 child: const EnemyWidget(),
               )),
           ..._asteroids.map((asteroid) => Positioned(
-                left: asteroid.position.dx - 25,
-                top: asteroid.position.dy - 25,
+                left: asteroid.position.dx - GameConstants.asteroidSize / 2,
+                top: asteroid.position.dy - GameConstants.asteroidSize / 2,
                 child: const AsteroidWidget(),
               )),
 
@@ -364,34 +381,34 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
               children: [
                 // Score and Level
                 Positioned(
-                  top: 20,
-                  left: 20,
+                  top: GameConstants.uiPadding,
+                  left: GameConstants.uiPadding,
                   child: Text(
-                    'Score: $_score\nLevel: $_level',
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
+                    '${AppConstants.scoreText}$_score\n${AppConstants.levelText}$_level',
+                    style: TextStyle(
+                      color: AppConstants.textColor,
+                      fontSize: GameConstants.scoreTextSize,
                     ),
                   ),
                 ),
                 // Lives Counter
                 Positioned(
-                  top: 20,
-                  right: 100,
+                  top: GameConstants.uiPadding,
+                  right: GameConstants.uiPadding * 5,
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(
+                      Icon(
                         Icons.favorite,
-                        color: Colors.red,
-                        size: 24,
+                        color: AppConstants.enemyColor,
+                        size: GameConstants.livesIconSize,
                       ),
-                      const SizedBox(width: 8),
+                      SizedBox(width: GameConstants.uiElementSpacing),
                       Text(
                         'x $_lives',
-                        style: const TextStyle(
-                          color: Colors.red,
-                          fontSize: 20,
+                        style: TextStyle(
+                          color: AppConstants.enemyColor,
+                          fontSize: GameConstants.livesTextSize,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -400,10 +417,10 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                 ),
                 // Close button
                 Positioned(
-                  top: 20,
-                  right: 20,
+                  top: GameConstants.uiPadding,
+                  right: GameConstants.uiPadding,
                   child: IconButton(
-                    icon: const Icon(Icons.close, color: Colors.white),
+                    icon: Icon(Icons.close, color: AppConstants.textColor),
                     onPressed: () => Navigator.of(context).pop(),
                   ),
                 ),
@@ -413,8 +430,8 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
 
           // Controls
           Positioned(
-            left: 10,
-            bottom: 20,
+            left: GameConstants.uiPadding / 2,
+            bottom: GameConstants.uiPadding,
             child: JoystickController(
               onMove: _handleJoystickMove,
             ),
@@ -422,21 +439,21 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
 
           // Action buttons
           Positioned(
-            right: 10,
-            bottom: 20,
+            right: GameConstants.uiPadding / 2,
+            bottom: GameConstants.uiPadding,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 ActionButton(
                   onPressed: _shoot,
-                  label: 'Fire',
-                  color: Colors.red,
+                  label: AppConstants.fireText,
+                  color: AppConstants.enemyColor,
                 ),
-                const SizedBox(height: 15),
+                SizedBox(height: AppConstants.actionButtonSpacing),
                 ActionButton(
                   onPressed: _fireNova,
-                  label: 'Nova',
-                  color: Colors.yellow,
+                  label: AppConstants.novaText,
+                  color: AppConstants.projectileColor,
                   counter: '$_novaBlastsRemaining',
                 ),
               ],
@@ -453,33 +470,35 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text(
-                      'Game Over',
+                    Text(
+                      AppConstants.gameOverText,
                       style: TextStyle(
-                        color: Colors.red,
-                        fontSize: 48,
+                        color: AppConstants.enemyColor,
+                        fontSize: GameConstants.gameOverTextSize,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    const SizedBox(height: 20),
+                    SizedBox(height: GameConstants.gameOverSpacing),
                     Text(
-                      'Score: $_score',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 24,
+                      '${AppConstants.scoreText}$_score',
+                      style: TextStyle(
+                        color: AppConstants.textColor,
+                        fontSize: GameConstants.scoreDisplayTextSize,
                       ),
                     ),
-                    const SizedBox(height: 20),
+                    SizedBox(height: GameConstants.gameOverSpacing),
                     ElevatedButton(
                       onPressed: () => Navigator.of(context).pop(),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.deepPurple,
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 32, vertical: 16),
+                        backgroundColor: AppConstants.primaryColor,
+                        padding: EdgeInsets.symmetric(
+                          horizontal: GameConstants.gameOverButtonPaddingH,
+                          vertical: GameConstants.gameOverButtonPaddingV,
+                        ),
                       ),
-                      child: const Text(
-                        'Main Menu',
-                        style: TextStyle(fontSize: 20),
+                      child: Text(
+                        AppConstants.mainMenuText,
+                        style: TextStyle(fontSize: GameConstants.scoreTextSize),
                       ),
                     ),
                   ],

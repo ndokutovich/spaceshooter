@@ -40,7 +40,11 @@ class _OptionsScreenState extends State<OptionsScreen> {
                   setState(() => _volume = value);
                 },
                 activeColor: AppConstants.primaryColor,
-                inactiveColor: AppConstants.primaryColor.withOpacity(0.3),
+                inactiveColor: AppConstants.primaryColor.withValues(
+                    red: (AppConstants.primaryColor.r * 255),
+                    green: (AppConstants.primaryColor.g * 255),
+                    blue: (AppConstants.primaryColor.b * 255),
+                    alpha: 77),
               ),
             ),
             const SizedBox(height: AppConstants.menuButtonSpacing * 2),
