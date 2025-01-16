@@ -1,0 +1,493 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'dart:async';
+import 'dart:math' as math;
+
+import '../entities/player.dart';
+import '../entities/enemy.dart';
+import '../entities/projectile.dart';
+import '../entities/asteroid.dart';
+import '../utils/constants.dart';
+import '../widgets/controls.dart';
+import '../widgets/background.dart';
+
+class GameScreen extends StatefulWidget {
+  const GameScreen({super.key});
+
+  @override
+  State<GameScreen> createState() => _GameScreenState();
+}
+
+class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
+  final Player _player = Player();
+  final List<Enemy> _enemies = [];
+  final List<Projectile> _projectiles = [];
+  final List<Asteroid> _asteroids = [];
+  Timer? _gameLoop;
+  Timer? _moveTimer;
+  Timer? _keyboardMoveTimer;
+  int _score = 0;
+  int _level = 1;
+  bool _isGameOver = false;
+  late Size _screenSize;
+  int _novaBlastsRemaining = GameConstants.initialNovaBlasts;
+  int _lives = GameConstants.initialLives;
+  bool _isInvulnerable = false;
+  final Set<LogicalKeyboardKey> _pressedKeys = {};
+
+  @override
+  void initState() {
+    super.initState();
+    RawKeyboard.instance.addListener(_handleKeyEvent);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _screenSize = MediaQuery.of(context).size;
+      _player.position =
+          Offset(_screenSize.width / 2, _screenSize.height * 0.8);
+      _startGame();
+    });
+    _keyboardMoveTimer = Timer.periodic(const Duration(milliseconds: 16), (_) {
+      _handleKeyboardMovement();
+    });
+  }
+
+  void _startGame() {
+    _spawnEnemies();
+    _spawnAsteroids();
+    const fps = 60;
+    _gameLoop = Timer.periodic(
+      const Duration(milliseconds: 1000 ~/ fps),
+      _update,
+    );
+  }
+
+  void _handleKeyEvent(RawKeyEvent event) {
+    if (event is RawKeyDownEvent) {
+      _pressedKeys.add(event.logicalKey);
+
+      if (event.logicalKey == LogicalKeyboardKey.space) {
+        _fireNova();
+      } else if (event.logicalKey == LogicalKeyboardKey.controlLeft ||
+          event.logicalKey == LogicalKeyboardKey.controlRight) {
+        _shoot();
+      } else if (event.logicalKey == LogicalKeyboardKey.escape) {
+        Navigator.of(context).pop();
+      }
+    } else if (event is RawKeyUpEvent) {
+      _pressedKeys.remove(event.logicalKey);
+    }
+  }
+
+  void _handleKeyboardMovement() {
+    if (_pressedKeys.isEmpty) return;
+
+    double dx = 0;
+    double dy = 0;
+
+    if (_pressedKeys.contains(LogicalKeyboardKey.keyW) ||
+        _pressedKeys.contains(LogicalKeyboardKey.arrowUp)) {
+      dy -= GameConstants.playerSpeed;
+    }
+    if (_pressedKeys.contains(LogicalKeyboardKey.keyS) ||
+        _pressedKeys.contains(LogicalKeyboardKey.arrowDown)) {
+      dy += GameConstants.playerSpeed;
+    }
+    if (_pressedKeys.contains(LogicalKeyboardKey.keyA) ||
+        _pressedKeys.contains(LogicalKeyboardKey.arrowLeft)) {
+      dx -= GameConstants.playerSpeed;
+    }
+    if (_pressedKeys.contains(LogicalKeyboardKey.keyD) ||
+        _pressedKeys.contains(LogicalKeyboardKey.arrowRight)) {
+      dx += GameConstants.playerSpeed;
+    }
+
+    if (dx != 0 || dy != 0) {
+      setState(() {
+        _player.move(Offset(dx, dy), _screenSize);
+      });
+    }
+  }
+
+  void _handleJoystickMove(Offset delta) {
+    _moveTimer?.cancel();
+    if (delta != Offset.zero) {
+      _moveTimer = Timer.periodic(const Duration(milliseconds: 16), (timer) {
+        setState(() {
+          _player.move(delta, _screenSize);
+        });
+      });
+    } else {
+      _moveTimer = null;
+    }
+  }
+
+  void _spawnEnemies() {
+    _enemies.clear();
+    final random = math.Random();
+    for (int i = 0; i < 10; i++) {
+      _enemies.add(
+        Enemy(
+          position: Offset(
+            GameConstants.playAreaPadding +
+                random.nextDouble() *
+                    (_screenSize.width - 2 * GameConstants.playAreaPadding),
+            random.nextDouble() * _screenSize.height * 0.3,
+          ),
+          speed: GameConstants.baseEnemySpeed + _level * 0.5,
+          health: 1 + (_level ~/ 2),
+        ),
+      );
+    }
+  }
+
+  void _spawnAsteroids() {
+    _asteroids.clear();
+    final random = math.Random();
+    for (int i = 0; i < 5; i++) {
+      _asteroids.add(
+        Asteroid(
+          position: Offset(
+            GameConstants.playAreaPadding +
+                random.nextDouble() *
+                    (_screenSize.width - 2 * GameConstants.playAreaPadding),
+            random.nextDouble() * _screenSize.height * 0.3,
+          ),
+          speed: GameConstants.baseAsteroidSpeed + random.nextDouble() * 2.0,
+        ),
+      );
+    }
+  }
+
+  void _shoot() {
+    HapticFeedback.mediumImpact();
+    setState(() {
+      _projectiles.add(
+        Projectile(position: _player.position.translate(0, -20)),
+      );
+    });
+  }
+
+  void _fireNova() {
+    if (_novaBlastsRemaining > 0) {
+      HapticFeedback.heavyImpact();
+      setState(() {
+        for (int angle = 0; angle < 360; angle += 45) {
+          final radians = angle * math.pi / 180;
+          _projectiles.add(
+            Projectile(
+              position: _player.position,
+              velocity: Offset(
+                math.cos(radians) * GameConstants.projectileSpeed,
+                math.sin(radians) * GameConstants.projectileSpeed,
+              ),
+            ),
+          );
+        }
+        _novaBlastsRemaining--;
+      });
+    }
+  }
+
+  void _handleCollision() {
+    if (!_isInvulnerable) {
+      setState(() {
+        _lives--;
+        if (_lives <= 0) {
+          _gameOver();
+        } else {
+          _isInvulnerable = true;
+          Future.delayed(const Duration(seconds: 2), () {
+            if (mounted) {
+              setState(() {
+                _isInvulnerable = false;
+              });
+            }
+          });
+        }
+      });
+    }
+  }
+
+  void _checkCollisions() {
+    final projectilesToRemove = <Projectile>{};
+    final enemiesToRemove = <Enemy>{};
+
+    for (var projectile in _projectiles) {
+      for (var enemy in _enemies) {
+        if ((projectile.position - enemy.position).distance <
+            GameConstants.collisionDistance) {
+          enemy.health--;
+          projectilesToRemove.add(projectile);
+          if (enemy.health <= 0) {
+            enemiesToRemove.add(enemy);
+            _score += 100;
+          }
+          break;
+        }
+      }
+    }
+
+    bool playerHit = false;
+
+    for (var asteroid in _asteroids) {
+      if ((_player.position - asteroid.position).distance <
+          GameConstants.collisionDistance) {
+        playerHit = true;
+        break;
+      }
+    }
+
+    if (!playerHit) {
+      for (var enemy in _enemies) {
+        if ((_player.position - enemy.position).distance <
+            GameConstants.collisionDistance) {
+          playerHit = true;
+          break;
+        }
+      }
+    }
+
+    _projectiles.removeWhere((p) => projectilesToRemove.contains(p));
+    _enemies.removeWhere((e) => enemiesToRemove.contains(e));
+
+    if (playerHit) {
+      _handleCollision();
+    }
+  }
+
+  void _update(Timer timer) {
+    if (_isGameOver) return;
+
+    setState(() {
+      for (var projectile in _projectiles) {
+        projectile.update();
+      }
+      _projectiles.removeWhere((projectile) =>
+          projectile.position.dy < 0 ||
+          projectile.position.dy > _screenSize.height ||
+          projectile.position.dx < GameConstants.playAreaPadding ||
+          projectile.position.dx >
+              _screenSize.width - GameConstants.playAreaPadding);
+
+      for (var enemy in _enemies) {
+        enemy.update(_screenSize);
+      }
+
+      for (var asteroid in _asteroids) {
+        asteroid.update(_screenSize);
+      }
+
+      _checkCollisions();
+
+      if (_enemies.isEmpty) {
+        _level++;
+        _spawnEnemies();
+        _spawnAsteroids();
+      }
+    });
+  }
+
+  void _gameOver() {
+    setState(() {
+      _isGameOver = true;
+    });
+    _gameLoop?.cancel();
+  }
+
+  @override
+  void dispose() {
+    RawKeyboard.instance.removeListener(_handleKeyEvent);
+    _keyboardMoveTimer?.cancel();
+    _gameLoop?.cancel();
+    _moveTimer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    _screenSize = MediaQuery.of(context).size;
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: Stack(
+        children: [
+          StarBackground(screenSize: _screenSize),
+
+          // Play area borders
+          Positioned(
+            left: GameConstants.playAreaPadding,
+            top: 0,
+            bottom: 0,
+            child: Container(
+              width: 2,
+              color: Colors.white.withOpacity(0.3),
+            ),
+          ),
+          Positioned(
+            right: GameConstants.playAreaPadding,
+            top: 0,
+            bottom: 0,
+            child: Container(
+              width: 2,
+              color: Colors.white.withOpacity(0.3),
+            ),
+          ),
+
+          // Player
+          Positioned(
+            left: _player.position.dx - 25,
+            top: _player.position.dy - 25,
+            child: Opacity(
+              opacity: _isInvulnerable ? 0.5 : 1.0,
+              child: const PlayerWidget(),
+            ),
+          ),
+
+          // Game objects
+          ..._projectiles.map((projectile) => Positioned(
+                left: projectile.position.dx - 2,
+                top: projectile.position.dy - 10,
+                child: const ProjectileWidget(),
+              )),
+          ..._enemies.map((enemy) => Positioned(
+                left: enemy.position.dx - 20,
+                top: enemy.position.dy - 20,
+                child: const EnemyWidget(),
+              )),
+          ..._asteroids.map((asteroid) => Positioned(
+                left: asteroid.position.dx - 25,
+                top: asteroid.position.dy - 25,
+                child: const AsteroidWidget(),
+              )),
+
+          // UI Elements
+          SafeArea(
+            child: Stack(
+              children: [
+                // Score and Level
+                Positioned(
+                  top: 20,
+                  left: 20,
+                  child: Text(
+                    'Score: $_score\nLevel: $_level',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                    ),
+                  ),
+                ),
+                // Lives Counter
+                Positioned(
+                  top: 20,
+                  right: 100,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(
+                        Icons.favorite,
+                        color: Colors.red,
+                        size: 24,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        'x $_lives',
+                        style: const TextStyle(
+                          color: Colors.red,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                // Close button
+                Positioned(
+                  top: 20,
+                  right: 20,
+                  child: IconButton(
+                    icon: const Icon(Icons.close, color: Colors.white),
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          // Controls
+          Positioned(
+            left: 10,
+            bottom: 20,
+            child: JoystickController(
+              onMove: _handleJoystickMove,
+            ),
+          ),
+
+          // Action buttons
+          Positioned(
+            right: 10,
+            bottom: 20,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ActionButton(
+                  onPressed: _shoot,
+                  label: 'Fire',
+                  color: Colors.red,
+                ),
+                const SizedBox(height: 15),
+                ActionButton(
+                  onPressed: _fireNova,
+                  label: 'Nova',
+                  color: Colors.yellow,
+                  counter: '$_novaBlastsRemaining',
+                ),
+              ],
+            ),
+          ),
+
+          // Game Over overlay
+          if (_isGameOver)
+            Container(
+              width: _screenSize.width,
+              height: _screenSize.height,
+              color: Colors.black54,
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text(
+                      'Game Over',
+                      style: TextStyle(
+                        color: Colors.red,
+                        fontSize: 48,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    Text(
+                      'Score: $_score',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 24,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    ElevatedButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.deepPurple,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 32, vertical: 16),
+                      ),
+                      child: const Text(
+                        'Main Menu',
+                        style: TextStyle(fontSize: 20),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}
