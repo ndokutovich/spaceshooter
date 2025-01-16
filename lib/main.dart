@@ -283,10 +283,10 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
   bool _isGameOver = false;
   late Size _screenSize;
   int _novaBlastsRemaining = 2;
-  int _lives = 3;
+  int _lives = 100;
   bool _isInvulnerable = false;
   Timer? _moveTimer;
-  final double _playAreaPadding = 60.0;
+  final double _playAreaPadding = 120.0;
 
   @override
   void initState() {
