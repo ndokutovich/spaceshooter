@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../game/screens/game_screen.dart';
 import 'main_menu.dart';
+import '../utils/app_constants.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -19,7 +20,7 @@ class _SplashScreenState extends State<SplashScreen>
   void initState() {
     super.initState();
     _controller = AnimationController(
-      duration: const Duration(seconds: 2),
+      duration: AppConstants.splashAnimationDuration,
       vsync: this,
     );
     _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(_controller);
@@ -27,17 +28,17 @@ class _SplashScreenState extends State<SplashScreen>
   }
 
   void _startSplashSequence() async {
-    await Future.delayed(const Duration(seconds: 1));
+    await Future.delayed(AppConstants.splashDelayDuration);
     if (!mounted) return;
 
     await _controller.forward();
-    await Future.delayed(const Duration(seconds: 2));
+    await Future.delayed(AppConstants.splashAnimationDuration);
     if (!mounted) return;
 
     setState(() => _showingPlatform = false);
     _controller.reset();
     await _controller.forward();
-    await Future.delayed(const Duration(seconds: 2));
+    await Future.delayed(AppConstants.splashAnimationDuration);
     if (!mounted) return;
 
     _navigateToMainMenu();
@@ -56,7 +57,7 @@ class _SplashScreenState extends State<SplashScreen>
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           return FadeTransition(opacity: animation, child: child);
         },
-        transitionDuration: const Duration(milliseconds: 500),
+        transitionDuration: AppConstants.menuTransitionDuration,
       ),
     );
   }
@@ -77,10 +78,12 @@ class _SplashScreenState extends State<SplashScreen>
           child: FadeTransition(
             opacity: _fadeAnimation,
             child: Text(
-              _showingPlatform ? 'Flutter Platform' : 'Developer Studio',
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 48,
+              _showingPlatform
+                  ? AppConstants.splashTextPlatform
+                  : AppConstants.splashTextStudio,
+              style: TextStyle(
+                color: AppConstants.textColor,
+                fontSize: AppConstants.titleFontSize,
                 fontWeight: FontWeight.bold,
               ),
             ),

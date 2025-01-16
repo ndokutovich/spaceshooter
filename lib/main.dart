@@ -4,13 +4,15 @@ import 'dart:io' show Platform;
 import 'package:window_size/window_size.dart';
 
 import 'screens/splash_screen.dart';
+import 'utils/app_constants.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
 
   if (Platform.isMacOS || Platform.isWindows || Platform.isLinux) {
-    setWindowTitle('Space Shooter');
-    setWindowMinSize(const Size(800, 600));
+    setWindowTitle(AppConstants.appTitle);
+    setWindowMinSize(
+        Size(AppConstants.minWindowWidth, AppConstants.minWindowHeight));
     setWindowMaxSize(Size.infinite);
     getCurrentScreen().then((screen) {
       if (screen != null) {
@@ -35,10 +37,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Space Shooter',
+      title: AppConstants.appTitle,
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: AppConstants.primaryColor),
         useMaterial3: true,
       ),
       home: const SplashScreen(),

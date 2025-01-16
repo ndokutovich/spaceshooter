@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import '../game/screens/game_screen.dart';
 import 'options_screen.dart';
 import '../widgets/menu_button.dart';
+import '../utils/app_constants.dart';
 
 class MainMenu extends StatelessWidget {
   const MainMenu({super.key});
@@ -15,26 +16,26 @@ class MainMenu extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text(
-              'Space Shooter',
+            Text(
+              AppConstants.appTitle,
               style: TextStyle(
-                color: Colors.white,
-                fontSize: 48,
+                color: AppConstants.textColor,
+                fontSize: AppConstants.titleFontSize,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(height: 50),
+            SizedBox(height: AppConstants.menuButtonSpacing * 2.5),
             MenuButton(
-              text: 'Play',
+              text: AppConstants.menuPlayText,
               onPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(builder: (context) => const GameScreen()),
                 );
               },
             ),
-            const SizedBox(height: 20),
+            SizedBox(height: AppConstants.menuButtonSpacing),
             MenuButton(
-              text: 'Options',
+              text: AppConstants.menuOptionsText,
               onPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
@@ -42,9 +43,9 @@ class MainMenu extends StatelessWidget {
                 );
               },
             ),
-            const SizedBox(height: 20),
+            SizedBox(height: AppConstants.menuButtonSpacing),
             MenuButton(
-              text: 'Exit',
+              text: AppConstants.menuExitText,
               onPressed: () => SystemNavigator.pop(),
             ),
           ],

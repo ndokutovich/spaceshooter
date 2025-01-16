@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../utils/app_constants.dart';
 
 class MenuButton extends StatelessWidget {
   final String text;
@@ -15,11 +16,12 @@ class MenuButton extends StatelessWidget {
     return ElevatedButton(
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.deepPurple,
-        foregroundColor: Colors.white,
-        minimumSize: const Size(200, 50),
+        backgroundColor: AppConstants.primaryColor,
+        foregroundColor: AppConstants.textColor,
+        minimumSize:
+            Size(AppConstants.menuButtonWidth, AppConstants.menuButtonHeight),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(25),
+          borderRadius: BorderRadius.circular(AppConstants.menuButtonRadius),
         ),
       ),
       child: Text(

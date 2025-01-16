@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../widgets/menu_button.dart';
+import '../utils/app_constants.dart';
 
 class OptionsScreen extends StatefulWidget {
   const OptionsScreen({super.key});
@@ -17,31 +18,34 @@ class _OptionsScreenState extends State<OptionsScreen> {
       backgroundColor: Colors.black,
       appBar: AppBar(
         title: const Text('Options'),
-        backgroundColor: Colors.deepPurple,
+        backgroundColor: AppConstants.primaryColor,
       ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text(
-              'Game Volume',
-              style: TextStyle(color: Colors.white, fontSize: 24),
+            Text(
+              AppConstants.volumeText,
+              style: TextStyle(
+                color: AppConstants.textColor,
+                fontSize: 24,
+              ),
             ),
-            const SizedBox(height: 20),
+            SizedBox(height: AppConstants.menuButtonSpacing),
             SizedBox(
-              width: 300,
+              width: AppConstants.volumeSliderWidth,
               child: Slider(
                 value: _volume,
                 onChanged: (value) {
                   setState(() => _volume = value);
                 },
-                activeColor: Colors.deepPurple,
-                inactiveColor: Colors.deepPurple.withOpacity(0.3),
+                activeColor: AppConstants.primaryColor,
+                inactiveColor: AppConstants.primaryColor.withOpacity(0.3),
               ),
             ),
-            const SizedBox(height: 40),
+            SizedBox(height: AppConstants.menuButtonSpacing * 2),
             MenuButton(
-              text: 'Back',
+              text: AppConstants.backText,
               onPressed: () => Navigator.of(context).pop(),
             ),
           ],
