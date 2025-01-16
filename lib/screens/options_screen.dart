@@ -24,14 +24,14 @@ class _OptionsScreenState extends State<OptionsScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
+            const Text(
               AppConstants.volumeText,
               style: TextStyle(
                 color: AppConstants.textColor,
                 fontSize: 24,
               ),
             ),
-            SizedBox(height: AppConstants.menuButtonSpacing),
+            const SizedBox(height: AppConstants.menuButtonSpacing),
             SizedBox(
               width: AppConstants.volumeSliderWidth,
               child: Slider(
@@ -43,7 +43,7 @@ class _OptionsScreenState extends State<OptionsScreen> {
                 inactiveColor: AppConstants.primaryColor.withOpacity(0.3),
               ),
             ),
-            SizedBox(height: AppConstants.menuButtonSpacing * 2),
+            const SizedBox(height: AppConstants.menuButtonSpacing * 2),
             MenuButton(
               text: AppConstants.backText,
               onPressed: () => Navigator.of(context).pop(),

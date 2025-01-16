@@ -19,7 +19,7 @@ class MenuButton extends StatelessWidget {
         backgroundColor: AppConstants.primaryColor,
         foregroundColor: AppConstants.textColor,
         minimumSize:
-            Size(AppConstants.menuButtonWidth, AppConstants.menuButtonHeight),
+            const Size(AppConstants.menuButtonWidth, AppConstants.menuButtonHeight),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppConstants.menuButtonRadius),
         ),

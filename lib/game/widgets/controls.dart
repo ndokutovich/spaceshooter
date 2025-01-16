@@ -20,7 +20,7 @@ class _JoystickControllerState extends State<JoystickController> {
   static const _baseRadius = 40.0;
 
   void _updateStick(Offset position) {
-    final delta = position - Offset(_baseRadius, _baseRadius);
+    final delta = position - const Offset(_baseRadius, _baseRadius);
     if (delta.distance > _baseRadius) {
       _stickPosition = delta * (_baseRadius / delta.distance);
     } else {

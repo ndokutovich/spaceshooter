@@ -12,7 +12,7 @@ void main() {
   if (Platform.isMacOS || Platform.isWindows || Platform.isLinux) {
     setWindowTitle(AppConstants.appTitle);
     setWindowMinSize(
-        Size(AppConstants.minWindowWidth, AppConstants.minWindowHeight));
+        const Size(AppConstants.minWindowWidth, AppConstants.minWindowHeight));
     setWindowMaxSize(Size.infinite);
     getCurrentScreen().then((screen) {
       if (screen != null) {

@@ -16,7 +16,7 @@ class MainMenu extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
+            const Text(
               AppConstants.appTitle,
               style: TextStyle(
                 color: AppConstants.textColor,
@@ -24,7 +24,7 @@ class MainMenu extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            SizedBox(height: AppConstants.menuButtonSpacing * 2.5),
+            const SizedBox(height: AppConstants.menuButtonSpacing * 2.5),
             MenuButton(
               text: AppConstants.menuPlayText,
               onPressed: () {
@@ -33,7 +33,7 @@ class MainMenu extends StatelessWidget {
                 );
               },
             ),
-            SizedBox(height: AppConstants.menuButtonSpacing),
+            const SizedBox(height: AppConstants.menuButtonSpacing),
             MenuButton(
               text: AppConstants.menuOptionsText,
               onPressed: () {
@@ -43,7 +43,7 @@ class MainMenu extends StatelessWidget {
                 );
               },
             ),
-            SizedBox(height: AppConstants.menuButtonSpacing),
+            const SizedBox(height: AppConstants.menuButtonSpacing),
             MenuButton(
               text: AppConstants.menuExitText,
               onPressed: () => SystemNavigator.pop(),

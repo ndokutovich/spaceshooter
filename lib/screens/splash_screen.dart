@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../game/screens/game_screen.dart';
 import 'main_menu.dart';
 import '../utils/app_constants.dart';
 
@@ -81,7 +80,7 @@ class _SplashScreenState extends State<SplashScreen>
               _showingPlatform
                   ? AppConstants.splashTextPlatform
                   : AppConstants.splashTextStudio,
-              style: TextStyle(
+              style: const TextStyle(
                 color: AppConstants.textColor,
                 fontSize: AppConstants.titleFontSize,
                 fontWeight: FontWeight.bold,
