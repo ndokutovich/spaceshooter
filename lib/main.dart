@@ -2,13 +2,30 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:math' as math;
 import 'dart:async';
+import 'dart:io' show Platform;
+import 'package:window_size/window_size.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+
+  if (Platform.isMacOS || Platform.isWindows || Platform.isLinux) {
+    setWindowTitle('Space Shooter');
+    setWindowMinSize(const Size(800, 600));
+    setWindowMaxSize(Size.infinite);
+    getCurrentScreen().then((screen) {
+      if (screen != null) {
+        setWindowFrame(
+            Rect.fromLTWH(0, 0, screen.frame.width, screen.frame.height));
+      }
+    });
+  }
+
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.landscapeLeft,
     DeviceOrientation.landscapeRight,
   ]);
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+
   runApp(const MyApp());
 }
 
@@ -18,7 +35,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Game',
+      title: 'Space Shooter',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
@@ -252,11 +269,17 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
   int _score = 0;
   int _level = 1;
   bool _isGameOver = false;
+  late Size _screenSize;
 
   @override
   void initState() {
     super.initState();
-    _startGame();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _screenSize = MediaQuery.of(context).size;
+      _player.position =
+          Offset(_screenSize.width / 2, _screenSize.height * 0.8);
+      _startGame();
+    });
   }
 
   void _startGame() {
@@ -276,8 +299,8 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
       _enemies.add(
         Enemy(
           position: Offset(
-            random.nextDouble() * 800,
-            random.nextDouble() * 200,
+            random.nextDouble() * _screenSize.width,
+            random.nextDouble() * _screenSize.height * 0.3,
           ),
           speed: 2.0 + _level * 0.5,
           health: 1 + (_level ~/ 2),
@@ -293,8 +316,8 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
       _asteroids.add(
         Asteroid(
           position: Offset(
-            random.nextDouble() * 800,
-            random.nextDouble() * 200,
+            random.nextDouble() * _screenSize.width,
+            random.nextDouble() * _screenSize.height * 0.3,
           ),
           speed: 1.0 + random.nextDouble() * 2.0,
         ),
@@ -314,12 +337,12 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
 
       // Update enemies
       for (var enemy in _enemies) {
-        enemy.update();
+        enemy.update(_screenSize);
       }
 
       // Update asteroids
       for (var asteroid in _asteroids) {
-        asteroid.update();
+        asteroid.update(_screenSize);
       }
 
       // Check collisions
@@ -410,57 +433,83 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    _screenSize = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: Colors.black,
-      body: GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onPanUpdate: (details) {
-          setState(() {
-            _player.move(details.delta);
-          });
-        },
-        onTapDown: (_) => _shoot(),
-        child: Stack(
-          children: [
-            // Player
-            Positioned(
-              left: _player.position.dx - 25,
-              top: _player.position.dy - 25,
-              child: const PlayerWidget(),
+      body: Stack(
+        children: [
+          GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onPanUpdate: (details) {
+              setState(() {
+                _player.move(details.delta, _screenSize);
+              });
+            },
+            onTapDown: (_) => _shoot(),
+            child: Container(
+              width: _screenSize.width,
+              height: _screenSize.height,
             ),
-            // Projectiles
-            ..._projectiles.map((projectile) => Positioned(
-                  left: projectile.position.dx - 2,
-                  top: projectile.position.dy - 10,
-                  child: const ProjectileWidget(),
-                )),
-            // Enemies
-            ..._enemies.map((enemy) => Positioned(
-                  left: enemy.position.dx - 20,
-                  top: enemy.position.dy - 20,
-                  child: const EnemyWidget(),
-                )),
-            // Asteroids
-            ..._asteroids.map((asteroid) => Positioned(
-                  left: asteroid.position.dx - 25,
-                  top: asteroid.position.dy - 25,
-                  child: const AsteroidWidget(),
-                )),
-            // Score and Level
-            Positioned(
-              top: 20,
-              left: 20,
-              child: Text(
-                'Score: $_score\nLevel: $_level',
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 20,
+          ),
+          // Player
+          Positioned(
+            left: _player.position.dx - 25,
+            top: _player.position.dy - 25,
+            child: const PlayerWidget(),
+          ),
+          // Projectiles
+          ..._projectiles.map((projectile) => Positioned(
+                left: projectile.position.dx - 2,
+                top: projectile.position.dy - 10,
+                child: const ProjectileWidget(),
+              )),
+          // Enemies
+          ..._enemies.map((enemy) => Positioned(
+                left: enemy.position.dx - 20,
+                top: enemy.position.dy - 20,
+                child: const EnemyWidget(),
+              )),
+          // Asteroids
+          ..._asteroids.map((asteroid) => Positioned(
+                left: asteroid.position.dx - 25,
+                top: asteroid.position.dy - 25,
+                child: const AsteroidWidget(),
+              )),
+          // UI Elements in SafeArea
+          SafeArea(
+            child: Stack(
+              children: [
+                // Score and Level
+                Positioned(
+                  top: 20,
+                  left: 20,
+                  child: Text(
+                    'Score: $_score\nLevel: $_level',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                    ),
+                  ),
                 ),
-              ),
+                // Close button
+                Positioned(
+                  top: 20,
+                  right: 20,
+                  child: IconButton(
+                    icon: const Icon(Icons.close, color: Colors.white),
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
+                ),
+              ],
             ),
-            // Game Over overlay
-            if (_isGameOver)
-              Center(
+          ),
+          // Game Over overlay
+          if (_isGameOver)
+            Container(
+              width: _screenSize.width,
+              height: _screenSize.height,
+              color: Colors.black54,
+              child: Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -488,30 +537,21 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                   ],
                 ),
               ),
-            // Close button
-            Positioned(
-              top: 20,
-              right: 20,
-              child: IconButton(
-                icon: const Icon(Icons.close, color: Colors.white),
-                onPressed: () => Navigator.of(context).pop(),
-              ),
             ),
-          ],
-        ),
+        ],
       ),
     );
   }
 }
 
 class Player {
-  Offset position = const Offset(400, 500);
+  Offset position = const Offset(0, 0);
 
-  void move(Offset delta) {
+  void move(Offset delta, Size screenSize) {
     position += delta;
     position = Offset(
-      position.dx.clamp(25, 775),
-      position.dy.clamp(25, 575),
+      position.dx.clamp(25, screenSize.width - 25),
+      position.dy.clamp(25, screenSize.height - 25),
     );
   }
 }
@@ -527,9 +567,9 @@ class Enemy {
     required this.health,
   });
 
-  void update() {
+  void update(Size screenSize) {
     position = Offset(position.dx, position.dy + speed);
-    if (position.dy > 600) {
+    if (position.dy > screenSize.height) {
       position = Offset(position.dx, -50);
     }
   }
@@ -552,9 +592,9 @@ class Asteroid {
 
   Asteroid({required this.position, required this.speed});
 
-  void update() {
+  void update(Size screenSize) {
     position = Offset(position.dx, position.dy + speed);
-    if (position.dy > 600) {
+    if (position.dy > screenSize.height) {
       position = Offset(position.dx, -50);
     }
   }
