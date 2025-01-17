@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../utils/app_constants.dart';
 
 class JoystickController extends StatefulWidget {
   final Function(Offset) onMove;
