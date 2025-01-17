@@ -502,9 +502,9 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                     SpaceButton(
                       text: AppConstants.mainMenuText,
                       onPressed: () => Navigator.of(context).pop(),
-                      width: AppConstants.menuButtonWidth * 0.7,
-                      height: AppConstants.menuButtonHeight * 0.7,
-                      fontSize: 20,
+                      width: AppConstants.menuButtonWidth,
+                      height: AppConstants.menuButtonHeight,
+                      fontSize: AppConstants.titleFontSize * 0.5,
                     ),
                   ],
                 ),
