@@ -19,16 +19,26 @@ class _JoystickControllerState extends State<JoystickController> {
   bool _isDragging = false;
   static const _stickRadius = 20.0;
   static const _baseRadius = 40.0;
+  static const _minSpeed = 2.0;
+  static const _maxSpeed = 5.0;
+  Offset? _startPosition;
 
   void _updateStick(Offset position) {
-    final delta = position - const Offset(_baseRadius, _baseRadius);
-    if (delta.distance > _baseRadius) {
-      _stickPosition = delta * (_baseRadius / delta.distance);
-    } else {
-      _stickPosition = delta;
-    }
+    final center = _startPosition ?? Offset(_baseRadius, _baseRadius);
+    final delta = position - center;
+    setState(() {
+      if (delta.distance > _baseRadius) {
+        _stickPosition = delta * (_baseRadius / delta.distance);
+      } else {
+        _stickPosition = delta;
+      }
+    });
+
+    final distanceRatio = _stickPosition.distance / _baseRadius;
+    final speedFactor = _minSpeed + (_maxSpeed - _minSpeed) * distanceRatio;
+
     HapticFeedback.lightImpact();
-    widget.onMove(_stickPosition / _baseRadius * 5);
+    widget.onMove(_stickPosition / _baseRadius * speedFactor);
   }
 
   @override
@@ -39,10 +49,10 @@ class _JoystickControllerState extends State<JoystickController> {
       child: GestureDetector(
         onPanStart: (details) {
           _isDragging = true;
-          HapticFeedback.mediumImpact();
           final box = context.findRenderObject() as RenderBox;
-          final localPosition = box.globalToLocal(details.globalPosition);
-          _updateStick(localPosition);
+          _startPosition = box.globalToLocal(details.globalPosition);
+          _updateStick(_startPosition!);
+          HapticFeedback.mediumImpact();
         },
         onPanUpdate: (details) {
           if (_isDragging) {
@@ -53,9 +63,11 @@ class _JoystickControllerState extends State<JoystickController> {
         },
         onPanEnd: (_) {
           _isDragging = false;
-          _stickPosition = Offset.zero;
+          _startPosition = null;
+          setState(() {
+            _stickPosition = Offset.zero;
+          });
           widget.onMove(Offset.zero);
-          setState(() {});
         },
         child: CustomPaint(
           painter: JoystickPainter(
