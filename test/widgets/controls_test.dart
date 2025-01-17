@@ -1,16 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter/services.dart';
 import 'package:space_shooter/widgets/controls.dart';
 
 void main() {
   group('JoystickController Tests', () {
     testWidgets('JoystickController initializes correctly', (tester) async {
-      Offset? moveOffset;
-
       await tester.pumpWidget(MaterialApp(
         home: JoystickController(
-          onMove: (offset) => moveOffset = offset,
+          onMove: (offset) => offset,
         ),
       ));
 
@@ -39,11 +36,10 @@ void main() {
   group('ActionButton Tests', () {
     testWidgets('ActionButton displays label correctly', (tester) async {
       const label = 'Test';
-      var pressed = false;
 
       await tester.pumpWidget(MaterialApp(
         home: ActionButton(
-          onPressed: () => pressed = true,
+          onPressed: () => true,
           label: label,
           color: Colors.blue,
         ),

@@ -1,5 +1,6 @@
 name: space_shooter
 description: A space shooter game built with Flutter
+publish_to: none
 version: 1.0.0+1
 
 environment:
