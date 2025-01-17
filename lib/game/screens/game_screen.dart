@@ -3,15 +3,15 @@ import 'package:flutter/services.dart';
 import 'dart:async';
 import 'dart:math' as math;
 
+import '../../widgets/controls.dart';
 import '../entities/player.dart';
 import '../entities/enemy.dart';
 import '../entities/projectile.dart';
 import '../entities/asteroid.dart';
-import '../utils/constants.dart';
-import '../../widgets/controls.dart';
-import '../widgets/background.dart';
 import '../../utils/app_constants.dart';
-import '../../widgets/game_objects.dart';
+import '../../widgets/background.dart';
+import '../utils/constants.dart';
+import '../utils/painters.dart';
 
 class GameScreen extends StatefulWidget {
   const GameScreen({super.key});
@@ -379,8 +379,8 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
               children: [
                 // Score and Level
                 Positioned(
-                  top: GameConstants.uiPadding,
-                  left: GameConstants.uiPadding,
+                  top: AppConstants.uiPadding,
+                  left: AppConstants.uiPadding,
                   child: Text(
                     '${AppConstants.scoreText}$_score\n${AppConstants.levelText}$_level',
                     style: TextStyle(
@@ -391,17 +391,18 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                 ),
                 // Lives Counter
                 Positioned(
-                  top: GameConstants.uiPadding,
-                  right: GameConstants.uiPadding * 5,
+                  top: AppConstants.uiPadding,
+                  right: AppConstants.uiPadding * 5,
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
+                      SizedBox(width: AppConstants.uiElementSpacing),
                       CustomPaint(
-                        painter: HeartPainter(color: AppConstants.enemyColor),
                         size: Size(GameConstants.livesIconSize,
                             GameConstants.livesIconSize),
+                        painter: HeartPainter(),
                       ),
-                      SizedBox(width: GameConstants.uiElementSpacing),
+                      SizedBox(width: AppConstants.uiElementSpacing),
                       Text(
                         'x $_lives',
                         style: TextStyle(
@@ -415,8 +416,8 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                 ),
                 // Close button
                 Positioned(
-                  top: GameConstants.uiPadding,
-                  right: GameConstants.uiPadding,
+                  top: AppConstants.uiPadding,
+                  right: AppConstants.uiPadding,
                   child: IconButton(
                     icon: Icon(Icons.close, color: AppConstants.textColor),
                     onPressed: () => Navigator.of(context).pop(),
@@ -428,8 +429,8 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
 
           // Controls
           Positioned(
-            left: GameConstants.uiPadding / 2,
-            bottom: GameConstants.uiPadding,
+            left: AppConstants.uiPadding,
+            bottom: AppConstants.uiPadding,
             child: JoystickController(
               onMove: _handleJoystickMove,
             ),
@@ -437,8 +438,8 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
 
           // Action buttons
           Positioned(
-            right: GameConstants.uiPadding / 2,
-            bottom: GameConstants.uiPadding,
+            right: AppConstants.uiPadding,
+            bottom: AppConstants.uiPadding,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -453,11 +454,9 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                   label: AppConstants.novaText,
                   color: AppConstants.projectileColor,
                   counterWidget: CustomPaint(
-                    painter: NovaCounterPainter(
-                      color: AppConstants.projectileColor,
-                      count: '$_novaBlastsRemaining',
-                    ),
                     size: const Size(30, 30),
+                    painter:
+                        NovaCounterPainter(_novaBlastsRemaining.toString()),
                   ),
                 ),
               ],

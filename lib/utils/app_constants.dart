@@ -20,6 +20,7 @@ class AppConstants {
   static const String backText = 'Back';
   static const String fireText = 'Fire';
   static const String novaText = 'Nova';
+  static const String livesText = 'Lives: ';
 
   // UI Dimensions
   static const double titleFontSize = 48.0;
@@ -31,6 +32,7 @@ class AppConstants {
   static const double actionButtonSpacing = 15.0;
   static const double volumeSliderWidth = 300.0;
   static const double uiPadding = 20.0;
+  static const double uiElementSpacing = 8.0;
 
   // Animation Durations
   static const splashAnimationDuration = Duration(seconds: 2);
@@ -47,4 +49,6 @@ class AppConstants {
   static const projectileColor = Colors.yellow;
   static const asteroidColor = Colors.grey;
   static const borderColor = Colors.white;
+  static const backgroundColor = Colors.black;
+  static const overlayColor = Colors.black54;
 }

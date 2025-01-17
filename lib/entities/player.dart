@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../utils/constants.dart';
+import '../game/utils/constants.dart';
 
 class Player {
   Offset position;
