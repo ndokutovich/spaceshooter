@@ -11,6 +11,7 @@ class AppConstants {
   static const String splashTextStudio = 'Developer Studio';
   static const String menuPlayText = 'Play';
   static const String menuOptionsText = 'Options';
+  static const String menuHighScoresText = 'High Scores';
   static const String menuExitText = 'Exit';
   static const String gameOverText = 'Game Over';
   static const String mainMenuText = 'Main Menu';

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../game/screens/game_screen.dart';
 import 'options_screen.dart';
+import 'high_scores_screen.dart';
 import '../widgets/menu_button.dart';
 import '../utils/app_constants.dart';
 
@@ -30,6 +31,16 @@ class MainMenu extends StatelessWidget {
               onPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(builder: (context) => const GameScreen()),
+                );
+              },
+            ),
+            const SizedBox(height: AppConstants.menuButtonSpacing),
+            MenuButton(
+              text: AppConstants.menuHighScoresText,
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                      builder: (context) => const HighScoresScreen()),
                 );
               },
             ),

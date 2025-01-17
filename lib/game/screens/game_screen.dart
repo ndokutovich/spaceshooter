@@ -12,6 +12,7 @@ import '../../utils/app_constants.dart';
 import '../../widgets/background.dart';
 import '../utils/constants.dart';
 import '../utils/painters.dart';
+import '../../utils/high_scores.dart';
 
 class GameScreen extends StatefulWidget {
   const GameScreen({super.key});
@@ -304,6 +305,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
       _isGameOver = true;
     });
     _gameLoop?.cancel();
+    HighScoreService.addScore(_score);
   }
 
   @override
