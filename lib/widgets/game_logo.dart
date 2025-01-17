@@ -43,14 +43,16 @@ class _GameLogoState extends State<GameLogo>
           children: [
             // Background energy field
             CustomPaint(
-              size: Size(widget.size * 1.75, widget.size * 0.5),
+              size: Size(widget.size * AppConstants.logoWidthMultiplier,
+                  widget.size * AppConstants.logoHeightMultiplier),
               painter: LogoBackgroundPainter(
                 progress: _controller.value,
               ),
             ),
             // Main text with effects
             CustomPaint(
-              size: Size(widget.size * 1.75, widget.size * 0.5),
+              size: Size(widget.size * AppConstants.logoWidthMultiplier,
+                  widget.size * AppConstants.logoHeightMultiplier),
               painter: LogoPainter(
                 text: AppConstants.appTitle.toUpperCase(),
                 progress: _controller.value,
@@ -129,15 +131,16 @@ class LogoPainter extends CustomPainter {
         text: text,
         style: TextStyle(
           color: AppConstants.textColor,
-          fontSize: size.height * 0.5,
+          fontSize: size.height * AppConstants.logoHeightMultiplier,
           fontWeight: FontWeight.w900,
-          letterSpacing: 6,
-          height: 1.1,
+          letterSpacing: AppConstants.logoLetterSpacing,
+          height: AppConstants.logoLineHeight,
           shadows: [
             Shadow(
-              color: AppConstants.playerColor.withOpacity(0.8),
+              color: AppConstants.playerColor
+                  .withOpacity(AppConstants.logoBaseOpacity),
               offset: const Offset(0, 2),
-              blurRadius: 10,
+              blurRadius: AppConstants.logoBlurRadius,
             ),
             Shadow(
               color: Colors.black,
@@ -194,30 +197,31 @@ class LogoPainter extends CustomPainter {
     // Enhanced horizontal energy lines
     for (var i = 0; i < 4; i++) {
       final x = (startX + i * size.width / 4) % size.width;
-      final opacity = (1 - (x / size.width)) * 0.7;
+      final opacity = (1 - (x / size.width)) * AppConstants.logoMediumOpacity;
       linePaint.color = AppConstants.playerColor.withOpacity(opacity);
 
       canvas.drawLine(
-        Offset(x, lineY - 8),
-        Offset(x + lineLength, lineY - 8),
+        Offset(x, lineY - AppConstants.logoEnergyLineSpacing),
+        Offset(x + lineLength, lineY - AppConstants.logoEnergyLineSpacing),
         linePaint,
       );
       canvas.drawLine(
-        Offset(x, lineY + 8),
-        Offset(x + lineLength, lineY + 8),
+        Offset(x, lineY + AppConstants.logoEnergyLineSpacing),
+        Offset(x + lineLength, lineY + AppConstants.logoEnergyLineSpacing),
         linePaint,
       );
     }
 
     // Enhanced outer glow
     final glowPaint = Paint()
-      ..maskFilter = const MaskFilter.blur(BlurStyle.outer, 15)
+      ..maskFilter =
+          MaskFilter.blur(BlurStyle.outer, AppConstants.logoOuterBlurRadius)
       ..shader = RadialGradient(
         center: Alignment.center,
         radius: 0.5,
         colors: [
           AppConstants.playerColor,
-          AppConstants.playerColor.withOpacity(0.6),
+          AppConstants.playerColor.withOpacity(AppConstants.logoMediumOpacity),
           Colors.transparent,
         ],
         stops: const [0.2, 0.7, 1.0],
@@ -230,15 +234,18 @@ class LogoPainter extends CustomPainter {
 
     // Tech circuit lines with animation
     final circuitPaint = Paint()
-      ..color = AppConstants.playerColor.withOpacity(0.4)
+      ..color =
+          AppConstants.playerColor.withOpacity(AppConstants.logoLowOpacity)
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.5;
+      ..strokeWidth = AppConstants.logoStrokeWidth;
 
-    final spacing = size.width / 12;
-    for (var i = 0; i < 12; i++) {
+    final spacing = size.width / AppConstants.logoCircuitLines;
+    for (var i = 0; i < AppConstants.logoCircuitLines; i++) {
       final x = i * spacing;
       final wave = math.sin(progress * math.pi * 2 + i * 0.5);
-      final startY = size.height * (0.2 + 0.15 * wave);
+      final startY = size.height *
+          (AppConstants.logoWaveBaseHeight +
+              AppConstants.logoWaveAmplitude * wave);
 
       // Top circuits
       canvas.drawPath(

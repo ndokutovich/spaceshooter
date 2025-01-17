@@ -17,20 +17,20 @@ class HighScoresScreen extends StatelessWidget {
         leading: SpaceButton(
           text: '←',
           onPressed: () => Navigator.of(context).pop(),
-          width: 40,
-          height: 40,
-          fontSize: 24,
+          width: AppConstants.highScoresBackButtonSize,
+          height: AppConstants.highScoresBackButtonSize,
+          fontSize: AppConstants.highScoresBackButtonFontSize,
         ),
         title: Text(
           'High Scores',
           style: TextStyle(
             color: AppConstants.textColor,
-            fontSize: 28,
+            fontSize: AppConstants.highScoresTitleSize,
             fontWeight: FontWeight.bold,
             shadows: [
               Shadow(
                 color: AppConstants.playerColor,
-                blurRadius: 10,
+                blurRadius: AppConstants.logoBlurRadius,
               ),
             ],
           ),
@@ -44,7 +44,7 @@ class HighScoresScreen extends StatelessWidget {
               'Top Scores',
               style: TextStyle(
                 color: AppConstants.textColor,
-                fontSize: AppConstants.titleFontSize,
+                fontSize: AppConstants.highScoresSubtitleSize,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -62,23 +62,26 @@ class HighScoresScreen extends StatelessWidget {
                     'No scores yet!',
                     style: TextStyle(
                       color: AppConstants.textColor,
-                      fontSize: 24,
+                      fontSize: AppConstants.highScoresSubtitleSize,
                     ),
                   );
                 }
 
                 return Container(
-                  padding: const EdgeInsets.all(20),
+                  padding: EdgeInsets.all(AppConstants.highScoresPadding),
                   decoration: BoxDecoration(
-                    color: AppConstants.playerColor.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(15),
+                    color: AppConstants.playerColor
+                        .withOpacity(AppConstants.opacityUltraLow),
+                    borderRadius: BorderRadius.circular(
+                        AppConstants.highScoresBorderRadius),
                     border: Border.all(
-                      color: AppConstants.playerColor.withOpacity(0.3),
-                      width: 2,
+                      color: AppConstants.playerColor
+                          .withOpacity(AppConstants.opacityVeryLow),
+                      width: AppConstants.highScoresBorderWidth,
                     ),
                   ),
                   child: DataTable(
-                    columnSpacing: 40,
+                    columnSpacing: AppConstants.highScoresColumnSpacing,
                     columns: const [
                       DataColumn(
                         label: Text(

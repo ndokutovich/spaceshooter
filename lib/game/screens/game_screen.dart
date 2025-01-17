@@ -234,7 +234,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
           projectilesToRemove.add(projectile);
           if (enemy.health <= 0) {
             enemiesToRemove.add(enemy);
-            _score += 100;
+            _score += AppConstants.scoreIncrement;
           }
           break;
         }
@@ -395,7 +395,8 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                 // Lives Counter
                 Positioned(
                   top: AppConstants.uiPadding,
-                  right: AppConstants.uiPadding * 5,
+                  right:
+                      AppConstants.uiPadding * AppConstants.uiPaddingMultiplier,
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [

@@ -52,4 +52,41 @@ class AppConstants {
   static const borderColor = Colors.white;
   static const backgroundColor = Colors.black;
   static const overlayColor = Colors.black54;
+
+  // Logo Constants
+  static const double logoWidthMultiplier = 1.75;
+  static const double logoHeightMultiplier = 0.5;
+  static const double logoLetterSpacing = 6.0;
+  static const double logoLineHeight = 1.1;
+  static const double logoBlurRadius = 10.0;
+  static const double logoOuterBlurRadius = 15.0;
+  static const double logoStrokeWidth = 1.5;
+  static const double logoEnergyLineWidth = 2.0;
+  static const double logoBaseOpacity = 0.8;
+  static const double logoMediumOpacity = 0.6;
+  static const double logoLowOpacity = 0.4;
+  static const double logoWaveBaseHeight = 0.2;
+  static const double logoWaveAmplitude = 0.15;
+  static const int logoCircuitLines = 12;
+  static const double logoEnergyLineSpacing = 8.0;
+  static const double logoEnergyLineLength = 0.2; // Multiplier of width
+
+  // High Scores Constants
+  static const double highScoresTitleSize = 28.0;
+  static const double highScoresSubtitleSize = 24.0;
+  static const double highScoresPadding = 20.0;
+  static const double highScoresBorderRadius = 15.0;
+  static const double highScoresBorderWidth = 2.0;
+  static const double highScoresColumnSpacing = 40.0;
+  static const double highScoresBackButtonSize = 40.0;
+  static const double highScoresBackButtonFontSize = 24.0;
+
+  // Additional UI Constants
+  static const int scoreIncrement = 100;
+  static const double uiPaddingMultiplier = 5.0;
+  static const double opacityHigh = 0.8;
+  static const double opacityMedium = 0.6;
+  static const double opacityLow = 0.4;
+  static const double opacityVeryLow = 0.3;
+  static const double opacityUltraLow = 0.1;
 }
