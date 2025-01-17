@@ -12,8 +12,29 @@ class HighScoresScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
-        title: const Text('High Scores'),
-        backgroundColor: AppConstants.primaryColor,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: SpaceButton(
+          text: '←',
+          onPressed: () => Navigator.of(context).pop(),
+          width: 40,
+          height: 40,
+          fontSize: 24,
+        ),
+        title: Text(
+          'High Scores',
+          style: TextStyle(
+            color: AppConstants.textColor,
+            fontSize: 28,
+            fontWeight: FontWeight.bold,
+            shadows: [
+              Shadow(
+                color: AppConstants.playerColor,
+                blurRadius: 10,
+              ),
+            ],
+          ),
+        ),
       ),
       body: Center(
         child: Column(
@@ -49,8 +70,12 @@ class HighScoresScreen extends StatelessWidget {
                 return Container(
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
-                    color: AppConstants.primaryColor.withOpacity(0.2),
+                    color: AppConstants.playerColor.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(15),
+                    border: Border.all(
+                      color: AppConstants.playerColor.withOpacity(0.3),
+                      width: 2,
+                    ),
                   ),
                   child: DataTable(
                     columnSpacing: 40,

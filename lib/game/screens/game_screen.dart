@@ -4,6 +4,7 @@ import 'dart:async';
 import 'dart:math' as math;
 
 import '../../widgets/controls.dart';
+import '../../widgets/menu_button.dart';
 import '../entities/player.dart';
 import '../entities/enemy.dart';
 import '../entities/projectile.dart';
@@ -420,9 +421,12 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                 Positioned(
                   top: AppConstants.uiPadding,
                   right: AppConstants.uiPadding,
-                  child: IconButton(
-                    icon: Icon(Icons.close, color: AppConstants.textColor),
+                  child: RoundSpaceButton(
+                    text: '×',
                     onPressed: () => Navigator.of(context).pop(),
+                    color: AppConstants.enemyColor,
+                    size: 40,
+                    fontSize: 24,
                   ),
                 ),
               ],
@@ -445,16 +449,18 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                ActionButton(
+                RoundSpaceButton(
+                  text: AppConstants.fireText,
                   onPressed: _shoot,
-                  label: AppConstants.fireText,
                   color: AppConstants.enemyColor,
+                  size: 70,
                 ),
                 SizedBox(height: AppConstants.actionButtonSpacing),
-                ActionButton(
+                RoundSpaceButton(
+                  text: AppConstants.novaText,
                   onPressed: _fireNova,
-                  label: AppConstants.novaText,
                   color: AppConstants.projectileColor,
+                  size: 70,
                   counterWidget: CustomPaint(
                     size: const Size(30, 30),
                     painter:
@@ -492,19 +498,12 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                       ),
                     ),
                     SizedBox(height: GameConstants.gameOverSpacing),
-                    ElevatedButton(
+                    SpaceButton(
+                      text: AppConstants.mainMenuText,
                       onPressed: () => Navigator.of(context).pop(),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppConstants.primaryColor,
-                        padding: EdgeInsets.symmetric(
-                          horizontal: GameConstants.gameOverButtonPaddingH,
-                          vertical: GameConstants.gameOverButtonPaddingV,
-                        ),
-                      ),
-                      child: Text(
-                        AppConstants.mainMenuText,
-                        style: TextStyle(fontSize: GameConstants.scoreTextSize),
-                      ),
+                      width: AppConstants.menuButtonWidth * 0.7,
+                      height: AppConstants.menuButtonHeight * 0.7,
+                      fontSize: 20,
                     ),
                   ],
                 ),

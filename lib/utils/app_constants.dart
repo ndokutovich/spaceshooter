@@ -25,10 +25,10 @@ class AppConstants {
 
   // UI Dimensions
   static const double titleFontSize = 48.0;
-  static const double menuButtonWidth = 200.0;
-  static const double menuButtonHeight = 50.0;
-  static const double menuButtonSpacing = 20.0;
-  static const double menuButtonRadius = 25.0;
+  static const double menuButtonWidth = 280.0;
+  static const double menuButtonHeight = 60.0;
+  static const double menuButtonSpacing = 25.0;
+  static const double menuButtonRadius = 30.0;
   static const double actionButtonSize = 40.0;
   static const double actionButtonSpacing = 15.0;
   static const double volumeSliderWidth = 300.0;
@@ -43,12 +43,12 @@ class AppConstants {
   static const invulnerabilityDuration = Duration(seconds: 2);
 
   // Colors
-  static const primaryColor = Colors.deepPurple;
+  static const primaryColor = Color(0xFF4A90E2); // Bright blue
   static const textColor = Colors.white;
-  static const playerColor = Colors.blue;
-  static const enemyColor = Colors.red;
-  static const projectileColor = Colors.yellow;
-  static const asteroidColor = Colors.grey;
+  static const playerColor = Color(0xFF4A90E2); // Bright blue
+  static const enemyColor = Color(0xFFE24A4A); // Bright red
+  static const projectileColor = Color(0xFFFFD700); // Gold
+  static const asteroidColor = Color(0xFF808080); // Gray
   static const borderColor = Colors.white;
   static const backgroundColor = Colors.black;
   static const overlayColor = Colors.black54;

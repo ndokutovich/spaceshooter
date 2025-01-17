@@ -17,8 +17,29 @@ class _OptionsScreenState extends State<OptionsScreen> {
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
-        title: const Text('Options'),
-        backgroundColor: AppConstants.primaryColor,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: SpaceButton(
+          text: '←',
+          onPressed: () => Navigator.of(context).pop(),
+          width: 40,
+          height: 40,
+          fontSize: 24,
+        ),
+        title: Text(
+          'Options',
+          style: TextStyle(
+            color: AppConstants.textColor,
+            fontSize: 28,
+            fontWeight: FontWeight.bold,
+            shadows: [
+              Shadow(
+                color: AppConstants.playerColor,
+                blurRadius: 10,
+              ),
+            ],
+          ),
+        ),
       ),
       body: Center(
         child: Column(
@@ -39,12 +60,8 @@ class _OptionsScreenState extends State<OptionsScreen> {
                 onChanged: (value) {
                   setState(() => _volume = value);
                 },
-                activeColor: AppConstants.primaryColor,
-                inactiveColor: AppConstants.primaryColor.withValues(
-                    red: (AppConstants.primaryColor.r * 255),
-                    green: (AppConstants.primaryColor.g * 255),
-                    blue: (AppConstants.primaryColor.b * 255),
-                    alpha: 77),
+                activeColor: AppConstants.playerColor,
+                inactiveColor: AppConstants.playerColor.withOpacity(0.3),
               ),
             ),
             const SizedBox(height: AppConstants.menuButtonSpacing * 2),
