@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import '../../utils/constants/gameplay_constants.dart';
 import '../../entities/enemy.dart';
 import '../../entities/projectile.dart';

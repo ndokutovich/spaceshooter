@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 class UIConstants {
   // Window settings
   static const String appTitle = 'Space Shooter';
