@@ -79,7 +79,7 @@ class AsteroidPainter extends CustomPainter {
     // Create irregular asteroid shape
     final path = Path();
     final radius = size.width * 0.4;
-    final points = 8;
+    const points = 8;
 
     for (var i = 0; i < points; i++) {
       final angle = (i * 2 * math.pi / points);
