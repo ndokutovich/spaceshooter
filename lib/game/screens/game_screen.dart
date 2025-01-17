@@ -68,8 +68,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
 
       if (event.logicalKey == LogicalKeyboardKey.space) {
         _fireNova();
-      } else if (event.logicalKey == LogicalKeyboardKey.controlLeft ||
-          event.logicalKey == LogicalKeyboardKey.controlRight) {
+      } else if (event.logicalKey == LogicalKeyboardKey.keyF) {
         _shoot();
       } else if (event.logicalKey == LogicalKeyboardKey.escape) {
         Navigator.of(context).pop();
@@ -172,7 +171,10 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
       _projectiles.add(
         Projectile(
             position:
-                _player.position.translate(0, -GameConstants.projectileOffset)),
+                _player.position.translate(0, -GameConstants.projectileOffset),
+            speed: GameConstants.projectileSpeed,
+            isEnemy: false,
+            angle: -90),
       );
     });
   }
@@ -181,17 +183,13 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
     if (_novaBlastsRemaining > 0) {
       HapticFeedback.heavyImpact();
       setState(() {
-        for (double angle = 0;
-            angle < 360;
-            angle += GameConstants.novaAngleStep) {
-          final radians = angle * math.pi / 180;
+        for (double angle = 0; angle < 360; angle += 45) {
           _projectiles.add(
             Projectile(
               position: _player.position,
-              velocity: Offset(
-                math.cos(radians) * GameConstants.projectileSpeed,
-                math.sin(radians) * GameConstants.projectileSpeed,
-              ),
+              speed: GameConstants.projectileSpeed,
+              isEnemy: false,
+              angle: angle,
             ),
           );
         }
