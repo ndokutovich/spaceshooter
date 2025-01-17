@@ -70,6 +70,21 @@ class _StarBackgroundState extends State<StarBackground>
   void _updateStars() {
     setState(() {
       for (var star in stars) {
+        // Update star position - move downward
+        star.position = Offset(
+          star.position.dx,
+          star.position.dy +
+              (1.0 + star.size) * 0.5, // Larger stars move faster
+        );
+
+        // Reset star to top when it goes off screen
+        if (star.position.dy > widget.screenSize.height) {
+          star.position = Offset(
+            random.nextDouble() * widget.screenSize.width,
+            0, // Start from top
+          );
+        }
+
         // Create a smooth twinkling effect using sine waves
         star.opacity =
             (math.sin(_controller.value * math.pi * 2 * star.twinkleSpeed) +
