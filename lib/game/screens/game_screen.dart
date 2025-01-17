@@ -66,8 +66,9 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
     if (event is KeyDownEvent) {
       _pressedKeys.add(event.logicalKey);
 
-      if (event.logicalKey == LogicalKeyboardKey.space) {
+      if (event.logicalKey == LogicalKeyboardKey.space && !_isGameOver) {
         _fireNova();
+        return true; // Consume the space event
       } else if (event.logicalKey == LogicalKeyboardKey.keyF) {
         _shoot();
       } else if (event.logicalKey == LogicalKeyboardKey.escape) {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/gestures.dart';
 import 'main_menu.dart';
 import '../utils/app_constants.dart';
 
@@ -72,7 +73,13 @@ class _SplashScreenState extends State<SplashScreen>
     return Scaffold(
       backgroundColor: Colors.black,
       body: GestureDetector(
-        onTapDown: (_) => _skipAnimation(),
+        behavior: HitTestBehavior.opaque,
+        onTapDown: (details) {
+          if (details.kind == PointerDeviceKind.mouse ||
+              details.kind == PointerDeviceKind.touch) {
+            _skipAnimation();
+          }
+        },
         child: Center(
           child: FadeTransition(
             opacity: _fadeAnimation,
