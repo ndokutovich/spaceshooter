@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../utils/app_constants.dart';
 
 class JoystickController extends StatefulWidget {
   final Function(Offset) onMove;
@@ -108,63 +109,58 @@ class ActionButton extends StatelessWidget {
   final VoidCallback onPressed;
   final String label;
   final Color color;
-  final String? counter;
+  final Widget? counterWidget;
+  final String? counterText;
 
   const ActionButton({
     super.key,
     required this.onPressed,
     required this.label,
     required this.color,
-    this.counter,
+    this.counterWidget,
+    this.counterText,
   });
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTapDown: (_) {
-        HapticFeedback.heavyImpact();
+        HapticFeedback.mediumImpact();
         onPressed();
       },
       child: Container(
-        width: 40,
-        height: 40,
+        width: 80,
+        height: 80,
         decoration: BoxDecoration(
-          color: color.withValues(
-              red: (color.r * 255),
-              green: (color.g * 255),
-              blue: (color.b * 255),
-              alpha: 128),
-          shape: BoxShape.circle,
-          border: Border.all(
-            color: color,
-            width: 2,
-          ),
+          color: color.withOpacity(0.3),
+          borderRadius: BorderRadius.circular(25),
+          border: Border.all(color: color),
         ),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              label,
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            if (counterWidget != null) ...[
+              const SizedBox(height: 4),
+              counterWidget!,
+            ] else if (counterText != null) ...[
+              const SizedBox(height: 4),
               Text(
-                label,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 12,
+                counterText!,
+                style: TextStyle(
+                  color: color,
+                  fontSize: 16,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              if (counter != null) ...[
-                const SizedBox(height: 2),
-                Text(
-                  counter!,
-                  style: TextStyle(
-                    color: color,
-                    fontSize: 10,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
             ],
-          ),
+          ],
         ),
       ),
     );

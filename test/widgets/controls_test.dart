@@ -57,7 +57,7 @@ void main() {
           onPressed: () {},
           label: label,
           color: Colors.blue,
-          counter: counter,
+          counterText: counter,
         ),
       ));
 

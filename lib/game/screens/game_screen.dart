@@ -8,9 +8,10 @@ import '../entities/enemy.dart';
 import '../entities/projectile.dart';
 import '../entities/asteroid.dart';
 import '../utils/constants.dart';
-import '../widgets/controls.dart';
+import '../../widgets/controls.dart';
 import '../widgets/background.dart';
 import '../../utils/app_constants.dart';
+import '../../widgets/game_objects.dart';
 
 class GameScreen extends StatefulWidget {
   const GameScreen({super.key});
@@ -397,10 +398,10 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(
-                        Icons.favorite,
-                        color: AppConstants.enemyColor,
-                        size: GameConstants.livesIconSize,
+                      CustomPaint(
+                        painter: HeartPainter(color: AppConstants.enemyColor),
+                        size: Size(GameConstants.livesIconSize,
+                            GameConstants.livesIconSize),
                       ),
                       SizedBox(width: GameConstants.uiElementSpacing),
                       Text(
@@ -453,7 +454,13 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                   onPressed: _fireNova,
                   label: AppConstants.novaText,
                   color: AppConstants.projectileColor,
-                  counter: '$_novaBlastsRemaining',
+                  counterWidget: CustomPaint(
+                    painter: NovaCounterPainter(
+                      color: AppConstants.projectileColor,
+                      count: '$_novaBlastsRemaining',
+                    ),
+                    size: const Size(30, 30),
+                  ),
                 ),
               ],
             ),

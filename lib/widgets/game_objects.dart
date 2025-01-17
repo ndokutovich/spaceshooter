@@ -178,3 +178,140 @@ class GameObjectWidget extends StatelessWidget {
     );
   }
 }
+
+class HeartPainter extends CustomPainter {
+  final Color color;
+
+  HeartPainter({
+    this.color = Colors.red,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final path = Path();
+
+    // Create heart shape
+    path.moveTo(size.width * 0.5, size.height * 0.85);
+    path.cubicTo(size.width * 0.8, size.height * 0.6, size.width * 1.1,
+        size.height * 0.3, size.width * 0.5, size.height * 0.15);
+    path.cubicTo(size.width * -0.1, size.height * 0.3, size.width * 0.2,
+        size.height * 0.6, size.width * 0.5, size.height * 0.85);
+
+    // Glowing effect
+    final glowPaint = Paint()
+      ..shader = RadialGradient(
+        center: Alignment.center,
+        radius: 0.8,
+        colors: [
+          color,
+          color.withOpacity(0.6),
+          color.withOpacity(0.3),
+          Colors.transparent,
+        ],
+      ).createShader(Rect.fromLTWH(0, 0, size.width, size.height))
+      ..maskFilter = const MaskFilter.blur(BlurStyle.outer, 8);
+
+    // Base heart with gradient
+    final heartGradient = LinearGradient(
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+      colors: [
+        Colors.white,
+        color,
+        color.withOpacity(0.8),
+      ],
+    );
+
+    final heartPaint = Paint()
+      ..shader = heartGradient.createShader(
+        Rect.fromLTWH(0, 0, size.width, size.height),
+      )
+      ..style = PaintingStyle.fill;
+
+    // Draw glow and heart
+    canvas.drawPath(path, glowPaint);
+    canvas.drawPath(path, heartPaint);
+
+    // Add highlight
+    final highlightPaint = Paint()
+      ..color = Colors.white.withOpacity(0.5)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2;
+
+    canvas.drawPath(path, highlightPaint);
+  }
+
+  @override
+  bool shouldRepaint(HeartPainter oldDelegate) => color != oldDelegate.color;
+}
+
+class NovaCounterPainter extends CustomPainter {
+  final Color color;
+  final String count;
+
+  NovaCounterPainter({
+    required this.color,
+    required this.count,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    // Energy orb background
+    final orbGradient = RadialGradient(
+      center: Alignment.center,
+      radius: 0.7,
+      colors: [
+        Colors.white,
+        color,
+        color.withOpacity(0.5),
+        Colors.transparent,
+      ],
+    );
+
+    final orbPaint = Paint()
+      ..shader = orbGradient.createShader(
+        Rect.fromLTWH(0, 0, size.width, size.height),
+      )
+      ..maskFilter = const MaskFilter.blur(BlurStyle.outer, 10);
+
+    canvas.drawCircle(
+      Offset(size.width / 2, size.height / 2),
+      size.width * 0.4,
+      orbPaint,
+    );
+
+    // Draw counter text
+    final textPainter = TextPainter(
+      text: TextSpan(
+        text: count,
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: size.height * 0.5,
+          fontWeight: FontWeight.bold,
+          shadows: [
+            Shadow(
+              color: color,
+              blurRadius: 10,
+              offset: const Offset(0, 0),
+            ),
+          ],
+        ),
+      ),
+      textDirection: TextDirection.ltr,
+      textAlign: TextAlign.center,
+    );
+
+    textPainter.layout();
+    textPainter.paint(
+      canvas,
+      Offset(
+        (size.width - textPainter.width) / 2,
+        (size.height - textPainter.height) / 2,
+      ),
+    );
+  }
+
+  @override
+  bool shouldRepaint(NovaCounterPainter oldDelegate) =>
+      color != oldDelegate.color || count != oldDelegate.count;
+}
