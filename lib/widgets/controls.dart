@@ -85,16 +85,16 @@ class JoystickPainter extends CustomPainter {
 
     // Draw base
     final basePaint = Paint()
-      ..color = Colors.white
-          .withValues(red: 255.0, green: 255.0, blue: 255.0, alpha: 77.0)
+      ..color =
+          Colors.white.withValues(red: 255, green: 255, blue: 255, alpha: 77)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2;
     canvas.drawCircle(center, baseRadius, basePaint);
 
     // Draw stick
     final stickPaint = Paint()
-      ..color = Colors.white
-          .withValues(red: 255.0, green: 255.0, blue: 255.0, alpha: 128.0)
+      ..color =
+          Colors.white.withValues(red: 255, green: 255, blue: 255, alpha: 128)
       ..style = PaintingStyle.fill;
     canvas.drawCircle(center + stickPosition, stickRadius, stickPaint);
   }
@@ -130,10 +130,10 @@ class ActionButton extends StatelessWidget {
         height: 40,
         decoration: BoxDecoration(
           color: color.withValues(
-              red: (color.r * 255).toDouble(),
-              green: (color.g * 255).toDouble(),
-              blue: (color.b * 255).toDouble(),
-              alpha: 128.0),
+              red: (color.r * 255),
+              green: (color.g * 255),
+              blue: (color.b * 255),
+              alpha: 128),
           shape: BoxShape.circle,
           border: Border.all(
             color: color,

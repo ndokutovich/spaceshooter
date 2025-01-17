@@ -106,10 +106,7 @@ class StarPainter extends CustomPainter {
 
     for (var star in stars) {
       paint.color = Colors.white.withValues(
-          red: 255.0,
-          green: 255.0,
-          blue: 255.0,
-          alpha: (star.opacity * 255).toDouble());
+          red: 255, green: 255, blue: 255, alpha: star.opacity * 255);
       canvas.drawCircle(star.position, star.size, paint);
     }
   }

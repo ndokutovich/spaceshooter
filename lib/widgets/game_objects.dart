@@ -17,11 +17,7 @@ class ProjectilePainter extends CustomPainter {
       colors: [
         Colors.white,
         color,
-        color.withValues(
-            red: (color.r * 255).toDouble(),
-            green: (color.g * 255).toDouble(),
-            blue: (color.b * 255).toDouble(),
-            alpha: 77.0), // 0.3
+        color.withOpacity(0.3),
       ],
     );
 
@@ -69,8 +65,8 @@ class AsteroidPainter extends CustomPainter {
 
   AsteroidPainter({
     required this.rotation,
-    this.primaryColor = Colors.grey,
-    this.accentColor = Colors.white,
+    this.primaryColor = const Color(0xFF8B4513), // Saddle brown
+    this.accentColor = const Color(0xFFD2691E), // Chocolate
   });
 
   @override
@@ -83,7 +79,7 @@ class AsteroidPainter extends CustomPainter {
     // Create irregular asteroid shape
     final path = Path();
     final radius = size.width * 0.4;
-    const points = 8;
+    final points = 8;
 
     for (var i = 0; i < points; i++) {
       final angle = (i * 2 * math.pi / points);
@@ -101,8 +97,7 @@ class AsteroidPainter extends CustomPainter {
 
     // Base shadow
     final shadowPaint = Paint()
-      ..color = Colors.black
-          .withValues(red: 0.0, green: 0.0, blue: 0.0, alpha: 128.0) // 0.5
+      ..color = Colors.black.withOpacity(0.5)
       ..style = PaintingStyle.fill;
     canvas.drawPath(path, shadowPaint);
 
@@ -111,13 +106,9 @@ class AsteroidPainter extends CustomPainter {
       center: const Alignment(-0.5, -0.5),
       radius: 1.2,
       colors: [
-        Colors.white,
+        accentColor,
         primaryColor,
-        primaryColor.withValues(
-            red: (primaryColor.r * 255 - 40).toDouble(),
-            green: (primaryColor.g * 255 - 40).toDouble(),
-            blue: (primaryColor.b * 255 - 40).toDouble(),
-            alpha: 204.0), // 0.8
+        primaryColor.withOpacity(0.8),
       ],
     );
 
@@ -131,8 +122,7 @@ class AsteroidPainter extends CustomPainter {
 
     // Surface details
     final detailPaint = Paint()
-      ..color = Colors.white.withValues(
-          red: 255.0, green: 255.0, blue: 255.0, alpha: 153.0) // 0.6
+      ..color = accentColor.withOpacity(0.6)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2;
 
@@ -157,8 +147,7 @@ class AsteroidPainter extends CustomPainter {
 
     // Highlight edge
     final highlightPaint = Paint()
-      ..color = Colors.white
-          .withValues(red: 255.0, green: 255.0, blue: 255.0, alpha: 77.0) // 0.3
+      ..color = Colors.white.withOpacity(0.3)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2;
     canvas.drawPath(path, highlightPaint);
