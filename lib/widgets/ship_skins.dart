@@ -6,7 +6,7 @@ class PlayerShipPainter extends CustomPainter {
 
   PlayerShipPainter({
     this.primaryColor = Colors.blue,
-    this.accentColor = Colors.lightBlueAccent,
+    this.accentColor = Colors.white,
   });
 
   @override
@@ -16,17 +16,13 @@ class PlayerShipPainter extends CustomPainter {
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
       colors: [
-        primaryColor.withValues(
-            red: primaryColor.r * 255 + 40,
-            green: primaryColor.g * 255 + 40,
-            blue: primaryColor.b * 255 + 40,
-            alpha: 255),
+        Colors.white,
         primaryColor,
         primaryColor.withValues(
-            red: primaryColor.r * 255 - 40,
-            green: primaryColor.g * 255 - 40,
-            blue: primaryColor.b * 255 - 40,
-            alpha: 255),
+            red: (primaryColor.r * 255 - 40).toDouble(),
+            green: (primaryColor.g * 255 - 40).toDouble(),
+            blue: (primaryColor.b * 255 - 40).toDouble(),
+            alpha: 255.0),
       ],
     );
 
@@ -54,7 +50,8 @@ class PlayerShipPainter extends CustomPainter {
 
     // Draw hull shadow
     final shadowPaint = Paint()
-      ..color = Colors.black.withOpacity(0.3)
+      ..color = Colors.black
+          .withValues(red: 0.0, green: 0.0, blue: 0.0, alpha: 77.0) // 0.3
       ..style = PaintingStyle.fill;
     canvas.drawPath(path, shadowPaint);
 
@@ -63,7 +60,8 @@ class PlayerShipPainter extends CustomPainter {
 
     // Metallic highlights
     final highlightPaint = Paint()
-      ..color = Colors.white.withOpacity(0.5)
+      ..color = Colors.white.withValues(
+          red: 255.0, green: 255.0, blue: 255.0, alpha: 128.0) // 0.5
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2;
 
@@ -82,8 +80,10 @@ class PlayerShipPainter extends CustomPainter {
         center: Alignment.center,
         radius: 1.0,
         colors: [
-          accentColor.withOpacity(0.3),
-          accentColor.withOpacity(0),
+          Colors.white.withValues(
+              red: 255.0, green: 255.0, blue: 255.0, alpha: 77.0), // 0.3
+          Colors.white.withValues(
+              red: 255.0, green: 255.0, blue: 255.0, alpha: 0.0), // 0.0
         ],
       ).createShader(Rect.fromLTWH(0, 0, size.width, size.height))
       ..style = PaintingStyle.fill;
@@ -96,8 +96,13 @@ class PlayerShipPainter extends CustomPainter {
       end: Alignment.bottomCenter,
       colors: [
         Colors.white,
-        accentColor,
-        primaryColor.withOpacity(0.5),
+        Colors.white
+            .withValues(red: 255.0, green: 255.0, blue: 255.0, alpha: 128.0),
+        primaryColor.withValues(
+            red: (primaryColor.r * 255).toDouble(),
+            green: (primaryColor.g * 255).toDouble(),
+            blue: (primaryColor.b * 255).toDouble(),
+            alpha: 128.0), // 0.5
       ],
     );
 
@@ -126,9 +131,18 @@ class PlayerShipPainter extends CustomPainter {
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
       colors: [
-        Colors.white.withOpacity(0.9),
-        accentColor.withOpacity(0.7),
-        accentColor.withOpacity(0.4),
+        Colors.white.withValues(
+            red: 255.0, green: 255.0, blue: 255.0, alpha: 230.0), // 0.9
+        accentColor.withValues(
+            red: (accentColor.r * 255).toDouble(),
+            green: (accentColor.g * 255).toDouble(),
+            blue: (accentColor.b * 255).toDouble(),
+            alpha: 179.0), // 0.7
+        accentColor.withValues(
+            red: (accentColor.r * 255).toDouble(),
+            green: (accentColor.g * 255).toDouble(),
+            blue: (accentColor.b * 255).toDouble(),
+            alpha: 102.0), // 0.4
       ],
     );
 
@@ -159,7 +173,7 @@ class EnemyShipPainter extends CustomPainter {
 
   EnemyShipPainter({
     this.primaryColor = Colors.red,
-    this.accentColor = Colors.redAccent,
+    this.accentColor = Colors.white,
   });
 
   @override
@@ -169,17 +183,13 @@ class EnemyShipPainter extends CustomPainter {
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
       colors: [
-        primaryColor.withValues(
-            red: primaryColor.r * 255 + 30,
-            green: primaryColor.g * 255,
-            blue: primaryColor.b * 255,
-            alpha: 255),
+        Colors.white,
         primaryColor,
         primaryColor.withValues(
-            red: primaryColor.r * 255 - 30,
-            green: primaryColor.g * 255,
-            blue: primaryColor.b * 255,
-            alpha: 255),
+            red: (primaryColor.r * 255 - 30).toDouble(),
+            green: (primaryColor.g * 255 - 30).toDouble(),
+            blue: (primaryColor.b * 255 - 30).toDouble(),
+            alpha: 255.0),
       ],
     );
 
@@ -205,7 +215,8 @@ class EnemyShipPainter extends CustomPainter {
 
     // Draw hull shadow
     final shadowPaint = Paint()
-      ..color = Colors.black.withOpacity(0.4)
+      ..color = Colors.black
+          .withValues(red: 0.0, green: 0.0, blue: 0.0, alpha: 102.0) // 0.4
       ..style = PaintingStyle.fill;
     canvas.drawPath(path, shadowPaint);
 
@@ -218,9 +229,13 @@ class EnemyShipPainter extends CustomPainter {
       radius: 0.8,
       colors: [
         Colors.white,
-        accentColor,
-        primaryColor.withOpacity(0.5),
-        Colors.black.withOpacity(0.5),
+        Colors.white
+            .withValues(red: 255.0, green: 255.0, blue: 255.0, alpha: 128.0),
+        primaryColor.withValues(
+            red: (primaryColor.r * 255).toDouble(),
+            green: (primaryColor.g * 255).toDouble(),
+            blue: (primaryColor.b * 255).toDouble(),
+            alpha: 128.0), // 0.5
       ],
     );
 
@@ -243,9 +258,15 @@ class EnemyShipPainter extends CustomPainter {
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
         colors: [
-          Colors.white.withOpacity(0.5),
-          accentColor.withOpacity(0.3),
-          Colors.black.withOpacity(0.3),
+          Colors.white.withValues(
+              red: 255.0, green: 255.0, blue: 255.0, alpha: 128.0), // 0.5
+          accentColor.withValues(
+              red: (accentColor.r * 255).toDouble(),
+              green: (accentColor.g * 255).toDouble(),
+              blue: (accentColor.b * 255).toDouble(),
+              alpha: 77.0), // 0.3
+          Colors.black
+              .withValues(red: 0.0, green: 0.0, blue: 0.0, alpha: 77.0), // 0.3
         ],
       ).createShader(Rect.fromLTWH(0, 0, size.width, size.height))
       ..style = PaintingStyle.stroke
