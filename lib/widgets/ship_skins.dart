@@ -11,117 +11,139 @@ class PlayerShipPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
+    // 3D hull effect with gradient
+    final hullGradient = LinearGradient(
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+      colors: [
+        primaryColor.withValues(
+            red: primaryColor.r * 255 + 40,
+            green: primaryColor.g * 255 + 40,
+            blue: primaryColor.b * 255 + 40,
+            alpha: 255),
+        primaryColor,
+        primaryColor.withValues(
+            red: primaryColor.r * 255 - 40,
+            green: primaryColor.g * 255 - 40,
+            blue: primaryColor.b * 255 - 40,
+            alpha: 255),
+      ],
+    );
+
     final paint = Paint()
-      ..style = PaintingStyle.fill
-      ..color = primaryColor;
+      ..shader = hullGradient
+          .createShader(Rect.fromLTWH(0, 0, size.width, size.height))
+      ..style = PaintingStyle.fill;
 
     final path = Path();
 
-    // Main body - more detailed spaceship shape
-    path.moveTo(size.width * 0.5, 0); // Top center
-    path.quadraticBezierTo(
-      size.width * 0.7, size.height * 0.3, // Control point
-      size.width * 0.9, size.height * 0.5, // Right wing tip
-    );
-    path.lineTo(size.width * 0.7, size.height * 0.7); // Right wing inner
-    path.lineTo(size.width * 0.6, size.height * 0.6); // Right body indent
-    path.lineTo(size.width * 0.5, size.height * 0.8); // Bottom center
-    path.lineTo(size.width * 0.4, size.height * 0.6); // Left body indent
-    path.lineTo(size.width * 0.3, size.height * 0.7); // Left wing inner
-    path.lineTo(size.width * 0.1, size.height * 0.5); // Left wing tip
-    path.quadraticBezierTo(
-      size.width * 0.3, size.height * 0.3, // Control point
-      size.width * 0.5, 0, // Back to top center
-    );
+    // Main hull - Space Rangers style with angular design
+    path.moveTo(size.width * 0.5, 0); // Top point
+    path.lineTo(size.width * 0.7, size.height * 0.2); // Right upper wing
+    path.lineTo(size.width * 0.9, size.height * 0.4); // Right wing tip
+    path.lineTo(size.width * 0.75, size.height * 0.5); // Right wing indent
+    path.lineTo(size.width * 0.8, size.height * 0.7); // Right lower wing
+    path.lineTo(size.width * 0.6, size.height * 0.6); // Right hull indent
+    path.lineTo(size.width * 0.5, size.height * 0.8); // Bottom point
+    path.lineTo(size.width * 0.4, size.height * 0.6); // Left hull indent
+    path.lineTo(size.width * 0.2, size.height * 0.7); // Left lower wing
+    path.lineTo(size.width * 0.25, size.height * 0.5); // Left wing indent
+    path.lineTo(size.width * 0.1, size.height * 0.4); // Left wing tip
+    path.lineTo(size.width * 0.3, size.height * 0.2); // Left upper wing
+    path.close();
+
+    // Draw hull shadow
+    final shadowPaint = Paint()
+      ..color = Colors.black.withOpacity(0.3)
+      ..style = PaintingStyle.fill;
+    canvas.drawPath(path, shadowPaint);
+
+    // Draw main hull
     canvas.drawPath(path, paint);
 
-    // Wing details
-    final detailPaint = Paint()
+    // Metallic highlights
+    final highlightPaint = Paint()
+      ..color = Colors.white.withOpacity(0.5)
       ..style = PaintingStyle.stroke
-      ..color = accentColor
       ..strokeWidth = 2;
 
-    // Right wing detail
-    canvas.drawLine(
-      Offset(size.width * 0.7, size.height * 0.4),
-      Offset(size.width * 0.85, size.height * 0.5),
-      detailPaint,
+    // Upper hull highlight
+    canvas.drawPath(
+      Path()
+        ..moveTo(size.width * 0.3, size.height * 0.2)
+        ..lineTo(size.width * 0.5, size.height * 0.1)
+        ..lineTo(size.width * 0.7, size.height * 0.2),
+      highlightPaint,
     );
 
-    // Left wing detail
-    canvas.drawLine(
-      Offset(size.width * 0.3, size.height * 0.4),
-      Offset(size.width * 0.15, size.height * 0.5),
-      detailPaint,
-    );
-
-    // Engine glow - enhanced with multiple layers
-    final enginePaint = Paint()
-      ..style = PaintingStyle.fill
-      ..color = accentColor
-      ..maskFilter = const MaskFilter.blur(BlurStyle.outer, 8);
-
-    // Main engine glow
-    final enginePath = Path();
-    enginePath.moveTo(size.width * 0.4, size.height * 0.6);
-    enginePath.lineTo(size.width * 0.6, size.height * 0.6);
-    enginePath.lineTo(size.width * 0.5, size.height);
-    enginePath.close();
-    canvas.drawPath(enginePath, enginePaint);
-
-    // Inner engine glow
-    final innerEnginePaint = Paint()
-      ..style = PaintingStyle.fill
-      ..color = Colors.white
-      ..maskFilter = const MaskFilter.blur(BlurStyle.outer, 4);
-
-    final innerEnginePath = Path();
-    innerEnginePath.moveTo(size.width * 0.45, size.height * 0.65);
-    innerEnginePath.lineTo(size.width * 0.55, size.height * 0.65);
-    innerEnginePath.lineTo(size.width * 0.5, size.height * 0.9);
-    innerEnginePath.close();
-    canvas.drawPath(innerEnginePath, innerEnginePaint);
-
-    // Cockpit with gradient
-    final cockpitPaint = Paint()
-      ..shader = LinearGradient(
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
+    // Energy shield effect
+    final shieldPaint = Paint()
+      ..shader = RadialGradient(
+        center: Alignment.center,
+        radius: 1.0,
         colors: [
-          accentColor.withValues(
-              red: accentColor.r * 255,
-              green: accentColor.g * 255,
-              blue: accentColor.b * 255,
-              alpha: 230),
-          accentColor.withValues(
-              red: accentColor.r * 255,
-              green: accentColor.g * 255,
-              blue: accentColor.b * 255,
-              alpha: 150),
+          accentColor.withOpacity(0.3),
+          accentColor.withOpacity(0),
         ],
-      ).createShader(
-          Rect.fromLTWH(0, size.height * 0.2, size.width, size.height * 0.3));
+      ).createShader(Rect.fromLTWH(0, 0, size.width, size.height))
+      ..style = PaintingStyle.fill;
+
+    canvas.drawPath(path, shieldPaint);
+
+    // Advanced engine effect
+    final engineGradient = LinearGradient(
+      begin: Alignment.topCenter,
+      end: Alignment.bottomCenter,
+      colors: [
+        Colors.white,
+        accentColor,
+        primaryColor.withOpacity(0.5),
+      ],
+    );
+
+    final enginePaint = Paint()
+      ..shader = engineGradient.createShader(
+        Rect.fromLTWH(size.width * 0.3, size.height * 0.6, size.width * 0.4,
+            size.height * 0.4),
+      )
+      ..maskFilter = const MaskFilter.blur(BlurStyle.outer, 10);
+
+    // Triple engine design
+    for (var i = 0; i < 3; i++) {
+      final enginePath = Path();
+      final xOffset = 0.4 + (i * 0.1);
+      enginePath.moveTo(size.width * xOffset, size.height * 0.6);
+      enginePath.lineTo(size.width * (xOffset + 0.05), size.height * 0.7);
+      enginePath.lineTo(size.width * (xOffset + 0.03), size.height);
+      enginePath.lineTo(size.width * (xOffset - 0.03), size.height);
+      enginePath.lineTo(size.width * (xOffset - 0.05), size.height * 0.7);
+      enginePath.close();
+      canvas.drawPath(enginePath, enginePaint);
+    }
+
+    // Cockpit with crystal effect
+    final cockpitGradient = LinearGradient(
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+      colors: [
+        Colors.white.withOpacity(0.9),
+        accentColor.withOpacity(0.7),
+        accentColor.withOpacity(0.4),
+      ],
+    );
+
+    final cockpitPaint = Paint()
+      ..shader = cockpitGradient.createShader(
+        Rect.fromLTWH(size.width * 0.35, size.height * 0.15, size.width * 0.3,
+            size.height * 0.2),
+      );
 
     final cockpitPath = Path();
-    cockpitPath.moveTo(size.width * 0.5, size.height * 0.2);
-    cockpitPath.quadraticBezierTo(
-      size.width * 0.6,
-      size.height * 0.3,
-      size.width * 0.55,
-      size.height * 0.4,
-    );
-    cockpitPath.quadraticBezierTo(
-      size.width * 0.5,
-      size.height * 0.45,
-      size.width * 0.45,
-      size.height * 0.4,
-    );
-    cockpitPath.quadraticBezierTo(
-      size.width * 0.4,
-      size.height * 0.3,
-      size.width * 0.5,
-      size.height * 0.2,
-    );
+    cockpitPath.moveTo(size.width * 0.5, size.height * 0.15);
+    cockpitPath.lineTo(size.width * 0.65, size.height * 0.25);
+    cockpitPath.lineTo(size.width * 0.5, size.height * 0.35);
+    cockpitPath.lineTo(size.width * 0.35, size.height * 0.25);
+    cockpitPath.close();
     canvas.drawPath(cockpitPath, cockpitPaint);
   }
 
@@ -142,113 +164,120 @@ class EnemyShipPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
+    // 3D hull effect with menacing gradient
+    final hullGradient = LinearGradient(
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+      colors: [
+        primaryColor.withValues(
+            red: primaryColor.r * 255 + 30,
+            green: primaryColor.g * 255,
+            blue: primaryColor.b * 255,
+            alpha: 255),
+        primaryColor,
+        primaryColor.withValues(
+            red: primaryColor.r * 255 - 30,
+            green: primaryColor.g * 255,
+            blue: primaryColor.b * 255,
+            alpha: 255),
+      ],
+    );
+
     final paint = Paint()
-      ..style = PaintingStyle.fill
-      ..color = primaryColor;
+      ..shader = hullGradient
+          .createShader(Rect.fromLTWH(0, 0, size.width, size.height))
+      ..style = PaintingStyle.fill;
 
     final path = Path();
 
-    // Main body - more aggressive alien design
-    path.moveTo(size.width * 0.5, size.height); // Bottom center
-    path.quadraticBezierTo(
-      size.width * 0.8, size.height * 0.7, // Control point
-      size.width, size.height * 0.5, // Far right
-    );
-    path.quadraticBezierTo(
-      size.width * 0.9, size.height * 0.3, // Control point
-      size.width * 0.7, size.height * 0.2, // Upper right indent
-    );
-    path.quadraticBezierTo(
-      size.width * 0.6, size.height * 0.1, // Control point
-      size.width * 0.5, 0, // Top center
-    );
-    path.quadraticBezierTo(
-      size.width * 0.4, size.height * 0.1, // Control point
-      size.width * 0.3, size.height * 0.2, // Upper left indent
-    );
-    path.quadraticBezierTo(
-      size.width * 0.1, size.height * 0.3, // Control point
-      0, size.height * 0.5, // Far left
-    );
-    path.quadraticBezierTo(
-      size.width * 0.2, size.height * 0.7, // Control point
-      size.width * 0.5, size.height, // Back to bottom center
-    );
+    // Alien battleship design
+    path.moveTo(size.width * 0.5, size.height); // Bottom point
+    path.lineTo(size.width * 0.8, size.height * 0.8); // Right lower wing
+    path.lineTo(size.width * 0.95, size.height * 0.5); // Right wing tip
+    path.lineTo(size.width * 0.8, size.height * 0.3); // Right upper indent
+    path.lineTo(size.width * 0.6, size.height * 0.2); // Right upper wing
+    path.lineTo(size.width * 0.5, 0); // Top point
+    path.lineTo(size.width * 0.4, size.height * 0.2); // Left upper wing
+    path.lineTo(size.width * 0.2, size.height * 0.3); // Left upper indent
+    path.lineTo(size.width * 0.05, size.height * 0.5); // Left wing tip
+    path.lineTo(size.width * 0.2, size.height * 0.8); // Left lower wing
+    path.close();
+
+    // Draw hull shadow
+    final shadowPaint = Paint()
+      ..color = Colors.black.withOpacity(0.4)
+      ..style = PaintingStyle.fill;
+    canvas.drawPath(path, shadowPaint);
+
+    // Draw main hull
     canvas.drawPath(path, paint);
 
-    // Energy core with pulsing effect
-    final corePaint = Paint()
-      ..style = PaintingStyle.fill
-      ..color = accentColor
-      ..maskFilter = const MaskFilter.blur(BlurStyle.outer, 8);
+    // Energy core with plasma effect
+    final plasmaGradient = RadialGradient(
+      center: Alignment.center,
+      radius: 0.8,
+      colors: [
+        Colors.white,
+        accentColor,
+        primaryColor.withOpacity(0.5),
+        Colors.black.withOpacity(0.5),
+      ],
+    );
 
-    // Outer core
+    final plasmaPaint = Paint()
+      ..shader = plasmaGradient.createShader(
+        Rect.fromLTWH(size.width * 0.2, size.height * 0.2, size.width * 0.6,
+            size.height * 0.6),
+      )
+      ..maskFilter = const MaskFilter.blur(BlurStyle.outer, 15);
+
     canvas.drawCircle(
       Offset(size.width * 0.5, size.height * 0.4),
       size.width * 0.2,
-      corePaint,
+      plasmaPaint,
     );
 
-    // Inner core
-    final innerCorePaint = Paint()
-      ..style = PaintingStyle.fill
-      ..color = Colors.white
-      ..maskFilter = const MaskFilter.blur(BlurStyle.outer, 4);
-
-    canvas.drawCircle(
-      Offset(size.width * 0.5, size.height * 0.4),
-      size.width * 0.1,
-      innerCorePaint,
-    );
-
-    // Wing patterns
-    final patternPaint = Paint()
+    // Armor plates with metallic effect
+    final platePaint = Paint()
+      ..shader = LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: [
+          Colors.white.withOpacity(0.5),
+          accentColor.withOpacity(0.3),
+          Colors.black.withOpacity(0.3),
+        ],
+      ).createShader(Rect.fromLTWH(0, 0, size.width, size.height))
       ..style = PaintingStyle.stroke
-      ..color = accentColor
       ..strokeWidth = 2;
 
-    // Left wing patterns
-    canvas.drawPath(
-      Path()
-        ..moveTo(size.width * 0.1, size.height * 0.5)
-        ..lineTo(size.width * 0.3, size.height * 0.4)
-        ..lineTo(size.width * 0.4, size.height * 0.6),
-      patternPaint,
-    );
-
-    // Right wing patterns
-    canvas.drawPath(
-      Path()
-        ..moveTo(size.width * 0.9, size.height * 0.5)
-        ..lineTo(size.width * 0.7, size.height * 0.4)
-        ..lineTo(size.width * 0.6, size.height * 0.6),
-      patternPaint,
-    );
-
-    // Additional details
-    final detailPaint = Paint()
-      ..style = PaintingStyle.stroke
-      ..color = accentColor.withValues(
-          red: accentColor.r * 255,
-          green: accentColor.g * 255,
-          blue: accentColor.b * 255,
-          alpha: 150)
-      ..strokeWidth = 1;
-
-    // Armor plates
+    // Draw angular armor plates
     for (var i = 0; i < 3; i++) {
-      canvas.drawArc(
-        Rect.fromCenter(
-          center: Offset(size.width * 0.5, size.height * 0.4),
-          width: size.width * (0.6 + i * 0.2),
-          height: size.height * (0.4 + i * 0.1),
-        ),
-        0,
-        3.14,
-        false,
-        detailPaint,
-      );
+      final platePath = Path();
+      platePath.moveTo(size.width * (0.3 + i * 0.1), size.height * 0.3);
+      platePath.lineTo(size.width * (0.7 - i * 0.1), size.height * 0.3);
+      platePath.lineTo(size.width * (0.6 - i * 0.05), size.height * 0.5);
+      platePath.lineTo(size.width * (0.4 + i * 0.05), size.height * 0.5);
+      platePath.close();
+      canvas.drawPath(platePath, platePaint);
     }
+
+    // Energy weapon glow
+    final weaponPaint = Paint()
+      ..color = accentColor
+      ..maskFilter = const MaskFilter.blur(BlurStyle.outer, 10);
+
+    // Side weapon pods
+    canvas.drawCircle(
+      Offset(size.width * 0.2, size.height * 0.6),
+      size.width * 0.08,
+      weaponPaint,
+    );
+    canvas.drawCircle(
+      Offset(size.width * 0.8, size.height * 0.6),
+      size.width * 0.08,
+      weaponPaint,
+    );
   }
 
   @override

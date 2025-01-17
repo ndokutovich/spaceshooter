@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../../widgets/ship_skins.dart';
+import 'dart:math' as math;
 
 class Enemy {
   Offset position;
@@ -24,14 +26,15 @@ class EnemyWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 40,
-      height: 40,
-      decoration: BoxDecoration(
-        color: Colors.red,
-        borderRadius: BorderRadius.circular(20),
+    return Transform.rotate(
+      angle: math.pi, // Rotate 180 degrees to face downward
+      child: ShipSkin(
+        painter: EnemyShipPainter(
+          primaryColor: Colors.red,
+          accentColor: Colors.redAccent,
+        ),
+        size: 60,
       ),
-      child: const Icon(Icons.android, color: Colors.white),
     );
   }
 }

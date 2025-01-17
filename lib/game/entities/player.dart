@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../utils/constants.dart';
+import '../../widgets/ship_skins.dart';
 
 class Player {
   Offset position;
@@ -22,14 +23,12 @@ class PlayerWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 50,
-      height: 50,
-      decoration: BoxDecoration(
-        color: Colors.blue,
-        borderRadius: BorderRadius.circular(25),
+    return ShipSkin(
+      painter: PlayerShipPainter(
+        primaryColor: Colors.blue,
+        accentColor: Colors.lightBlueAccent,
       ),
-      child: const Icon(Icons.rocket, color: Colors.white),
+      size: 80,
     );
   }
 }
