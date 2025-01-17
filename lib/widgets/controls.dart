@@ -86,16 +86,14 @@ class JoystickPainter extends CustomPainter {
 
     // Draw base
     final basePaint = Paint()
-      ..color =
-          Colors.white.withValues(red: 255, green: 255, blue: 255, alpha: 77)
+      ..color = Colors.white.withOpacity(0.3)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2;
     canvas.drawCircle(center, baseRadius, basePaint);
 
     // Draw stick
     final stickPaint = Paint()
-      ..color =
-          Colors.white.withValues(red: 255, green: 255, blue: 255, alpha: 128)
+      ..color = Colors.white.withOpacity(0.5)
       ..style = PaintingStyle.fill;
     canvas.drawCircle(center + stickPosition, stickRadius, stickPaint);
   }

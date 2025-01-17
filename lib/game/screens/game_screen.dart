@@ -331,8 +331,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
             bottom: 0,
             child: Container(
               width: GameConstants.borderWidth,
-              color: AppConstants.borderColor
-                  .withValues(red: 255, green: 255, blue: 255, alpha: 77),
+              color: AppConstants.borderColor.withOpacity(0.3),
             ),
           ),
           Positioned(
@@ -341,8 +340,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
             bottom: 0,
             child: Container(
               width: GameConstants.borderWidth,
-              color: AppConstants.borderColor
-                  .withValues(red: 255, green: 255, blue: 255, alpha: 77),
+              color: AppConstants.borderColor.withOpacity(0.3),
             ),
           ),
 
