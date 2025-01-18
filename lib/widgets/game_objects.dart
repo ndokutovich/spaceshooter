@@ -71,6 +71,102 @@ class AsteroidPainter extends CustomPainter {
     this.health = 3,
   });
 
+  void _drawCrack(
+      Canvas canvas, Offset start, double length, double angle, Paint paint) {
+    final path = Path();
+    path.moveTo(start.dx, start.dy);
+
+    final random = math.Random();
+    var currentPoint = start;
+    var currentAngle = angle;
+    final segments = 3 + random.nextInt(3);
+
+    for (var i = 0; i < segments; i++) {
+      final segmentLength =
+          length / segments * (0.7 + random.nextDouble() * 0.6);
+      currentAngle +=
+          (random.nextDouble() - 0.5) * 0.5; // Random angle variation
+      final endPoint = Offset(
+        currentPoint.dx + math.cos(currentAngle) * segmentLength,
+        currentPoint.dy + math.sin(currentAngle) * segmentLength,
+      );
+
+      // Add small branches to the crack
+      if (random.nextDouble() < 0.7) {
+        final branchAngle =
+            currentAngle + (random.nextDouble() - 0.5) * math.pi / 2;
+        final branchLength = segmentLength * 0.4;
+        final branchEnd = Offset(
+          currentPoint.dx + math.cos(branchAngle) * branchLength,
+          currentPoint.dy + math.sin(branchAngle) * branchLength,
+        );
+        path.moveTo(currentPoint.dx, currentPoint.dy);
+        path.lineTo(branchEnd.dx, branchEnd.dy);
+        path.moveTo(currentPoint.dx, currentPoint.dy);
+      }
+
+      path.lineTo(endPoint.dx, endPoint.dy);
+      currentPoint = endPoint;
+    }
+
+    canvas.drawPath(path, paint);
+  }
+
+  void _drawDamage(
+      Canvas canvas, Size size, Path asteroidPath, int damageLevel) {
+    final center = Offset(size.width / 2, size.height / 2);
+    final radius = size.width * 0.4;
+    final random = math.Random();
+
+    final crackPaint = Paint()
+      ..color = Colors.black.withOpacity(0.7)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2;
+
+    final chipPaint = Paint()
+      ..color = Colors.black.withOpacity(0.5)
+      ..style = PaintingStyle.fill;
+
+    // Add cracks based on damage level
+    for (var i = 0; i < (3 - health) * 3; i++) {
+      final angle = random.nextDouble() * 2 * math.pi;
+      final distance = radius * (0.3 + random.nextDouble() * 0.7);
+      final startPoint = Offset(
+        center.dx + math.cos(angle) * distance,
+        center.dy + math.sin(angle) * distance,
+      );
+
+      _drawCrack(
+        canvas,
+        startPoint,
+        radius * (0.3 + random.nextDouble() * 0.3),
+        angle + (random.nextDouble() - 0.5) * math.pi,
+        crackPaint,
+      );
+    }
+
+    // Add chips and breaks in the asteroid
+    for (var i = 0; i < (3 - health) * 2; i++) {
+      final chipPath = Path();
+      final angle = random.nextDouble() * 2 * math.pi;
+      final distance = radius * 0.8;
+      final chipSize = radius * (0.1 + random.nextDouble() * 0.15);
+
+      chipPath.addOval(
+        Rect.fromCenter(
+          center: Offset(
+            center.dx + math.cos(angle) * distance,
+            center.dy + math.sin(angle) * distance,
+          ),
+          width: chipSize,
+          height: chipSize,
+        ),
+      );
+
+      canvas.drawPath(chipPath, chipPaint);
+    }
+  }
+
   @override
   void paint(Canvas canvas, Size size) {
     final center = Offset(size.width / 2, size.height / 2);
@@ -106,6 +202,9 @@ class AsteroidPainter extends CustomPainter {
       )!
       ..style = PaintingStyle.fill;
     canvas.drawPath(path, basePaint);
+
+    // Draw damage effects
+    _drawDamage(canvas, size, path, 3 - health);
 
     // Outer glow based on health
     final glowPaint = Paint()
