@@ -62,10 +62,13 @@ class MenuButton extends StatelessWidget {
             Center(
               child: Text(
                 text,
+                textAlign: TextAlign.center,
                 style: TextStyle(
                   color: AppConstants.textColor,
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
+                  letterSpacing: 0.3,
+                  height: 1.0,
                   shadows: [
                     Shadow(
                       color: AppConstants.playerColor,
@@ -171,10 +174,13 @@ class SpaceButton extends StatelessWidget {
                 children: [
                   Text(
                     text,
+                    textAlign: TextAlign.center,
                     style: TextStyle(
                       color: AppConstants.textColor,
                       fontSize: fontSize,
                       fontWeight: FontWeight.bold,
+                      letterSpacing: 0.3,
+                      height: 1.0,
                       shadows: [
                         Shadow(
                           color: color,
@@ -294,13 +300,16 @@ class RoundSpaceButton extends StatelessWidget {
                 children: [
                   Text(
                     text,
+                    textAlign: TextAlign.center,
                     style: TextStyle(
                       color: AppConstants.textColor,
                       fontSize: fontSize,
                       fontWeight: FontWeight.bold,
+                      letterSpacing: 0.3,
+                      height: 1.0,
                       shadows: [
                         Shadow(
-                          color: color,
+                          color: AppConstants.playerColor,
                           blurRadius: 10,
                         ),
                       ],
