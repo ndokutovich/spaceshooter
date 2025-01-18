@@ -13,10 +13,12 @@ class Boss {
   double speed;
   int health;
   int maxHealth;
-  double targetX;
+  Offset targetPosition;
   bool isMovingRight;
   DateTime? lastAttackTime;
+  DateTime? lastMoveTime;
   static const attackCooldown = Duration(seconds: 3);
+  static const postActionDelay = Duration(seconds: 2);
   static const aimDuration = Duration(seconds: 1);
   DateTime? aimStartTime;
 
@@ -25,26 +27,50 @@ class Boss {
     this.speed = 3.0,
     this.health = 100,
   })  : maxHealth = health,
-        targetX = position.dx,
+        targetPosition = position,
         isMovingRight = true;
 
   void update(Size screenSize, Offset playerPosition) {
-    // Update target position to match player's X coordinate
-    targetX = playerPosition.dx;
+    final now = DateTime.now();
+    final canMove = lastAttackTime == null ||
+        now.difference(lastAttackTime!) > postActionDelay;
 
-    // Move towards target
-    double dx = 0;
-    if ((position.dx - targetX).abs() > speed) {
-      dx = position.dx > targetX ? -speed : speed;
-      isMovingRight = dx > 0;
+    if (!canMove) return;
+
+    // Update target position randomly if reached or enough time passed
+    if ((position - targetPosition).distance < speed * 2 ||
+        (lastMoveTime != null &&
+            now.difference(lastMoveTime!) > const Duration(seconds: 3))) {
+      final random = math.Random();
+      targetPosition = Offset(
+        random.nextDouble() *
+                (screenSize.width - 2 * GameConstants.playAreaPadding) +
+            GameConstants.playAreaPadding,
+        random.nextDouble() * screenSize.height * 0.25 + // Only in top quarter
+            screenSize.height * 0.05, // Minimum distance from top
+      );
+      lastMoveTime = now;
     }
 
+    // Move towards target
+    final dx = targetPosition.dx - position.dx;
+    final dy = targetPosition.dy - position.dy;
+    final distance = math.sqrt(dx * dx + dy * dy);
+
+    // Normalize and apply speed
+    final directionX = distance > 0 ? (dx / distance) * speed : 0;
+    final directionY = distance > 0 ? (dy / distance) * speed : 0;
+    isMovingRight = directionX > 0;
+
     position = Offset(
-      (position.dx + dx).clamp(
-        GameConstants.playAreaPadding + 100,
-        screenSize.width - GameConstants.playAreaPadding - 100,
+      (position.dx + directionX).clamp(
+        GameConstants.playAreaPadding,
+        screenSize.width - GameConstants.playAreaPadding,
       ),
-      position.dy,
+      (position.dy + directionY).clamp(
+        screenSize.height * 0.05,
+        screenSize.height * 0.3,
+      ),
     );
   }
 
