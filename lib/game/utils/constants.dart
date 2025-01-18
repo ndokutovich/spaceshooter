@@ -16,7 +16,7 @@ class GameConstants {
   static const int baseEnemyHealth = 2;
 
   // Asteroid settings
-  static const int asteroidCount = 3;
+  static const int asteroidCount = 6;
   static const double asteroidSize = 50.0;
   static const double baseAsteroidSpeed = 1.0;
   static const double maxAsteroidSpeedVariation = 1.0;
@@ -53,4 +53,12 @@ class GameConstants {
   static const double scoreTextSize = 20.0;
   static const double livesIconSize = 24.0;
   static const double livesTextSize = 20.0;
+
+  // Boss settings
+  static const double bossSize = 200.0;
+  static const double bossSpeed = 3.0;
+  static const int bossHealth = 100;
+  static const int bossScoreValue = 1000;
+  static const double bossStartHeightRatio = 0.2;
+  static const double bossPlayAreaPadding = playAreaPadding + 100;
 }

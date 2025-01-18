@@ -9,12 +9,14 @@ import '../entities/player.dart';
 import '../entities/enemy.dart';
 import '../entities/projectile.dart';
 import '../entities/asteroid.dart';
+import '../entities/boss.dart';
 import '../../utils/app_constants.dart';
 import '../../widgets/background.dart';
 import '../utils/constants.dart';
 import '../utils/painters.dart' as game_painters;
 import '../../utils/high_scores.dart';
 import '../../widgets/game_objects.dart';
+import '../../widgets/game_objects/boss_widget.dart';
 import '../../entities/bonus_item.dart';
 import '../../widgets/round_space_button.dart' as space_buttons;
 import '../../utils/transitions.dart';
@@ -48,6 +50,8 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
   final Set<LogicalKeyboardKey> _pressedKeys = {};
   List<BonusItem> _bonusItems = [];
   int _damageMultiplier = 1;
+  Boss? _boss;
+  bool _isBossFight = false;
 
   void _startCountdown({bool isResume = false}) {
     setState(() {
@@ -319,80 +323,121 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
   }
 
   void _checkCollisions() {
-    // Check projectile collisions
     List<Projectile> projectilesToRemove = [];
     List<Enemy> enemiesToRemove = [];
     List<Asteroid> asteroidsToRemove = [];
 
     for (var projectile in _projectiles) {
-      // Check asteroid hits first
-      for (var asteroid in _asteroids) {
-        if ((projectile.position - asteroid.position).distance <
-            GameConstants.collisionDistance) {
-          asteroid.health -= projectile.damage;
-          projectilesToRemove.add(projectile);
-          if (asteroid.health <= 0) {
-            asteroidsToRemove.add(asteroid);
-            _score += AppConstants.scoreIncrement;
-            _handleAsteroidDestroyed(asteroid.position);
-          }
-          break;
-        }
-      }
-
-      // If projectile hasn't hit an asteroid, check enemy hits
-      if (!projectilesToRemove.contains(projectile)) {
-        for (var enemy in _enemies) {
-          if ((projectile.position - enemy.position).distance <
-              GameConstants.collisionDistance) {
-            enemy.health -= projectile.damage;
+      if (!projectile.isEnemy) {
+        // Check boss hits
+        if (_boss != null) {
+          if ((projectile.position - _boss!.position).distance <
+              GameConstants.collisionDistance * 2) {
+            _boss!.health -= projectile.damage;
             projectilesToRemove.add(projectile);
-            if (enemy.health <= 0) {
-              enemiesToRemove.add(enemy);
+            if (_boss!.health <= 0) {
+              setState(() {
+                _score += GameConstants.bossScoreValue;
+                _boss = null;
+              });
+            }
+            continue;
+          }
+        }
+
+        // Check asteroid hits
+        for (var asteroid in _asteroids) {
+          if ((projectile.position - asteroid.position).distance <
+              GameConstants.collisionDistance) {
+            asteroid.health -= projectile.damage;
+            projectilesToRemove.add(projectile);
+            if (asteroid.health <= 0) {
+              asteroidsToRemove.add(asteroid);
               _score += AppConstants.scoreIncrement;
-              _handleEnemyDestroyed(enemy.position);
+              _handleAsteroidDestroyed(asteroid.position);
             }
             break;
           }
         }
+
+        // Check enemy hits
+        if (!projectilesToRemove.contains(projectile)) {
+          for (var enemy in _enemies) {
+            if ((projectile.position - enemy.position).distance <
+                GameConstants.collisionDistance) {
+              enemy.health -= projectile.damage;
+              projectilesToRemove.add(projectile);
+              if (enemy.health <= 0) {
+                enemiesToRemove.add(enemy);
+                _score += AppConstants.scoreIncrement;
+                _handleEnemyDestroyed(enemy.position);
+              }
+              break;
+            }
+          }
+        }
       }
     }
 
-    bool playerHit = false;
-
-    for (var asteroid in _asteroids) {
-      if ((_player.position - asteroid.position).distance <
-          GameConstants.collisionDistance) {
-        playerHit = true;
-        break;
+    // Check player collisions
+    if (!_isInvulnerable) {
+      // Check enemy projectiles
+      for (var projectile in _projectiles) {
+        if (projectile.isEnemy &&
+            (_player.position - projectile.position).distance <
+                GameConstants.collisionDistance) {
+          projectilesToRemove.add(projectile);
+          _handleCollision();
+          break;
+        }
       }
-    }
 
-    if (!playerHit) {
+      // Check enemy collisions
       for (var enemy in _enemies) {
         if ((_player.position - enemy.position).distance <
             GameConstants.collisionDistance) {
-          playerHit = true;
+          _handleCollision();
+          break;
+        }
+      }
+
+      // Check asteroid collisions
+      for (var asteroid in _asteroids) {
+        if ((_player.position - asteroid.position).distance <
+            GameConstants.collisionDistance) {
+          _handleCollision();
           break;
         }
       }
     }
 
-    _projectiles.removeWhere((p) => projectilesToRemove.contains(p));
-    _enemies.removeWhere((e) => enemiesToRemove.contains(e));
-    _asteroids.removeWhere((a) => asteroidsToRemove.contains(a));
-
-    if (playerHit) {
-      _handleCollision();
-    }
+    // Remove destroyed objects
+    setState(() {
+      _projectiles.removeWhere((p) => projectilesToRemove.contains(p));
+      _enemies.removeWhere((e) => enemiesToRemove.contains(e));
+      _asteroids.removeWhere((a) => asteroidsToRemove.contains(a));
+    });
   }
 
   void _update(Timer timer) {
     if (_isGameOver || _isPaused || _isCountingDown) return;
 
-    // Update bonus items rotation
-    for (var bonus in _bonusItems) {
-      setState(() {
+    setState(() {
+      // Update projectiles
+      for (var projectile in _projectiles) {
+        projectile.update();
+      }
+
+      // Update enemies and asteroids
+      for (var enemy in _enemies) {
+        enemy.update(_screenSize);
+      }
+      for (var asteroid in _asteroids) {
+        asteroid.update(_screenSize);
+      }
+
+      // Update bonus items rotation
+      for (var bonus in _bonusItems) {
         final newBonus = BonusItem(
           type: bonus.type,
           position: bonus.position,
@@ -400,35 +445,51 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
           size: bonus.size,
         );
         _bonusItems[_bonusItems.indexOf(bonus)] = newBonus;
-      });
-    }
+      }
 
-    // Check for bonus item collection
-    final playerRect = Rect.fromCenter(
-      center: _player.position,
-      width: AppConstants.playerSize,
-      height: AppConstants.playerSize,
-    );
-
-    _bonusItems.toList().forEach((bonus) {
-      final bonusRect = Rect.fromCenter(
-        center: bonus.position,
-        width: bonus.size,
-        height: bonus.size,
+      // Check for bonus item collection
+      final playerRect = Rect.fromCenter(
+        center: _player.position,
+        width: AppConstants.playerSize,
+        height: AppConstants.playerSize,
       );
 
-      if (playerRect.overlaps(bonusRect)) {
-        setState(() {
+      _bonusItems.toList().forEach((bonus) {
+        final bonusRect = Rect.fromCenter(
+          center: bonus.position,
+          width: bonus.size,
+          height: bonus.size,
+        );
+
+        if (playerRect.overlaps(bonusRect)) {
           _bonusItems.remove(bonus);
           _collectBonus(bonus.type);
-        });
-      }
-    });
+        }
+      });
 
-    setState(() {
-      for (var projectile in _projectiles) {
-        projectile.update();
+      // Update boss if present
+      if (_boss != null) {
+        _boss!.update(_screenSize, _player.position);
+
+        // Boss attack logic
+        if (_boss!.canAttack() && !_boss!.isAiming()) {
+          _boss!.startAiming();
+          Future.delayed(Boss.aimDuration, () {
+            if (_boss != null && mounted) {
+              final attackType = _boss!.chooseAttack();
+              if (attackType == BossAttackType.nova) {
+                _fireBossNova();
+              } else {
+                setState(() {
+                  _enemies.addAll(_boss!.spawnShips(_screenSize));
+                });
+              }
+            }
+          });
+        }
       }
+
+      // Remove off-screen projectiles
       _projectiles.removeWhere((projectile) =>
           projectile.position.dy < 0 ||
           projectile.position.dy > _screenSize.height ||
@@ -436,20 +497,20 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
           projectile.position.dx >
               _screenSize.width - GameConstants.playAreaPadding);
 
-      for (var enemy in _enemies) {
-        enemy.update(_screenSize);
-      }
-
-      for (var asteroid in _asteroids) {
-        asteroid.update(_screenSize);
-      }
-
       _checkCollisions();
 
-      if (_enemies.isEmpty) {
-        _level++;
-        _spawnEnemies();
-        _spawnAsteroids();
+      // Check if level is complete
+      if (_enemies.isEmpty && _asteroids.isEmpty) {
+        if (_boss == null && !_isBossFight) {
+          // Start boss fight
+          _startBossFight();
+        } else if (_boss == null && _isBossFight) {
+          // Level complete
+          _level++;
+          _isBossFight = false;
+          _spawnEnemies();
+          _spawnAsteroids();
+        }
       }
     });
   }
@@ -497,6 +558,36 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
         ));
       });
     }
+  }
+
+  void _startBossFight() {
+    setState(() {
+      _isBossFight = true;
+      _boss = Boss(
+        position: Offset(
+          _screenSize.width / 2,
+          _screenSize.height * GameConstants.bossStartHeightRatio,
+        ),
+        speed: GameConstants.bossSpeed,
+        health: GameConstants.bossHealth,
+      );
+    });
+  }
+
+  void _fireBossNova() {
+    if (_boss == null) return;
+    setState(() {
+      for (double angle = 0; angle < 360; angle += 30) {
+        _projectiles.add(
+          Projectile(
+            position: _boss!.position,
+            speed: GameConstants.projectileSpeed * 0.8,
+            isEnemy: true,
+            angle: angle,
+          ),
+        );
+      }
+    });
   }
 
   @override
@@ -829,6 +920,18 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                   count: _novaBlastsRemaining.toString(),
                 ),
                 size: 40,
+              ),
+            ),
+
+          // Boss
+          if (_boss != null)
+            Positioned(
+              left: _boss!.position.dx - GameConstants.bossSize / 2,
+              top: _boss!.position.dy - GameConstants.bossSize / 2,
+              child: BossWidget(
+                healthPercentage: _boss!.healthPercentage,
+                isMovingRight: _boss!.isMovingRight,
+                isAiming: _boss!.isAiming(),
               ),
             ),
         ],
