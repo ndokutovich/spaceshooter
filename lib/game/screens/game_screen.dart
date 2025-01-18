@@ -17,6 +17,8 @@ import '../../utils/high_scores.dart';
 import '../../widgets/game_objects.dart';
 import '../../entities/bonus_item.dart';
 import '../../widgets/round_space_button.dart' as space_buttons;
+import '../../utils/transitions.dart';
+import '../../screens/main_menu.dart';
 
 class GameScreen extends StatefulWidget {
   const GameScreen({super.key});
@@ -695,7 +697,12 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                     SizedBox(height: GameConstants.gameOverSpacing),
                     SpaceButton(
                       text: AppConstants.mainMenuText,
-                      onPressed: () => Navigator.of(context).pop(),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        Navigator.of(context).pushReplacement(
+                          FadeSlideTransition(page: const MainMenu()),
+                        );
+                      },
                       width: AppConstants.menuButtonWidth,
                       height: AppConstants.menuButtonHeight,
                       fontSize: AppConstants.titleFontSize * 0.5,
@@ -737,7 +744,12 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                     SizedBox(height: AppConstants.menuButtonSpacing),
                     MenuButton(
                       text: AppConstants.mainMenuText,
-                      onPressed: () => Navigator.of(context).pop(),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        Navigator.of(context).pushReplacement(
+                          FadeSlideTransition(page: const MainMenu()),
+                        );
+                      },
                     ),
                     SizedBox(height: AppConstants.menuButtonSpacing),
                     MenuButton(
