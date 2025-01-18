@@ -34,11 +34,63 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
   int _level = 1;
   bool _isGameOver = false;
   bool _isPaused = false;
+  bool _isCountingDown = false;
+  String _countdownText = '';
   late Size _screenSize;
   int _novaBlastsRemaining = GameConstants.initialNovaBlasts;
   int _lives = GameConstants.initialLives;
   bool _isInvulnerable = false;
   final Set<LogicalKeyboardKey> _pressedKeys = {};
+
+  void _startCountdown({bool isResume = false}) {
+    setState(() {
+      _isCountingDown = true;
+      _countdownText =
+          isResume ? AppConstants.countdownText1 : AppConstants.countdownText3;
+    });
+
+    if (isResume) {
+      Future.delayed(AppConstants.countdownDuration, () {
+        if (!mounted) return;
+        setState(() {
+          _countdownText = AppConstants.countdownTextGo;
+          Future.delayed(const Duration(milliseconds: 500), () {
+            if (!mounted) return;
+            setState(() {
+              _isCountingDown = false;
+              _countdownText = '';
+              _resumeGame();
+            });
+          });
+        });
+      });
+    } else {
+      Future.delayed(AppConstants.countdownDuration, () {
+        if (!mounted) return;
+        setState(() => _countdownText = AppConstants.countdownText2);
+
+        Future.delayed(AppConstants.countdownDuration, () {
+          if (!mounted) return;
+          setState(() => _countdownText = AppConstants.countdownText1);
+
+          Future.delayed(AppConstants.countdownDuration, () {
+            if (!mounted) return;
+            setState(() {
+              _countdownText = AppConstants.countdownTextGo;
+              Future.delayed(const Duration(milliseconds: 500), () {
+                if (!mounted) return;
+                setState(() {
+                  _isCountingDown = false;
+                  _countdownText = '';
+                  _startGame();
+                });
+              });
+            });
+          });
+        });
+      });
+    }
+  }
 
   @override
   void initState() {
@@ -50,7 +102,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
         _screenSize.width / 2,
         _screenSize.height * GameConstants.playerStartHeightRatio,
       );
-      _startGame();
+      _startCountdown();
     });
     _keyboardMoveTimer = Timer.periodic(AppConstants.gameLoopDuration, (_) {
       _handleKeyboardMovement();
@@ -87,7 +139,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
   }
 
   void _togglePause() {
-    if (_isGameOver) return;
+    if (_isGameOver || _isCountingDown) return;
 
     setState(() {
       _isPaused = !_isPaused;
@@ -96,14 +148,18 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
         _moveTimer?.cancel();
         _keyboardMoveTimer?.cancel();
       } else {
-        _gameLoop = Timer.periodic(
-          AppConstants.gameLoopDuration,
-          _update,
-        );
-        _keyboardMoveTimer = Timer.periodic(AppConstants.gameLoopDuration, (_) {
-          _handleKeyboardMovement();
-        });
+        _startCountdown(isResume: true);
       }
+    });
+  }
+
+  void _resumeGame() {
+    _gameLoop = Timer.periodic(
+      AppConstants.gameLoopDuration,
+      _update,
+    );
+    _keyboardMoveTimer = Timer.periodic(AppConstants.gameLoopDuration, (_) {
+      _handleKeyboardMovement();
     });
   }
 
@@ -573,7 +629,36 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                       text: AppConstants.mainMenuText,
                       onPressed: () => Navigator.of(context).pop(),
                     ),
+                    SizedBox(height: AppConstants.menuButtonSpacing),
+                    MenuButton(
+                      text: AppConstants.menuExitText,
+                      onPressed: () => SystemNavigator.pop(),
+                    ),
                   ],
+                ),
+              ),
+            ),
+
+          // Countdown overlay
+          if (_isCountingDown)
+            Container(
+              width: _screenSize.width,
+              height: _screenSize.height,
+              color: Colors.black54,
+              child: Center(
+                child: Text(
+                  _countdownText,
+                  style: TextStyle(
+                    color: AppConstants.playerColor,
+                    fontSize: AppConstants.countdownTextSize,
+                    fontWeight: FontWeight.bold,
+                    shadows: [
+                      Shadow(
+                        color: AppConstants.playerColor.withOpacity(0.5),
+                        blurRadius: 20,
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

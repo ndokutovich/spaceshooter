@@ -26,6 +26,10 @@ class AppConstants {
   static const String resumeText = 'Resume';
   static const String pauseButtonText =
       '❚❚'; // Double vertical bar pause symbol
+  static const String countdownText3 = '3';
+  static const String countdownText2 = '2';
+  static const String countdownText1 = '1';
+  static const String countdownTextGo = 'GO!';
 
   // UI Dimensions
   static const double titleFontSize = 48.0;
@@ -38,6 +42,9 @@ class AppConstants {
   static const double volumeSliderWidth = 300.0;
   static const double uiPadding = 20.0;
   static const double uiElementSpacing = 8.0;
+  static const double countdownTextSize = 72.0;
+  static const Duration countdownDuration = Duration(seconds: 1);
+  static const Duration countdownTotalDuration = Duration(seconds: 3);
 
   // Animation Durations
   static const splashAnimationDuration = Duration(seconds: 2);
