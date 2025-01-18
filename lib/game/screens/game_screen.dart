@@ -33,6 +33,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
   int _score = 0;
   int _level = 1;
   bool _isGameOver = false;
+  bool _isPaused = false;
   late Size _screenSize;
   int _novaBlastsRemaining = GameConstants.initialNovaBlasts;
   int _lives = GameConstants.initialLives;
@@ -69,13 +70,15 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
     if (event is KeyDownEvent) {
       _pressedKeys.add(event.logicalKey);
 
-      if (event.logicalKey == LogicalKeyboardKey.space && !_isGameOver) {
+      if (event.logicalKey == LogicalKeyboardKey.space &&
+          !_isGameOver &&
+          !_isPaused) {
         _fireNova();
-        return true; // Consume the space event
-      } else if (event.logicalKey == LogicalKeyboardKey.keyF) {
+        return true;
+      } else if (event.logicalKey == LogicalKeyboardKey.keyF && !_isPaused) {
         _shoot();
       } else if (event.logicalKey == LogicalKeyboardKey.escape) {
-        Navigator.of(context).pop();
+        _togglePause();
       }
     } else if (event is KeyUpEvent) {
       _pressedKeys.remove(event.logicalKey);
@@ -83,8 +86,29 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
     return false;
   }
 
+  void _togglePause() {
+    if (_isGameOver) return;
+
+    setState(() {
+      _isPaused = !_isPaused;
+      if (_isPaused) {
+        _gameLoop?.cancel();
+        _moveTimer?.cancel();
+        _keyboardMoveTimer?.cancel();
+      } else {
+        _gameLoop = Timer.periodic(
+          AppConstants.gameLoopDuration,
+          _update,
+        );
+        _keyboardMoveTimer = Timer.periodic(AppConstants.gameLoopDuration, (_) {
+          _handleKeyboardMovement();
+        });
+      }
+    });
+  }
+
   void _handleKeyboardMovement() {
-    if (_pressedKeys.isEmpty) return;
+    if (_pressedKeys.isEmpty || _isPaused) return;
 
     double dx = 0;
     double dy = 0;
@@ -114,6 +138,8 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
   }
 
   void _handleJoystickMove(Offset delta) {
+    if (_isPaused) return;
+
     _moveTimer?.cancel();
     if (delta != Offset.zero) {
       _moveTimer = Timer.periodic(const Duration(milliseconds: 16), (timer) {
@@ -170,6 +196,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
   }
 
   void _shoot() {
+    if (_isPaused) return;
     HapticFeedback.mediumImpact();
     setState(() {
       _projectiles.add(
@@ -184,6 +211,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
   }
 
   void _fireNova() {
+    if (_isPaused) return;
     if (_novaBlastsRemaining > 0) {
       HapticFeedback.heavyImpact();
       setState(() {
@@ -270,7 +298,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
   }
 
   void _update(Timer timer) {
-    if (_isGameOver) return;
+    if (_isGameOver || _isPaused) return;
 
     setState(() {
       for (var projectile in _projectiles) {
@@ -423,11 +451,11 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                   top: AppConstants.uiPadding,
                   right: AppConstants.uiPadding,
                   child: RoundSpaceButton(
-                    text: '×',
-                    onPressed: () => Navigator.of(context).pop(),
-                    color: AppConstants.enemyColor,
+                    text: AppConstants.pauseButtonText,
+                    onPressed: _togglePause,
+                    color: AppConstants.playerColor,
                     size: 40,
-                    fontSize: 24,
+                    fontSize: 16,
                   ),
                 ),
               ],
@@ -505,6 +533,45 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                       width: AppConstants.menuButtonWidth,
                       height: AppConstants.menuButtonHeight,
                       fontSize: AppConstants.titleFontSize * 0.5,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+
+          // Pause menu overlay
+          if (_isPaused)
+            Container(
+              width: _screenSize.width,
+              height: _screenSize.height,
+              color: Colors.black54,
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      AppConstants.pausedText,
+                      style: TextStyle(
+                        color: AppConstants.playerColor,
+                        fontSize: GameConstants.gameOverTextSize,
+                        fontWeight: FontWeight.bold,
+                        shadows: [
+                          Shadow(
+                            color: AppConstants.playerColor.withOpacity(0.5),
+                            blurRadius: 10,
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: GameConstants.gameOverSpacing),
+                    MenuButton(
+                      text: AppConstants.resumeText,
+                      onPressed: _togglePause,
+                    ),
+                    SizedBox(height: AppConstants.menuButtonSpacing),
+                    MenuButton(
+                      text: AppConstants.mainMenuText,
+                      onPressed: () => Navigator.of(context).pop(),
                     ),
                   ],
                 ),

@@ -22,6 +22,10 @@ class AppConstants {
   static const String fireText = 'Fire';
   static const String novaText = 'Nova';
   static const String livesText = 'Lives: ';
+  static const String pausedText = 'PAUSED';
+  static const String resumeText = 'Resume';
+  static const String pauseButtonText =
+      '❚❚'; // Double vertical bar pause symbol
 
   // UI Dimensions
   static const double titleFontSize = 48.0;
