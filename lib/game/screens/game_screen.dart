@@ -307,20 +307,39 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
   }
 
   void _checkCollisions() {
-    final projectilesToRemove = <Projectile>{};
-    final enemiesToRemove = <Enemy>{};
+    // Check projectile collisions
+    List<Projectile> projectilesToRemove = [];
+    List<Enemy> enemiesToRemove = [];
+    List<Asteroid> asteroidsToRemove = [];
 
     for (var projectile in _projectiles) {
-      for (var enemy in _enemies) {
-        if ((projectile.position - enemy.position).distance <
+      // Check asteroid hits first
+      for (var asteroid in _asteroids) {
+        if ((projectile.position - asteroid.position).distance <
             GameConstants.collisionDistance) {
-          enemy.health--;
+          asteroid.health--;
           projectilesToRemove.add(projectile);
-          if (enemy.health <= 0) {
-            enemiesToRemove.add(enemy);
+          if (asteroid.health <= 0) {
+            asteroidsToRemove.add(asteroid);
             _score += AppConstants.scoreIncrement;
           }
           break;
+        }
+      }
+
+      // If projectile hasn't hit an asteroid, check enemy hits
+      if (!projectilesToRemove.contains(projectile)) {
+        for (var enemy in _enemies) {
+          if ((projectile.position - enemy.position).distance <
+              GameConstants.collisionDistance) {
+            enemy.health--;
+            projectilesToRemove.add(projectile);
+            if (enemy.health <= 0) {
+              enemiesToRemove.add(enemy);
+              _score += AppConstants.scoreIncrement;
+            }
+            break;
+          }
         }
       }
     }
@@ -347,6 +366,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
 
     _projectiles.removeWhere((p) => projectilesToRemove.contains(p));
     _enemies.removeWhere((e) => enemiesToRemove.contains(e));
+    _asteroids.removeWhere((a) => asteroidsToRemove.contains(a));
 
     if (playerHit) {
       _handleCollision();
@@ -457,7 +477,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
           ..._asteroids.map((asteroid) => Positioned(
                 left: asteroid.position.dx - GameConstants.asteroidSize / 2,
                 top: asteroid.position.dy - GameConstants.asteroidSize / 2,
-                child: const AsteroidWidget(),
+                child: AsteroidWidget(health: asteroid.health),
               )),
 
           // UI Elements

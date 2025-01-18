@@ -62,11 +62,13 @@ class AsteroidPainter extends CustomPainter {
   final double rotation;
   final Color primaryColor;
   final Color accentColor;
+  final int health;
 
   AsteroidPainter({
     required this.rotation,
     this.primaryColor = const Color(0xFF8B4513), // Saddle brown
     this.accentColor = const Color(0xFFD2691E), // Chocolate
+    this.health = 3,
   });
 
   @override
@@ -81,12 +83,12 @@ class AsteroidPainter extends CustomPainter {
     final radius = size.width * 0.4;
     const points = 8;
 
+    // Create base shape
     for (var i = 0; i < points; i++) {
-      final angle = (i * 2 * math.pi / points);
-      final variance = math.Random().nextDouble() * 0.2 + 0.8; // 0.8-1.0
+      final angle = (i * 2 * math.pi) / points;
+      final variance = math.Random().nextDouble() * 0.2 + 0.9;
       final x = center.dx + radius * variance * math.cos(angle);
       final y = center.dy + radius * variance * math.sin(angle);
-
       if (i == 0) {
         path.moveTo(x, y);
       } else {
@@ -95,34 +97,33 @@ class AsteroidPainter extends CustomPainter {
     }
     path.close();
 
-    // Base shadow
-    final shadowPaint = Paint()
-      ..color = Colors.black.withOpacity(0.5)
-      ..style = PaintingStyle.fill;
-    canvas.drawPath(path, shadowPaint);
-
-    // Rock texture gradient
-    final rockGradient = RadialGradient(
-      center: const Alignment(-0.5, -0.5),
-      radius: 1.2,
-      colors: [
-        accentColor,
+    // Base color based on health
+    final basePaint = Paint()
+      ..color = Color.lerp(
+        Colors.red.withOpacity(0.7),
         primaryColor,
-        primaryColor.withOpacity(0.8),
-      ],
-    );
-
-    final paint = Paint()
-      ..shader = rockGradient.createShader(
-        Rect.fromLTWH(0, 0, size.width, size.height),
-      )
+        health / 3,
+      )!
       ..style = PaintingStyle.fill;
+    canvas.drawPath(path, basePaint);
 
-    canvas.drawPath(path, paint);
+    // Outer glow based on health
+    final glowPaint = Paint()
+      ..color = Color.lerp(
+        Colors.red.withOpacity(0.3),
+        primaryColor.withOpacity(0.3),
+        health / 3,
+      )!
+      ..maskFilter = const MaskFilter.blur(BlurStyle.outer, 3);
+    canvas.drawPath(path, glowPaint);
 
     // Surface details
     final detailPaint = Paint()
-      ..color = accentColor.withOpacity(0.6)
+      ..color = Color.lerp(
+        Colors.redAccent.withOpacity(0.6),
+        accentColor.withOpacity(0.6),
+        health / 3,
+      )!
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2;
 
@@ -147,7 +148,11 @@ class AsteroidPainter extends CustomPainter {
 
     // Highlight edge
     final highlightPaint = Paint()
-      ..color = Colors.white.withOpacity(0.3)
+      ..color = Color.lerp(
+        Colors.red.withOpacity(0.3),
+        Colors.white.withOpacity(0.3),
+        health / 3,
+      )!
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2;
     canvas.drawPath(path, highlightPaint);
@@ -157,7 +162,8 @@ class AsteroidPainter extends CustomPainter {
   bool shouldRepaint(AsteroidPainter oldDelegate) =>
       rotation != oldDelegate.rotation ||
       primaryColor != oldDelegate.primaryColor ||
-      accentColor != oldDelegate.accentColor;
+      accentColor != oldDelegate.accentColor ||
+      health != oldDelegate.health;
 }
 
 class GameObjectWidget extends StatelessWidget {

@@ -7,12 +7,14 @@ class Asteroid {
   final double speed;
   final double rotation;
   final double rotationSpeed;
+  int health;
 
   Asteroid({
     required this.position,
     required this.speed,
     double? rotation,
     double? rotationSpeed,
+    this.health = 3,
   })  : rotation = rotation ?? (math.Random().nextDouble() * 2 * math.pi),
         rotationSpeed =
             rotationSpeed ?? (math.Random().nextDouble() * 0.1 - 0.05);
@@ -21,12 +23,18 @@ class Asteroid {
     position = Offset(position.dx, position.dy + speed);
     if (position.dy > screenSize.height) {
       position = Offset(position.dx, -50);
+      health = 3; // Reset health when recycling asteroid
     }
   }
 }
 
 class AsteroidWidget extends StatefulWidget {
-  const AsteroidWidget({super.key});
+  final int health;
+
+  const AsteroidWidget({
+    super.key,
+    this.health = 3,
+  });
 
   @override
   State<AsteroidWidget> createState() => _AsteroidWidgetState();
@@ -61,7 +69,10 @@ class _AsteroidWidgetState extends State<AsteroidWidget>
   @override
   Widget build(BuildContext context) {
     return GameObjectWidget(
-      painter: AsteroidPainter(rotation: _rotation),
+      painter: AsteroidPainter(
+        rotation: _rotation,
+        health: widget.health,
+      ),
       size: 60,
     );
   }
