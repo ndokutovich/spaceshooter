@@ -6,19 +6,22 @@ class GameConstants {
   static const int initialLives = 3;
 
   // Enemy settings
-  static const int enemyCount = 10;
+  static const int enemyCount = 5;
   static const double enemySize = 40.0;
   static const double enemySpawnHeightRatio = 0.3;
   static const double baseEnemySpeed = 2.0;
   static const double enemyLevelSpeedIncrease = 0.5;
-  static const int enemyHealthIncreaseLevel = 2;
+  static const int enemyHealthIncreaseLevel = 3;
   static const double enemyRespawnHeight = -50.0;
+  static const int baseEnemyHealth = 2;
 
   // Asteroid settings
-  static const int asteroidCount = 5;
+  static const int asteroidCount = 3;
   static const double asteroidSize = 50.0;
   static const double baseAsteroidSpeed = 1.0;
-  static const double maxAsteroidSpeedVariation = 2.0;
+  static const double maxAsteroidSpeedVariation = 1.0;
+  static const int baseAsteroidHealth = 3;
+  static const int asteroidHealthIncreaseLevel = 2;
 
   // Projectile settings
   static const double projectileWidth = 4.0;

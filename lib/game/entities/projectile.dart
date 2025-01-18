@@ -7,19 +7,21 @@ class Projectile {
   final double speed;
   final bool isEnemy;
   final double angle;
+  final int damage;
 
   Projectile({
     required this.position,
     required this.speed,
-    this.isEnemy = false,
-    this.angle = -90, // Default upward direction
+    required this.isEnemy,
+    this.angle = -90,
+    this.damage = 1,
   });
 
   void update() {
     final radians = angle * math.pi / 180;
     position = Offset(
-      position.dx + math.cos(radians) * speed,
-      position.dy + math.sin(radians) * speed,
+      position.dx + speed * math.cos(radians),
+      position.dy + speed * math.sin(radians),
     );
   }
 }

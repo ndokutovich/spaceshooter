@@ -34,7 +34,7 @@ class AppConstants {
   // UI Dimensions
   static const double titleFontSize = 48.0;
   static const double menuButtonWidth = 280.0;
-  static const double menuButtonHeight = 60.0;
+  static const double menuButtonHeight = 50.0;
   static const double menuButtonSpacing = 25.0;
   static const double menuButtonRadius = 30.0;
   static const double actionButtonSize = 40.0;
@@ -100,4 +100,6 @@ class AppConstants {
   static const double opacityLow = 0.4;
   static const double opacityVeryLow = 0.3;
   static const double opacityUltraLow = 0.1;
+
+  static const double playerSize = 40.0;
 }

@@ -12,8 +12,11 @@ import '../entities/asteroid.dart';
 import '../../utils/app_constants.dart';
 import '../../widgets/background.dart';
 import '../utils/constants.dart';
-import '../utils/painters.dart';
+import '../utils/painters.dart' as game_painters;
 import '../../utils/high_scores.dart';
+import '../../widgets/game_objects.dart';
+import '../../entities/bonus_item.dart';
+import '../../widgets/round_space_button.dart' as space_buttons;
 
 class GameScreen extends StatefulWidget {
   const GameScreen({super.key});
@@ -41,6 +44,8 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
   int _lives = GameConstants.initialLives;
   bool _isInvulnerable = false;
   final Set<LogicalKeyboardKey> _pressedKeys = {};
+  List<BonusItem> _bonusItems = [];
+  int _damageMultiplier = 1;
 
   void _startCountdown({bool isResume = false}) {
     setState(() {
@@ -224,7 +229,8 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
           ),
           speed: GameConstants.baseEnemySpeed +
               _level * GameConstants.enemyLevelSpeedIncrease,
-          health: 1 + (_level ~/ GameConstants.enemyHealthIncreaseLevel),
+          health: GameConstants.baseEnemyHealth +
+              (_level ~/ GameConstants.enemyHealthIncreaseLevel),
         ),
       );
     }
@@ -246,22 +252,26 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
           ),
           speed: GameConstants.baseAsteroidSpeed +
               random.nextDouble() * GameConstants.maxAsteroidSpeedVariation,
+          health: GameConstants.baseAsteroidHealth +
+              (_level ~/ GameConstants.asteroidHealthIncreaseLevel),
         ),
       );
     }
   }
 
   void _shoot() {
-    if (_isPaused) return;
+    if (_isPaused || _isGameOver || _isCountingDown) return;
     HapticFeedback.mediumImpact();
     setState(() {
       _projectiles.add(
         Projectile(
-            position:
-                _player.position.translate(0, -GameConstants.projectileOffset),
-            speed: GameConstants.projectileSpeed,
-            isEnemy: false,
-            angle: -90),
+          position:
+              _player.position.translate(0, -GameConstants.projectileOffset),
+          speed: GameConstants.projectileSpeed,
+          isEnemy: false,
+          angle: -90,
+          damage: _damageMultiplier,
+        ),
       );
     });
   }
@@ -317,11 +327,12 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
       for (var asteroid in _asteroids) {
         if ((projectile.position - asteroid.position).distance <
             GameConstants.collisionDistance) {
-          asteroid.health--;
+          asteroid.health -= projectile.damage;
           projectilesToRemove.add(projectile);
           if (asteroid.health <= 0) {
             asteroidsToRemove.add(asteroid);
             _score += AppConstants.scoreIncrement;
+            _handleAsteroidDestroyed(asteroid.position);
           }
           break;
         }
@@ -332,11 +343,12 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
         for (var enemy in _enemies) {
           if ((projectile.position - enemy.position).distance <
               GameConstants.collisionDistance) {
-            enemy.health--;
+            enemy.health -= projectile.damage;
             projectilesToRemove.add(projectile);
             if (enemy.health <= 0) {
               enemiesToRemove.add(enemy);
               _score += AppConstants.scoreIncrement;
+              _handleEnemyDestroyed(enemy.position);
             }
             break;
           }
@@ -374,7 +386,42 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
   }
 
   void _update(Timer timer) {
-    if (_isGameOver || _isPaused) return;
+    if (_isGameOver || _isPaused || _isCountingDown) return;
+
+    // Update bonus items rotation
+    for (var bonus in _bonusItems) {
+      setState(() {
+        final newBonus = BonusItem(
+          type: bonus.type,
+          position: bonus.position,
+          rotation: bonus.rotation + 0.05,
+          size: bonus.size,
+        );
+        _bonusItems[_bonusItems.indexOf(bonus)] = newBonus;
+      });
+    }
+
+    // Check for bonus item collection
+    final playerRect = Rect.fromCenter(
+      center: _player.position,
+      width: AppConstants.playerSize,
+      height: AppConstants.playerSize,
+    );
+
+    _bonusItems.toList().forEach((bonus) {
+      final bonusRect = Rect.fromCenter(
+        center: bonus.position,
+        width: bonus.size,
+        height: bonus.size,
+      );
+
+      if (playerRect.overlaps(bonusRect)) {
+        setState(() {
+          _bonusItems.remove(bonus);
+          _collectBonus(bonus.type);
+        });
+      }
+    });
 
     setState(() {
       for (var projectile in _projectiles) {
@@ -411,6 +458,43 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
     });
     _gameLoop?.cancel();
     HighScoreService.addScore(_score);
+  }
+
+  void _collectBonus(BonusType type) {
+    switch (type) {
+      case BonusType.damageMultiplier:
+        setState(() {
+          _damageMultiplier *= 2; // Stack multipliers
+        });
+        break;
+      case BonusType.goldOre:
+        setState(() {
+          _score += 500;
+        });
+        break;
+    }
+  }
+
+  void _handleEnemyDestroyed(Offset position) {
+    if (BonusItem.shouldDropBonus(BonusType.damageMultiplier)) {
+      setState(() {
+        _bonusItems.add(BonusItem(
+          type: BonusType.damageMultiplier,
+          position: position,
+        ));
+      });
+    }
+  }
+
+  void _handleAsteroidDestroyed(Offset position) {
+    if (BonusItem.shouldDropBonus(BonusType.goldOre)) {
+      setState(() {
+        _bonusItems.add(BonusItem(
+          type: BonusType.goldOre,
+          position: position,
+        ));
+      });
+    }
   }
 
   @override
@@ -508,7 +592,9 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                       CustomPaint(
                         size: Size(GameConstants.livesIconSize,
                             GameConstants.livesIconSize),
-                        painter: HeartPainter(),
+                        painter: game_painters.HeartPainter(
+                          color: AppConstants.playerColor,
+                        ),
                       ),
                       SizedBox(width: AppConstants.uiElementSpacing),
                       Text(
@@ -526,7 +612,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                 Positioned(
                   top: AppConstants.uiPadding,
                   right: AppConstants.uiPadding,
-                  child: RoundSpaceButton(
+                  child: space_buttons.RoundSpaceButton(
                     text: AppConstants.pauseButtonText,
                     onPressed: _togglePause,
                     color: AppConstants.playerColor,
@@ -554,22 +640,26 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                RoundSpaceButton(
-                  text: AppConstants.fireText,
+                space_buttons.RoundSpaceButton(
+                  text: _damageMultiplier > 1
+                      ? '${_damageMultiplier}×'
+                      : AppConstants.fireText,
                   onPressed: _shoot,
                   color: AppConstants.enemyColor,
                   size: 70,
                 ),
                 SizedBox(height: AppConstants.actionButtonSpacing),
-                RoundSpaceButton(
+                space_buttons.RoundSpaceButton(
                   text: AppConstants.novaText,
                   onPressed: _fireNova,
                   color: AppConstants.projectileColor,
                   size: 70,
                   counterWidget: CustomPaint(
                     size: const Size(30, 30),
-                    painter:
-                        NovaCounterPainter(_novaBlastsRemaining.toString()),
+                    painter: game_painters.NovaCounterPainter(
+                      color: AppConstants.playerColor,
+                      count: _novaBlastsRemaining.toString(),
+                    ),
                   ),
                 ),
               ],
@@ -680,6 +770,53 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                     ],
                   ),
                 ),
+              ),
+            ),
+
+          // Draw bonus items
+          ..._bonusItems.map((bonus) => Positioned(
+                left: bonus.position.dx - bonus.size / 2,
+                top: bonus.position.dy - bonus.size / 2,
+                child: GameObjectWidget(
+                  painter: BonusPainter(
+                    type: bonus.type,
+                    rotation: bonus.rotation,
+                  ),
+                  size: bonus.size,
+                ),
+              )),
+
+          // Health display
+          Positioned(
+            left: 20,
+            top: 20,
+            child: Row(
+              children: List.generate(
+                _lives,
+                (index) => Padding(
+                  padding: const EdgeInsets.only(right: 10),
+                  child: GameObjectWidget(
+                    painter: game_painters.HeartPainter(
+                      color: AppConstants.playerColor,
+                    ),
+                    size: 30,
+                  ),
+                ),
+              ),
+            ),
+          ),
+
+          // Nova counter
+          if (_novaBlastsRemaining > 0)
+            Positioned(
+              right: 20,
+              top: 20,
+              child: GameObjectWidget(
+                painter: game_painters.NovaCounterPainter(
+                  color: AppConstants.playerColor,
+                  count: _novaBlastsRemaining.toString(),
+                ),
+                size: 40,
               ),
             ),
         ],
