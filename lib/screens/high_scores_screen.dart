@@ -27,7 +27,7 @@ class HighScoresScreen extends StatelessWidget {
             color: AppConstants.textColor,
             fontSize: AppConstants.highScoresTitleSize,
             fontWeight: FontWeight.bold,
-            shadows: [
+            shadows: const [
               Shadow(
                 color: AppConstants.playerColor,
                 blurRadius: AppConstants.logoBlurRadius,

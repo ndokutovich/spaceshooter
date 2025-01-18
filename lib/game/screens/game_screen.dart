@@ -48,7 +48,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
   int _lives = GameConstants.initialLives;
   bool _isInvulnerable = false;
   final Set<LogicalKeyboardKey> _pressedKeys = {};
-  List<BonusItem> _bonusItems = [];
+  final List<BonusItem> _bonusItems = [];
   int _damageMultiplier = 1;
   Boss? _boss;
   bool _isBossFight = false;
@@ -735,7 +735,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
               children: [
                 space_buttons.RoundSpaceButton(
                   text: _damageMultiplier > 1
-                      ? '${_damageMultiplier}×'
+                      ? '$_damageMultiplier×'
                       : AppConstants.fireText,
                   onPressed: _shoot,
                   color: AppConstants.enemyColor,

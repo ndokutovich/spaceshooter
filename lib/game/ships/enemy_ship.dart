@@ -29,9 +29,9 @@ class EnemyShip extends BaseShip {
 
 class EnemyShipPainter extends BaseShipPainter {
   EnemyShipPainter({
-    Color primaryColor = StyleConstants.enemyColor,
-    Color accentColor = StyleConstants.projectileColor,
-  }) : super(primaryColor: primaryColor, accentColor: accentColor);
+    super.primaryColor = StyleConstants.enemyColor,
+    super.accentColor = StyleConstants.projectileColor,
+  });
 
   @override
   void paint(Canvas canvas, Size size) {

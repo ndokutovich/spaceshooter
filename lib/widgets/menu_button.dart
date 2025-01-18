@@ -69,7 +69,7 @@ class MenuButton extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                   letterSpacing: 0.3,
                   height: 1.0,
-                  shadows: [
+                  shadows: const [
                     Shadow(
                       color: AppConstants.playerColor,
                       blurRadius: 10,
@@ -307,7 +307,7 @@ class RoundSpaceButton extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                       letterSpacing: 0.3,
                       height: 1.0,
-                      shadows: [
+                      shadows: const [
                         Shadow(
                           color: AppConstants.playerColor,
                           blurRadius: 10,

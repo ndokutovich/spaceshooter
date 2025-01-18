@@ -153,7 +153,7 @@ class _EnergyRingPainter extends CustomPainter {
     // Draw energy arcs
     for (var i = 0; i < 4; i++) {
       final startAngle = (i * math.pi / 2) + math.pi / 6;
-      final sweepAngle = math.pi / 3;
+      const sweepAngle = math.pi / 3;
       canvas.drawArc(
         Rect.fromCircle(center: center, radius: radius * 0.85),
         startAngle,

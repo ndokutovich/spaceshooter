@@ -34,9 +34,9 @@ class PlayerShip extends BaseShip {
 
 class PlayerShipPainter extends BaseShipPainter {
   PlayerShipPainter({
-    Color primaryColor = StyleConstants.playerColor,
-    Color accentColor = StyleConstants.primaryColor,
-  }) : super(primaryColor: primaryColor, accentColor: accentColor);
+    super.primaryColor = StyleConstants.playerColor,
+    super.accentColor = StyleConstants.primaryColor,
+  });
 
   @override
   void paint(Canvas canvas, Size size) {

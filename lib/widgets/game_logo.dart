@@ -83,7 +83,7 @@ class LogoBackgroundPainter extends CustomPainter {
           AppConstants.playerColor.withOpacity(0.3),
           Colors.transparent,
         ],
-        stops: [0.0, 1.0],
+        stops: const [0.0, 1.0],
       ).createShader(rect);
 
     canvas.drawRect(rect, energyPaint);
