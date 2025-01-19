@@ -207,15 +207,10 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
   void _handleJoystickMove(Offset delta) {
     if (_isPaused) return;
 
-    _moveTimer?.cancel();
     if (delta != Offset.zero) {
-      _moveTimer = Timer.periodic(const Duration(milliseconds: 16), (timer) {
-        setState(() {
-          _player.move(delta, _screenSize);
-        });
+      setState(() {
+        _player.move(delta, _screenSize);
       });
-    } else {
-      _moveTimer = null;
     }
   }
 

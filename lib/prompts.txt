@@ -1,0 +1,16 @@
+Add joystick controls for more responsive ship movement
+Adjust joystick sensitivity and maximum speed
+Implement acceleration behavior for smoother movement
+Fix maximum speed to match asteroids behavior
+Add boss fight mechanics with special attacks
+Implement nova blast system
+Add bonus items and damage multipliers
+Add pause/resume functionality with countdown
+Add lives system with invulnerability after hits
+Add nova counter display
+Add boss health display
+Implement action buttons for shooting and nova blasts
+Add keyboard controls support
+Add boundary checks for movement
+Normalize movement speeds
+Add haptic feedback for controls 

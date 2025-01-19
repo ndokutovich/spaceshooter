@@ -26,8 +26,35 @@ class _JoystickControllerState extends State<JoystickController> {
     } else {
       _stickPosition = delta;
     }
+
+    // Calculate speed multiplier based on distance from center
+    final normalizedDistance = _stickPosition.distance / _baseRadius;
+    final accelerationThreshold = 0.25; // 25% of radius for acceleration zone
+    double speedMultiplier;
+
+    if (normalizedDistance <= accelerationThreshold) {
+      // Linear acceleration in the inner 25%
+      speedMultiplier = (normalizedDistance / accelerationThreshold) * 0.5;
+    } else {
+      // Constant max speed beyond 25%
+      speedMultiplier = 0.5;
+    }
+
+    // Apply the speed to the normalized direction
+    final direction = _stickPosition.distance > 0
+        ? _stickPosition / _stickPosition.distance
+        : Offset.zero;
+
+    // Normalize diagonal movement to match asteroid speed
+    var movement = direction * speedMultiplier;
+    final actualSpeed = movement.distance;
+    if (actualSpeed > 0) {
+      // Scale down the movement to match intended speed
+      movement = movement * (speedMultiplier / actualSpeed);
+    }
+
     HapticFeedback.lightImpact();
-    widget.onMove(_stickPosition / _baseRadius * 5);
+    widget.onMove(movement);
   }
 
   @override

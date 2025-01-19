@@ -18,8 +18,8 @@ class _JoystickControllerState extends State<JoystickController> {
   bool _isDragging = false;
   static const _stickRadius = 20.0;
   static const _baseRadius = 40.0;
-  static const _minSpeed = 2.0;
-  static const _maxSpeed = 5.0;
+  static const _minSpeed = 0.2;
+  static const _maxSpeed = 0.5;
   Offset? _startPosition;
 
   void _updateStick(Offset position) {
