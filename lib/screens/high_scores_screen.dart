@@ -9,17 +9,21 @@ class HighScoresScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenSize = MediaQuery.of(context).size;
+    final buttonWidth = screenSize.width * 0.35;
+    final buttonHeight = screenSize.height * 0.08;
+    final buttonSpacing = screenSize.height * 0.02;
+
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        leading: SpaceButton(
+        leading: MenuButton(
           text: '←',
           onPressed: () => Navigator.of(context).pop(),
-          width: AppConstants.highScoresBackButtonSize,
-          height: AppConstants.highScoresBackButtonSize,
-          fontSize: AppConstants.highScoresBackButtonFontSize,
+          width: buttonHeight,
+          height: buttonHeight,
         ),
         title: Text(
           'High Scores',
@@ -147,10 +151,12 @@ class HighScoresScreen extends StatelessWidget {
                 );
               },
             ),
-            const SizedBox(height: AppConstants.menuButtonSpacing * 2),
+            SizedBox(height: buttonSpacing * 2),
             MenuButton(
               text: AppConstants.backText,
               onPressed: () => Navigator.of(context).pop(),
+              width: buttonWidth,
+              height: buttonHeight,
             ),
           ],
         ),

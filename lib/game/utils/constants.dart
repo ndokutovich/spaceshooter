@@ -32,7 +32,7 @@ class GameConstants {
   static const int initialNovaBlasts = 3;
 
   // Play area settings
-  static const double playAreaPadding = 60.0;
+  static const double playAreaPadding = 100.0;
   static const double borderWidth = 2.0;
   static const double collisionDistance = 30.0;
 

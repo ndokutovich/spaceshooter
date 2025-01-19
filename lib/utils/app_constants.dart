@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class AppConstants {
   // Window settings
   static const String appTitle = 'Space Shooter';
-  static const double minWindowWidth = 800;
+  static const double minWindowWidth = 1067;
   static const double minWindowHeight = 600;
 
   // UI Text
@@ -33,15 +33,15 @@ class AppConstants {
 
   // UI Dimensions
   static const double titleFontSize = 48.0;
-  static const double menuButtonWidth = 280.0;
+  static const double menuButtonWidth = 320.0;
   static const double menuButtonHeight = 50.0;
   static const double menuButtonSpacing = 25.0;
   static const double menuButtonRadius = 30.0;
   static const double actionButtonSize = 40.0;
-  static const double actionButtonSpacing = 15.0;
-  static const double volumeSliderWidth = 300.0;
-  static const double uiPadding = 20.0;
-  static const double uiElementSpacing = 8.0;
+  static const double actionButtonSpacing = 20.0;
+  static const double volumeSliderWidth = 400.0;
+  static const double uiPadding = 40.0;
+  static const double uiElementSpacing = 12.0;
   static const double countdownTextSize = 72.0;
   static const Duration countdownDuration = Duration(seconds: 1);
   static const Duration countdownTotalDuration = Duration(seconds: 3);

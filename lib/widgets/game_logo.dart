@@ -35,32 +35,37 @@ class _GameLogoState extends State<GameLogo>
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _controller,
-      builder: (context, child) {
-        return Stack(
-          alignment: Alignment.center,
-          children: [
-            // Background energy field
-            CustomPaint(
-              size: Size(widget.size * AppConstants.logoWidthMultiplier,
-                  widget.size * AppConstants.logoHeightMultiplier),
-              painter: LogoBackgroundPainter(
-                progress: _controller.value,
-              ),
-            ),
-            // Main text with effects
-            CustomPaint(
-              size: Size(widget.size * AppConstants.logoWidthMultiplier,
-                  widget.size * AppConstants.logoHeightMultiplier),
-              painter: LogoPainter(
-                text: AppConstants.appTitle.toUpperCase(),
-                progress: _controller.value,
-              ),
-            ),
-          ],
-        );
-      },
+    return Padding(
+      padding: const EdgeInsets.all(10.0),
+      child: SizedBox(
+        width: widget.size,
+        height: widget.size * 0.3,
+        child: AnimatedBuilder(
+          animation: _controller,
+          builder: (context, child) {
+            return Stack(
+              alignment: Alignment.center,
+              children: [
+                // Background energy field
+                CustomPaint(
+                  size: Size(widget.size, widget.size * 0.3),
+                  painter: LogoBackgroundPainter(
+                    progress: _controller.value,
+                  ),
+                ),
+                // Main text with effects
+                CustomPaint(
+                  size: Size(widget.size, widget.size * 0.3),
+                  painter: LogoPainter(
+                    text: AppConstants.appTitle.toUpperCase(),
+                    progress: _controller.value,
+                  ),
+                ),
+              ],
+            );
+          },
+        ),
+      ),
     );
   }
 }

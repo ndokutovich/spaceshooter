@@ -781,7 +781,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                       ),
                     ),
                     SizedBox(height: GameConstants.gameOverSpacing),
-                    SpaceButton(
+                    MenuButton(
                       text: AppConstants.mainMenuText,
                       onPressed: () {
                         Navigator.of(context).pop();
@@ -789,9 +789,8 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                           FadeSlideTransition(page: const MainMenu()),
                         );
                       },
-                      width: AppConstants.menuButtonWidth,
-                      height: AppConstants.menuButtonHeight,
-                      fontSize: AppConstants.titleFontSize * 0.5,
+                      width: _screenSize.width * 0.35,
+                      height: _screenSize.height * 0.08,
                     ),
                   ],
                 ),
@@ -826,8 +825,10 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                     MenuButton(
                       text: AppConstants.resumeText,
                       onPressed: _togglePause,
+                      width: _screenSize.width * 0.35,
+                      height: _screenSize.height * 0.08,
                     ),
-                    SizedBox(height: AppConstants.menuButtonSpacing),
+                    SizedBox(height: _screenSize.height * 0.02),
                     MenuButton(
                       text: AppConstants.mainMenuText,
                       onPressed: () {
@@ -836,11 +837,15 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                           FadeSlideTransition(page: const MainMenu()),
                         );
                       },
+                      width: _screenSize.width * 0.35,
+                      height: _screenSize.height * 0.08,
                     ),
-                    SizedBox(height: AppConstants.menuButtonSpacing),
+                    SizedBox(height: _screenSize.height * 0.02),
                     MenuButton(
                       text: AppConstants.menuExitText,
                       onPressed: () => SystemNavigator.pop(),
+                      width: _screenSize.width * 0.35,
+                      height: _screenSize.height * 0.08,
                     ),
                   ],
                 ),

@@ -15,50 +15,70 @@ class MainMenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
+    final logoSize = screenSize.width * 0.35; // 35% of screen width
+    final buttonWidth = screenSize.width * 0.35; // 35% of screen width
+    final buttonHeight = screenSize.height * 0.08; // 8% of screen height
+    final buttonSpacing = screenSize.height * 0.02; // 2% of screen height
 
     return Scaffold(
       backgroundColor: Colors.black,
       body: Stack(
         children: [
           StarBackground(screenSize: screenSize),
-          Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const GameLogo(size: 400),
-                SizedBox(height: AppConstants.menuButtonSpacing * 2),
-                MenuButton(
-                  text: AppConstants.menuPlayText,
-                  onPressed: () {
-                    Navigator.of(context).push(
-                      FadeSlideTransition(page: const GameScreen()),
-                    );
-                  },
+          SafeArea(
+            child: Center(
+              child: SingleChildScrollView(
+                padding: EdgeInsets.symmetric(
+                  vertical: screenSize.height * 0.03, // 3% vertical padding
+                  horizontal: screenSize.width * 0.02, // 2% horizontal padding
                 ),
-                SizedBox(height: AppConstants.menuButtonSpacing),
-                MenuButton(
-                  text: AppConstants.menuOptionsText,
-                  onPressed: () {
-                    Navigator.of(context).push(
-                      FadeSlideTransition(page: const OptionsScreen()),
-                    );
-                  },
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    GameLogo(size: logoSize),
+                    SizedBox(height: buttonSpacing * 2),
+                    MenuButton(
+                      text: AppConstants.menuPlayText,
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          FadeSlideTransition(page: const GameScreen()),
+                        );
+                      },
+                      width: buttonWidth,
+                      height: buttonHeight,
+                    ),
+                    SizedBox(height: buttonSpacing),
+                    MenuButton(
+                      text: AppConstants.menuOptionsText,
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          FadeSlideTransition(page: const OptionsScreen()),
+                        );
+                      },
+                      width: buttonWidth,
+                      height: buttonHeight,
+                    ),
+                    SizedBox(height: buttonSpacing),
+                    MenuButton(
+                      text: AppConstants.menuHighScoresText,
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          FadeSlideTransition(page: const HighScoresScreen()),
+                        );
+                      },
+                      width: buttonWidth,
+                      height: buttonHeight,
+                    ),
+                    SizedBox(height: buttonSpacing),
+                    MenuButton(
+                      text: AppConstants.menuExitText,
+                      onPressed: () => SystemNavigator.pop(),
+                      width: buttonWidth,
+                      height: buttonHeight,
+                    ),
+                  ],
                 ),
-                SizedBox(height: AppConstants.menuButtonSpacing),
-                MenuButton(
-                  text: AppConstants.menuHighScoresText,
-                  onPressed: () {
-                    Navigator.of(context).push(
-                      FadeSlideTransition(page: const HighScoresScreen()),
-                    );
-                  },
-                ),
-                SizedBox(height: AppConstants.menuButtonSpacing),
-                MenuButton(
-                  text: AppConstants.menuExitText,
-                  onPressed: () => SystemNavigator.pop(),
-                ),
-              ],
+              ),
             ),
           ),
         ],

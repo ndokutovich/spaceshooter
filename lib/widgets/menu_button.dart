@@ -5,20 +5,27 @@ import 'dart:math' as math;
 class MenuButton extends StatelessWidget {
   final String text;
   final VoidCallback onPressed;
+  final double? width;
+  final double? height;
 
   const MenuButton({
     super.key,
     required this.text,
     required this.onPressed,
+    this.width,
+    this.height,
   });
 
   @override
   Widget build(BuildContext context) {
+    final screenSize = MediaQuery.of(context).size;
+    final fontSize = screenSize.width * 0.02; // 2% of screen width for text
+
     return GestureDetector(
       onTapDown: (_) => onPressed(),
       child: Container(
-        width: AppConstants.menuButtonWidth,
-        height: AppConstants.menuButtonHeight,
+        width: width ?? AppConstants.menuButtonWidth,
+        height: height ?? AppConstants.menuButtonHeight,
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
@@ -65,7 +72,7 @@ class MenuButton extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: AppConstants.textColor,
-                  fontSize: 24,
+                  fontSize: fontSize,
                   fontWeight: FontWeight.bold,
                   letterSpacing: 0.3,
                   height: 1.0,
@@ -80,19 +87,41 @@ class MenuButton extends StatelessWidget {
             ),
             // Side accents
             Positioned(
-              left: 15,
-              top: (AppConstants.menuButtonHeight - 30) / 2,
-              child: CustomPaint(
-                painter: AccentPainter(AppConstants.playerColor),
-                size: const Size(20, 30),
+              left: (width ?? AppConstants.menuButtonWidth) *
+                  0.05, // 5% from left
+              top: (height ?? AppConstants.menuButtonHeight) *
+                  0.2, // Center vertically
+              bottom: (height ?? AppConstants.menuButtonHeight) *
+                  0.2, // Center vertically
+              child: Center(
+                child: CustomPaint(
+                  painter: AccentPainter(AppConstants.playerColor),
+                  size: Size(
+                    (width ?? AppConstants.menuButtonWidth) *
+                        0.06, // 6% of width
+                    (height ?? AppConstants.menuButtonHeight) *
+                        0.6, // 60% of height
+                  ),
+                ),
               ),
             ),
             Positioned(
-              right: 15,
-              top: (AppConstants.menuButtonHeight - 30) / 2,
-              child: CustomPaint(
-                painter: AccentPainter(AppConstants.playerColor),
-                size: const Size(20, 30),
+              right: (width ?? AppConstants.menuButtonWidth) *
+                  0.05, // 5% from right
+              top: (height ?? AppConstants.menuButtonHeight) *
+                  0.2, // Center vertically
+              bottom: (height ?? AppConstants.menuButtonHeight) *
+                  0.2, // Center vertically
+              child: Center(
+                child: CustomPaint(
+                  painter: AccentPainter(AppConstants.playerColor),
+                  size: Size(
+                    (width ?? AppConstants.menuButtonWidth) *
+                        0.06, // 6% of width
+                    (height ?? AppConstants.menuButtonHeight) *
+                        0.6, // 60% of height
+                  ),
+                ),
               ),
             ),
           ],
