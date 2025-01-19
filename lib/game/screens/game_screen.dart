@@ -677,12 +677,11 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       SizedBox(width: AppConstants.uiElementSpacing),
-                      CustomPaint(
-                        size: Size(GameConstants.livesIconSize,
-                            GameConstants.livesIconSize),
+                      GameObjectWidget(
                         painter: game_painters.HeartPainter(
                           color: AppConstants.playerColor,
                         ),
+                        size: GameConstants.livesIconSize,
                       ),
                       SizedBox(width: AppConstants.uiElementSpacing),
                       Text(

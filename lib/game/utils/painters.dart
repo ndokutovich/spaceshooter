@@ -10,18 +10,83 @@ class HeartPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final path = Path();
+
+    // Create heart shape with sharper angles for sci-fi look
     path.moveTo(size.width * 0.5, size.height * 0.85);
-    path.cubicTo(size.width * 0.8, size.height * 0.6, size.width * 1.1,
-        size.height * 0.3, size.width * 0.5, size.height * 0.15);
-    path.cubicTo(size.width * -0.1, size.height * 0.3, size.width * 0.2,
-        size.height * 0.6, size.width * 0.5, size.height * 0.85);
+    path.lineTo(size.width * 0.15, size.height * 0.5);
+    path.lineTo(size.width * 0.3, size.height * 0.3);
+    path.lineTo(size.width * 0.5, size.height * 0.4);
+    path.lineTo(size.width * 0.7, size.height * 0.3);
+    path.lineTo(size.width * 0.85, size.height * 0.5);
+    path.close();
 
-    final paint = Paint()
-      ..color = color
-      ..style = PaintingStyle.fill
-      ..maskFilter = const MaskFilter.blur(BlurStyle.outer, 5);
+    // Energy core gradient
+    final coreGradient = RadialGradient(
+      center: Alignment.center,
+      radius: 0.8,
+      colors: [
+        Colors.white,
+        color.withOpacity(0.8),
+        color.withOpacity(0.6),
+      ],
+    );
 
-    canvas.drawPath(path, paint);
+    // Metallic edge gradient
+    final edgeGradient = LinearGradient(
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+      colors: [
+        Colors.white.withOpacity(0.9),
+        color,
+        color.withOpacity(0.8),
+        Colors.white.withOpacity(0.3),
+      ],
+      stops: const [0.0, 0.3, 0.7, 1.0],
+    );
+
+    // Draw energy glow
+    final glowPaint = Paint()
+      ..maskFilter = const MaskFilter.blur(BlurStyle.outer, 8)
+      ..shader = coreGradient.createShader(
+        Rect.fromCenter(
+          center: Offset(size.width * 0.5, size.height * 0.5),
+          width: size.width,
+          height: size.height,
+        ),
+      );
+
+    // Draw metallic edge
+    final edgePaint = Paint()
+      ..shader = edgeGradient.createShader(
+        Rect.fromLTWH(0, 0, size.width, size.height),
+      )
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 4;
+
+    // Draw base with energy core
+    final basePaint = Paint()
+      ..shader = coreGradient.createShader(
+        Rect.fromLTWH(0, 0, size.width, size.height),
+      );
+
+    // Apply all layers
+    canvas.drawPath(path, glowPaint);
+    canvas.drawPath(path, basePaint);
+    canvas.drawPath(path, edgePaint);
+
+    // Add highlight detail
+    final detailPath = Path()
+      ..moveTo(size.width * 0.3, size.height * 0.4)
+      ..lineTo(size.width * 0.4, size.height * 0.5)
+      ..lineTo(size.width * 0.5, size.height * 0.45);
+
+    canvas.drawPath(
+      detailPath,
+      Paint()
+        ..color = Colors.white.withOpacity(0.6)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2,
+    );
   }
 
   @override
