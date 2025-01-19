@@ -80,6 +80,7 @@ class _OptionsScreenState extends State<OptionsScreen> {
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           elevation: 0,
+          leadingWidth: 220,
           title: Text(
             AppConstants.menuOptionsText,
             style: TextStyle(
@@ -94,12 +95,14 @@ class _OptionsScreenState extends State<OptionsScreen> {
               ],
             ),
           ),
-          leading: SpaceButton(
-            text: AppConstants.backText,
-            onPressed: () => Navigator.of(context).pop(),
-            width: 60,
-            height: 40,
-            fontSize: 24,
+          leading: Padding(
+            padding: const EdgeInsets.only(left: 8.0),
+            child: MenuButton(
+              text: '← Back',
+              onPressed: () => Navigator.of(context).pop(),
+              width: 200,
+              height: 40,
+            ),
           ),
           bottom: TabBar(
             tabs: const [
