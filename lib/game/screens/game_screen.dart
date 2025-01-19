@@ -889,26 +889,6 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                 ),
               )),
 
-          // Health display
-          Positioned(
-            left: 20,
-            top: 20,
-            child: Row(
-              children: List.generate(
-                _lives,
-                (index) => Padding(
-                  padding: const EdgeInsets.only(right: 10),
-                  child: GameObjectWidget(
-                    painter: game_painters.HeartPainter(
-                      color: AppConstants.playerColor,
-                    ),
-                    size: 30,
-                  ),
-                ),
-              ),
-            ),
-          ),
-
           // Nova counter
           if (_novaBlastsRemaining > 0)
             Positioned(

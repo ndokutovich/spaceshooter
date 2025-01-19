@@ -80,32 +80,26 @@ class _OptionsScreenState extends State<OptionsScreen> {
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           elevation: 0,
-          leadingWidth: 180,
-          title: Row(
-            children: [
-              SpaceButton(
-                text: AppConstants.backText,
-                onPressed: () => Navigator.of(context).pop(),
-                width: 160,
-                height: 40,
-                fontSize: 24,
-              ),
-              const SizedBox(width: 16),
-              Text(
-                AppConstants.menuOptionsText,
-                style: TextStyle(
-                  color: AppConstants.textColor,
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  shadows: const [
-                    Shadow(
-                      color: AppConstants.playerColor,
-                      blurRadius: 10,
-                    ),
-                  ],
+          title: Text(
+            AppConstants.menuOptionsText,
+            style: TextStyle(
+              color: AppConstants.textColor,
+              fontSize: 28,
+              fontWeight: FontWeight.bold,
+              shadows: const [
+                Shadow(
+                  color: AppConstants.playerColor,
+                  blurRadius: 10,
                 ),
-              ),
-            ],
+              ],
+            ),
+          ),
+          leading: SpaceButton(
+            text: AppConstants.backText,
+            onPressed: () => Navigator.of(context).pop(),
+            width: 60,
+            height: 40,
+            fontSize: 24,
           ),
           bottom: TabBar(
             tabs: const [
