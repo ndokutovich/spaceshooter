@@ -38,7 +38,7 @@ class _GameLogoState extends State<GameLogo>
     return Padding(
       padding: const EdgeInsets.all(10.0),
       child: SizedBox(
-        width: widget.size,
+        width: widget.size * 1.5,
         height: widget.size * 0.3,
         child: AnimatedBuilder(
           animation: _controller,
@@ -48,14 +48,14 @@ class _GameLogoState extends State<GameLogo>
               children: [
                 // Background energy field
                 CustomPaint(
-                  size: Size(widget.size, widget.size * 0.3),
+                  size: Size(widget.size * 1.5, widget.size * 0.3),
                   painter: LogoBackgroundPainter(
                     progress: _controller.value,
                   ),
                 ),
                 // Main text with effects
                 CustomPaint(
-                  size: Size(widget.size, widget.size * 0.3),
+                  size: Size(widget.size * 1.5, widget.size * 0.3),
                   painter: LogoPainter(
                     text: AppConstants.appTitle.toUpperCase(),
                     progress: _controller.value,
@@ -138,19 +138,19 @@ class LogoPainter extends CustomPainter {
           color: AppConstants.textColor,
           fontSize: size.height * AppConstants.logoHeightMultiplier,
           fontWeight: FontWeight.w900,
-          letterSpacing: AppConstants.logoLetterSpacing,
+          letterSpacing: AppConstants.logoLetterSpacing * 1.5,
           height: AppConstants.logoLineHeight,
           shadows: [
             Shadow(
               color: AppConstants.playerColor
                   .withOpacity(AppConstants.logoBaseOpacity),
               offset: const Offset(0, 2),
-              blurRadius: AppConstants.logoBlurRadius,
+              blurRadius: AppConstants.logoBlurRadius * 2,
             ),
             Shadow(
               color: Colors.black,
               offset: const Offset(2, 2),
-              blurRadius: 2,
+              blurRadius: 4,
             ),
           ],
         ),
@@ -193,28 +193,32 @@ class LogoPainter extends CustomPainter {
     final linePaint = Paint()
       ..color = AppConstants.playerColor.withOpacity(0.7)
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 2;
+      ..strokeWidth = 4;
 
     final lineY = size.height / 2;
-    final lineLength = size.width * 0.2;
-    final startX = (progress * size.width * 2) - size.width;
+    final lineLength = size.width * 0.25;
+    final startX = size.width * 0.1 + (progress * (size.width * 0.8));
 
     // Enhanced horizontal energy lines
     for (var i = 0; i < 4; i++) {
-      final x = (startX + i * size.width / 4) % size.width;
+      final x = (startX + i * size.width / 5) % (size.width * 0.9);
       final opacity = (1 - (x / size.width)) * AppConstants.logoMediumOpacity;
       linePaint.color = AppConstants.playerColor.withOpacity(opacity);
 
-      canvas.drawLine(
-        Offset(x, lineY - AppConstants.logoEnergyLineSpacing),
-        Offset(x + lineLength, lineY - AppConstants.logoEnergyLineSpacing),
-        linePaint,
-      );
-      canvas.drawLine(
-        Offset(x, lineY + AppConstants.logoEnergyLineSpacing),
-        Offset(x + lineLength, lineY + AppConstants.logoEnergyLineSpacing),
-        linePaint,
-      );
+      if (x + lineLength <= size.width * 0.95) {
+        canvas.drawLine(
+          Offset(x, lineY - AppConstants.logoEnergyLineSpacing * 1.5),
+          Offset(
+              x + lineLength, lineY - AppConstants.logoEnergyLineSpacing * 1.5),
+          linePaint,
+        );
+        canvas.drawLine(
+          Offset(x, lineY + AppConstants.logoEnergyLineSpacing * 1.5),
+          Offset(
+              x + lineLength, lineY + AppConstants.logoEnergyLineSpacing * 1.5),
+          linePaint,
+        );
+      }
     }
 
     // Enhanced outer glow
@@ -242,33 +246,41 @@ class LogoPainter extends CustomPainter {
       ..color =
           AppConstants.playerColor.withOpacity(AppConstants.logoLowOpacity)
       ..style = PaintingStyle.stroke
-      ..strokeWidth = AppConstants.logoStrokeWidth;
+      ..strokeWidth = AppConstants.logoStrokeWidth * 2;
 
-    final spacing = size.width / AppConstants.logoCircuitLines;
-    for (var i = 0; i < AppConstants.logoCircuitLines; i++) {
-      final x = i * spacing;
-      final wave = math.sin(progress * math.pi * 2 + i * 0.5);
-      final startY = size.height *
-          (AppConstants.logoWaveBaseHeight +
-              AppConstants.logoWaveAmplitude * wave);
+    final spacing = size.width / (AppConstants.logoCircuitLines * 1.2);
+    final circuitCount = (AppConstants.logoCircuitLines * 1.2).floor();
 
-      // Top circuits
-      canvas.drawPath(
-        Path()
-          ..moveTo(x, 0)
-          ..lineTo(x, startY)
-          ..lineTo(x + spacing * 0.5, startY + 5),
-        circuitPaint,
-      );
+    for (var i = 0; i < circuitCount; i++) {
+      final x = size.width * 0.05 + (i * spacing);
+      if (x < size.width * 0.95) {
+        final wave = math.sin(progress * math.pi * 2 + i * 0.5) * 1.2;
+        final startY = size.height *
+            (AppConstants.logoWaveBaseHeight +
+                AppConstants.logoWaveAmplitude * wave);
 
-      // Bottom circuits
-      canvas.drawPath(
-        Path()
-          ..moveTo(x, size.height)
-          ..lineTo(x, size.height - startY)
-          ..lineTo(x + spacing * 0.5, size.height - startY - 5),
-        circuitPaint,
-      );
+        // Top circuits
+        if (x + spacing * 0.4 <= size.width * 0.95) {
+          canvas.drawPath(
+            Path()
+              ..moveTo(x, 0)
+              ..lineTo(x, startY)
+              ..lineTo(x + spacing * 0.4, startY + 8),
+            circuitPaint,
+          );
+        }
+
+        // Bottom circuits
+        if (x + spacing * 0.4 <= size.width * 0.95) {
+          canvas.drawPath(
+            Path()
+              ..moveTo(x, size.height)
+              ..lineTo(x, size.height - startY)
+              ..lineTo(x + spacing * 0.4, size.height - startY - 8),
+            circuitPaint,
+          );
+        }
+      }
     }
   }
 
