@@ -1,9 +1,9 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
-import '../../entities/player.dart';
+import '../entities/player.dart';
 import '../entities/enemy.dart';
-import '../../entities/projectile.dart';
-import '../../entities/asteroid.dart';
+import '../entities/projectile.dart';
+import '../entities/asteroid.dart';
 import '../../utils/constants/gameplay_constants.dart';
 
 class EntityManager {

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../utils/constants.dart';
+import '../../utils/constants/gameplay_constants.dart';
 import '../../widgets/ship_skins.dart';
 import 'projectile.dart';
 
@@ -12,8 +12,8 @@ class Player {
   void move(Offset delta, Size screenSize) {
     position += delta;
     position = Offset(
-      position.dx.clamp(GameConstants.playAreaPadding,
-          screenSize.width - GameConstants.playAreaPadding),
+      position.dx.clamp(GameplayConstants.playAreaPadding,
+          screenSize.width - GameplayConstants.playAreaPadding),
       position.dy.clamp(0, screenSize.height),
     );
   }
@@ -22,9 +22,9 @@ class Player {
     return Projectile(
       position: Offset(
         position.dx,
-        position.dy - GameConstants.projectileOffset,
+        position.dy - GameplayConstants.projectileOffset,
       ),
-      speed: GameConstants.projectileSpeed,
+      speed: GameplayConstants.projectileSpeed,
       isEnemy: false,
     );
   }

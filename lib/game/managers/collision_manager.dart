@@ -1,5 +1,5 @@
 import '../entities/enemy.dart';
-import '../../entities/projectile.dart';
+import '../entities/projectile.dart';
 import './entity_manager.dart';
 import './game_state_manager.dart';
 import '../../utils/constants/gameplay_constants.dart';
