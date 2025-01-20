@@ -110,7 +110,8 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _screenSize = MediaQuery.of(context).size;
       _player.position = Offset(
-        _screenSize.width / 2,
+        (_screenSize.width - 2 * GameConstants.playAreaPadding) / 2 +
+            GameConstants.playAreaPadding,
         _screenSize.height * GameConstants.playerStartHeightRatio,
       );
       _startCountdown();
@@ -860,6 +861,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
               child: Center(
                 child: Text(
                   _countdownText,
+                  textAlign: TextAlign.center,
                   style: TextStyle(
                     color: AppConstants.playerColor,
                     fontSize: AppConstants.countdownTextSize,
