@@ -37,6 +37,13 @@ class GameplayConstants {
   static const int targetFPS = 60;
   static const int scoreIncrement = 100;
 
+  // Bonus settings
+  static const double bonusSize = 30.0;
+  static const double bonusRotationStep = 0.05;
+  static const int bonusMultiplierValue = 2;
+  static const int bonusGoldValue = 500;
+  static const double bonusDropRate = 0.3;
+
   // Game over screen settings
   static const double gameOverTextSize = 48.0;
   static const double scoreDisplayTextSize = 24.0;

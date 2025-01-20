@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../utils/constants.dart';
 import '../../widgets/ship_skins.dart';
+import 'projectile.dart';
 
 class Player {
   Offset position;
@@ -15,6 +16,21 @@ class Player {
           screenSize.width - GameConstants.playAreaPadding),
       position.dy.clamp(0, screenSize.height),
     );
+  }
+
+  Projectile shoot() {
+    return Projectile(
+      position: Offset(
+        position.dx,
+        position.dy - GameConstants.projectileOffset,
+      ),
+      speed: GameConstants.projectileSpeed,
+      isEnemy: false,
+    );
+  }
+
+  void useNovaBlast() {
+    // This is handled by the GameStateManager
   }
 }
 

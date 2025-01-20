@@ -1,8 +1,8 @@
-import '../../utils/constants/gameplay_constants.dart';
-import '../../entities/enemy.dart';
+import '../entities/enemy.dart';
 import '../../entities/projectile.dart';
-import 'entity_manager.dart';
-import 'game_state_manager.dart';
+import './entity_manager.dart';
+import './game_state_manager.dart';
+import '../../utils/constants/gameplay_constants.dart';
 
 class CollisionManager {
   final EntityManager entityManager;
@@ -26,7 +26,7 @@ class CollisionManager {
           projectilesToRemove.add(projectile);
           if (enemy.health <= 0) {
             enemiesToRemove.add(enemy);
-            gameState.incrementScore();
+            gameState.incrementScore(GameplayConstants.scorePerKill);
           }
           break;
         }

@@ -10,6 +10,10 @@ class GameStateManager extends ChangeNotifier {
   bool _isGameOver = false;
   bool _isInvulnerable = false;
   int _novaBlastsRemaining = GameplayConstants.initialNovaBlasts;
+  int _damageMultiplier = 1;
+  bool _isPaused = false;
+  bool _isCountingDown = false;
+  String _countdownText = '';
 
   // Getters
   int get score => _score;
@@ -18,9 +22,13 @@ class GameStateManager extends ChangeNotifier {
   bool get isGameOver => _isGameOver;
   bool get isInvulnerable => _isInvulnerable;
   int get novaBlastsRemaining => _novaBlastsRemaining;
+  int get damageMultiplier => _damageMultiplier;
+  bool get isPaused => _isPaused;
+  bool get isCountingDown => _isCountingDown;
+  String get countdownText => _countdownText;
 
-  void incrementScore() {
-    _score += GameplayConstants.scoreIncrement;
+  void incrementScore(int amount) {
+    _score += amount;
     notifyListeners();
   }
 
@@ -34,6 +42,22 @@ class GameStateManager extends ChangeNotifier {
       _novaBlastsRemaining--;
       notifyListeners();
     }
+  }
+
+  void multiplyDamage(int multiplier) {
+    _damageMultiplier *= multiplier;
+    notifyListeners();
+  }
+
+  void setPaused(bool paused) {
+    _isPaused = paused;
+    notifyListeners();
+  }
+
+  void setCountdown(bool counting, [String text = '']) {
+    _isCountingDown = counting;
+    _countdownText = text;
+    notifyListeners();
   }
 
   void handleCollision() {
@@ -65,6 +89,10 @@ class GameStateManager extends ChangeNotifier {
     _isGameOver = false;
     _isInvulnerable = false;
     _novaBlastsRemaining = GameplayConstants.initialNovaBlasts;
+    _damageMultiplier = 1;
+    _isPaused = false;
+    _isCountingDown = false;
+    _countdownText = '';
     notifyListeners();
   }
 }

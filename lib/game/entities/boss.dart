@@ -95,6 +95,10 @@ class Boss {
         : BossAttackType.spawnShips;
   }
 
+  void takeDamage(int damage) {
+    health -= damage;
+  }
+
   List<Enemy> spawnShips(Size screenSize) {
     return [
       Enemy(
