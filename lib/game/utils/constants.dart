@@ -61,4 +61,29 @@ class GameConstants {
   static const int bossScoreValue = 1000;
   static const double bossStartHeightRatio = 0.2;
   static const double bossPlayAreaPadding = playAreaPadding + 100;
+
+  // Animation and timing constants
+  static const double invulnerabilityOpacity = 0.5;
+  static const double overlayOpacity = 0.54;
+  static const Duration aimDuration = Duration(milliseconds: 1000);
+  static const double bossNovaProjectileSpeedMultiplier = 0.8;
+  static const double bossNovaAngleStep = 30.0;
+
+  // UI Layout constants
+  static const double actionButtonSize = 70.0;
+  static const double pauseButtonSize = 40.0;
+  static const double pauseButtonFontSize = 16.0;
+  static const double novaCounterSize = 30.0;
+  static const double novaCounterDisplaySize = 40.0;
+  static const double menuButtonWidthRatio = 0.35;
+  static const double menuButtonHeightRatio = 0.08;
+  static const double menuButtonSpacingRatio = 0.02;
+
+  // Bonus item constants
+  static const int bonusMultiplierValue = 2;
+  static const int bonusGoldValue = 500;
+  static const double bonusRotationStep = 0.05;
+
+  // Boss attack patterns
+  static const int bossNovaProjectileCount = 12; // 360 / bossNovaAngleStep
 }

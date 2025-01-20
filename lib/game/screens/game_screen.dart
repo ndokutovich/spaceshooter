@@ -437,7 +437,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
         final newBonus = BonusItem(
           type: bonus.type,
           position: bonus.position,
-          rotation: bonus.rotation + 0.05,
+          rotation: bonus.rotation + GameConstants.bonusRotationStep,
           size: bonus.size,
         );
         _bonusItems[_bonusItems.indexOf(bonus)] = newBonus;
@@ -523,12 +523,12 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
     switch (type) {
       case BonusType.damageMultiplier:
         setState(() {
-          _damageMultiplier *= 2; // Stack multipliers
+          _damageMultiplier *= GameConstants.bonusMultiplierValue;
         });
         break;
       case BonusType.goldOre:
         setState(() {
-          _score += 500;
+          _score += GameConstants.bonusGoldValue;
         });
         break;
     }
@@ -573,11 +573,14 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
   void _fireBossNova() {
     if (_boss == null) return;
     setState(() {
-      for (double angle = 0; angle < 360; angle += 30) {
+      for (double angle = 0;
+          angle < 360;
+          angle += GameConstants.bossNovaAngleStep) {
         _projectiles.add(
           Projectile(
             position: _boss!.position,
-            speed: GameConstants.projectileSpeed * 0.8,
+            speed: GameConstants.projectileSpeed *
+                GameConstants.bossNovaProjectileSpeedMultiplier,
             isEnemy: true,
             angle: angle,
           ),
@@ -629,7 +632,8 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
             left: _player.position.dx - GameConstants.playerSize / 2,
             top: _player.position.dy - GameConstants.playerSize / 2,
             child: Opacity(
-              opacity: _isInvulnerable ? 0.5 : 1.0,
+              opacity:
+                  _isInvulnerable ? GameConstants.invulnerabilityOpacity : 1.0,
               child: const PlayerWidget(),
             ),
           ),
@@ -734,16 +738,17 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                       : AppConstants.fireText,
                   onPressed: _shoot,
                   color: AppConstants.enemyColor,
-                  size: 70,
+                  size: GameConstants.actionButtonSize,
                 ),
                 SizedBox(height: AppConstants.actionButtonSpacing),
                 space_buttons.RoundSpaceButton(
                   text: AppConstants.novaText,
                   onPressed: _fireNova,
                   color: AppConstants.projectileColor,
-                  size: 70,
+                  size: GameConstants.actionButtonSize,
                   counterWidget: CustomPaint(
-                    size: const Size(30, 30),
+                    size: Size(GameConstants.novaCounterSize,
+                        GameConstants.novaCounterSize),
                     painter: game_painters.NovaCounterPainter(
                       color: AppConstants.playerColor,
                       count: _novaBlastsRemaining.toString(),
@@ -759,7 +764,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
             Container(
               width: _screenSize.width,
               height: _screenSize.height,
-              color: Colors.black54,
+              color: Colors.black.withOpacity(GameConstants.overlayOpacity),
               child: Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -789,8 +794,10 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                           FadeSlideTransition(page: const MainMenu()),
                         );
                       },
-                      width: _screenSize.width * 0.35,
-                      height: _screenSize.height * 0.08,
+                      width: _screenSize.width *
+                          GameConstants.menuButtonWidthRatio,
+                      height: _screenSize.height *
+                          GameConstants.menuButtonHeightRatio,
                     ),
                   ],
                 ),
@@ -802,7 +809,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
             Container(
               width: _screenSize.width,
               height: _screenSize.height,
-              color: Colors.black54,
+              color: Colors.black.withOpacity(GameConstants.overlayOpacity),
               child: Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -825,10 +832,14 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                     MenuButton(
                       text: AppConstants.resumeText,
                       onPressed: _togglePause,
-                      width: _screenSize.width * 0.35,
-                      height: _screenSize.height * 0.08,
+                      width: _screenSize.width *
+                          GameConstants.menuButtonWidthRatio,
+                      height: _screenSize.height *
+                          GameConstants.menuButtonHeightRatio,
                     ),
-                    SizedBox(height: _screenSize.height * 0.02),
+                    SizedBox(
+                        height: _screenSize.height *
+                            GameConstants.menuButtonSpacingRatio),
                     MenuButton(
                       text: AppConstants.mainMenuText,
                       onPressed: () {
@@ -837,15 +848,21 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                           FadeSlideTransition(page: const MainMenu()),
                         );
                       },
-                      width: _screenSize.width * 0.35,
-                      height: _screenSize.height * 0.08,
+                      width: _screenSize.width *
+                          GameConstants.menuButtonWidthRatio,
+                      height: _screenSize.height *
+                          GameConstants.menuButtonHeightRatio,
                     ),
-                    SizedBox(height: _screenSize.height * 0.02),
+                    SizedBox(
+                        height: _screenSize.height *
+                            GameConstants.menuButtonSpacingRatio),
                     MenuButton(
                       text: AppConstants.menuExitText,
                       onPressed: () => SystemNavigator.pop(),
-                      width: _screenSize.width * 0.35,
-                      height: _screenSize.height * 0.08,
+                      width: _screenSize.width *
+                          GameConstants.menuButtonWidthRatio,
+                      height: _screenSize.height *
+                          GameConstants.menuButtonHeightRatio,
                     ),
                   ],
                 ),
@@ -893,14 +910,14 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
           // Nova counter
           if (_novaBlastsRemaining > 0)
             Positioned(
-              right: 20,
-              top: 20,
+              right: AppConstants.uiPadding,
+              top: AppConstants.uiPadding,
               child: GameObjectWidget(
                 painter: game_painters.NovaCounterPainter(
                   color: AppConstants.playerColor,
                   count: _novaBlastsRemaining.toString(),
                 ),
-                size: 40,
+                size: GameConstants.novaCounterDisplaySize,
               ),
             ),
 
