@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'dart:io' show Platform;
 import 'package:window_size/window_size.dart';
+import 'dart:html' if (dart.library.io) 'dart:io' as device;
 
 import 'screens/splash_screen.dart';
 import 'utils/app_constants.dart';
@@ -9,7 +11,8 @@ import 'utils/app_constants.dart';
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
 
-  if (Platform.isMacOS || Platform.isWindows || Platform.isLinux) {
+  // Desktop window settings
+  if (!kIsWeb && (Platform.isMacOS || Platform.isWindows || Platform.isLinux)) {
     setWindowTitle(AppConstants.appTitle);
     setWindowMinSize(
         const Size(AppConstants.minWindowWidth, AppConstants.minWindowHeight));
@@ -22,10 +25,13 @@ void main() {
     });
   }
 
+  // Force landscape mode
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.landscapeLeft,
     DeviceOrientation.landscapeRight,
   ]);
+
+  // Hide system UI overlays
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
 
   runApp(const MyApp());

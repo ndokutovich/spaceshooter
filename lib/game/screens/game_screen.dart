@@ -5,6 +5,7 @@ import 'dart:math' as math;
 
 import '../../widgets/controls.dart';
 import '../../widgets/menu_button.dart';
+import '../../widgets/performance_overlay.dart';
 import '../entities/player.dart';
 import '../entities/enemy.dart';
 import '../entities/projectile.dart';
@@ -21,6 +22,7 @@ import '../../entities/bonus_item.dart';
 import '../../widgets/round_space_button.dart' as space_buttons;
 import '../../utils/transitions.dart';
 import '../../screens/main_menu.dart';
+import '../../widgets/performance_overlay.dart';
 
 class GameScreen extends StatefulWidget {
   const GameScreen({super.key});
@@ -932,6 +934,9 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                 isAiming: _boss!.isAiming(),
               ),
             ),
+
+          // Add performance overlay
+          const GamePerformanceOverlay(),
         ],
       ),
     );
