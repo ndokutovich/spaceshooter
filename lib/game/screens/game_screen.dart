@@ -23,6 +23,7 @@ import '../../widgets/round_space_button.dart' as space_buttons;
 import '../../utils/transitions.dart';
 import '../../screens/main_menu.dart';
 import '../../widgets/performance_overlay.dart';
+import '../../utils/collision_utils.dart';
 
 class GameScreen extends StatefulWidget {
   const GameScreen({super.key});
@@ -398,34 +399,21 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
   }
 
   void _checkCollisions() {
-    final projectilesToRemove =
-        <Projectile>{}; // Using Set for better performance
+    final projectilesToRemove = <Projectile>{};
     final enemiesToRemove = <Enemy>{};
     final asteroidsToRemove = <Asteroid>{};
     final bonusesToRemove = <BonusItem>{};
     bool playerHit = false;
 
-    // Use squared distance for performance (avoid square root)
-    final collisionDistanceSq =
-        GameConstants.collisionDistance * GameConstants.collisionDistance;
-    final bossCollisionDistanceSq = collisionDistanceSq * 4;
-
     // Check player bonus collection
     if (!_isGameOver) {
-      final playerRect = Rect.fromCenter(
-        center: _player.position,
-        width: AppConstants.playerSize,
-        height: AppConstants.playerSize,
-      );
-
       for (var bonus in _bonusItems) {
-        final bonusRect = Rect.fromCenter(
-          center: bonus.position,
-          width: bonus.size,
-          height: bonus.size,
-        );
-
-        if (playerRect.overlaps(bonusRect)) {
+        if (CollisionUtils.checkPlayerCollision(
+          _player.position,
+          GameConstants.playerSize,
+          bonus.position,
+          bonus.size,
+        )) {
           bonusesToRemove.add(bonus);
           _collectBonus(bonus.type);
         }
@@ -436,9 +424,12 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
     for (var projectile in _projectiles) {
       if (projectile.isEnemy) {
         if (!_isInvulnerable && !playerHit) {
-          final dx = _player.position.dx - projectile.position.dx;
-          final dy = _player.position.dy - projectile.position.dy;
-          if (dx * dx + dy * dy <= collisionDistanceSq) {
+          if (CollisionUtils.checkPlayerCollision(
+            _player.position,
+            GameConstants.playerSize,
+            projectile.position,
+            GameConstants.projectileWidth,
+          )) {
             projectilesToRemove.add(projectile);
             playerHit = true;
           }
@@ -448,9 +439,12 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
 
       // Check boss hits first
       if (_boss != null) {
-        final dx = projectile.position.dx - _boss!.position.dx;
-        final dy = projectile.position.dy - _boss!.position.dy;
-        if (dx * dx + dy * dy <= bossCollisionDistanceSq) {
+        if (CollisionUtils.checkBossCollision(
+          _boss!.position,
+          GameConstants.bossSize,
+          projectile.position,
+          GameConstants.projectileWidth,
+        )) {
           _boss!.health -= projectile.damage;
           projectilesToRemove.add(projectile);
           if (_boss!.health <= 0) {
@@ -465,11 +459,14 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
       if (!projectilesToRemove.contains(projectile)) {
         bool hit = false;
 
-        // Check asteroid hits with early exit
+        // Check asteroid hits
         for (var asteroid in _asteroids) {
-          final dx = projectile.position.dx - asteroid.position.dx;
-          final dy = projectile.position.dy - asteroid.position.dy;
-          if (dx * dx + dy * dy <= collisionDistanceSq) {
+          if (CollisionUtils.checkAsteroidCollision(
+            asteroid.position,
+            GameConstants.asteroidSize,
+            projectile.position,
+            GameConstants.projectileWidth,
+          )) {
             asteroid.health -= projectile.damage;
             projectilesToRemove.add(projectile);
             if (asteroid.health <= 0) {
@@ -478,16 +475,19 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
               _handleAsteroidDestroyed(asteroid.position);
             }
             hit = true;
-            break; // Early exit after hit
+            break;
           }
         }
 
         // Check enemy hits if no asteroid was hit
         if (!hit) {
           for (var enemy in _enemies) {
-            final dx = projectile.position.dx - enemy.position.dx;
-            final dy = projectile.position.dy - enemy.position.dy;
-            if (dx * dx + dy * dy <= collisionDistanceSq) {
+            if (CollisionUtils.checkEnemyCollision(
+              enemy.position,
+              GameConstants.enemySize,
+              projectile.position,
+              GameConstants.projectileWidth,
+            )) {
               enemy.health -= projectile.damage;
               projectilesToRemove.add(projectile);
               if (enemy.health <= 0) {
@@ -495,19 +495,22 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                 _score += AppConstants.scoreIncrement;
                 _handleEnemyDestroyed(enemy.position);
               }
-              break; // Early exit after hit
+              break;
             }
           }
         }
       }
     }
 
-    // Check direct collisions with player with early exits
+    // Check direct collisions with player
     if (!_isInvulnerable && !playerHit) {
       for (var enemy in _enemies) {
-        final dx = _player.position.dx - enemy.position.dx;
-        final dy = _player.position.dy - enemy.position.dy;
-        if (dx * dx + dy * dy <= collisionDistanceSq) {
+        if (CollisionUtils.checkPlayerCollision(
+          _player.position,
+          GameConstants.playerSize,
+          enemy.position,
+          GameConstants.enemySize,
+        )) {
           playerHit = true;
           break;
         }
@@ -515,9 +518,12 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
 
       if (!playerHit) {
         for (var asteroid in _asteroids) {
-          final dx = _player.position.dx - asteroid.position.dx;
-          final dy = _player.position.dy - asteroid.position.dy;
-          if (dx * dx + dy * dy <= collisionDistanceSq) {
+          if (CollisionUtils.checkPlayerCollision(
+            _player.position,
+            GameConstants.playerSize,
+            asteroid.position,
+            GameConstants.asteroidSize,
+          )) {
             playerHit = true;
             break;
           }
