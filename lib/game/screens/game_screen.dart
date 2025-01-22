@@ -320,190 +320,56 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
     }
   }
 
-  void _checkCollisions() {
-    List<Projectile> projectilesToRemove = [];
-    List<Enemy> enemiesToRemove = [];
-    List<Asteroid> asteroidsToRemove = [];
-
-    for (var projectile in _projectiles) {
-      if (!projectile.isEnemy) {
-        // Check boss hits
-        if (_boss != null) {
-          if ((projectile.position - _boss!.position).distance <
-              GameConstants.collisionDistance * 2) {
-            _boss!.health -= projectile.damage;
-            projectilesToRemove.add(projectile);
-            if (_boss!.health <= 0) {
-              setState(() {
-                _score += GameConstants.bossScoreValue;
-                _boss = null;
-              });
-            }
-            continue;
-          }
-        }
-
-        // Check asteroid hits
-        for (var asteroid in _asteroids) {
-          if ((projectile.position - asteroid.position).distance <
-              GameConstants.collisionDistance) {
-            asteroid.health -= projectile.damage;
-            projectilesToRemove.add(projectile);
-            if (asteroid.health <= 0) {
-              asteroidsToRemove.add(asteroid);
-              _score += AppConstants.scoreIncrement;
-              _handleAsteroidDestroyed(asteroid.position);
-            }
-            break;
-          }
-        }
-
-        // Check enemy hits
-        if (!projectilesToRemove.contains(projectile)) {
-          for (var enemy in _enemies) {
-            if ((projectile.position - enemy.position).distance <
-                GameConstants.collisionDistance) {
-              enemy.health -= projectile.damage;
-              projectilesToRemove.add(projectile);
-              if (enemy.health <= 0) {
-                enemiesToRemove.add(enemy);
-                _score += AppConstants.scoreIncrement;
-                _handleEnemyDestroyed(enemy.position);
-              }
-              break;
-            }
-          }
-        }
-      }
-    }
-
-    // Check player collisions
-    if (!_isInvulnerable) {
-      // Check enemy projectiles
-      for (var projectile in _projectiles) {
-        if (projectile.isEnemy &&
-            (_player.position - projectile.position).distance <
-                GameConstants.collisionDistance) {
-          projectilesToRemove.add(projectile);
-          _handleCollision();
-          break;
-        }
-      }
-
-      // Check enemy collisions
-      for (var enemy in _enemies) {
-        if ((_player.position - enemy.position).distance <
-            GameConstants.collisionDistance) {
-          _handleCollision();
-          break;
-        }
-      }
-
-      // Check asteroid collisions
-      for (var asteroid in _asteroids) {
-        if ((_player.position - asteroid.position).distance <
-            GameConstants.collisionDistance) {
-          _handleCollision();
-          break;
-        }
-      }
-    }
-
-    // Remove destroyed objects
-    setState(() {
-      _projectiles.removeWhere((p) => projectilesToRemove.contains(p));
-      _enemies.removeWhere((e) => enemiesToRemove.contains(e));
-      _asteroids.removeWhere((a) => asteroidsToRemove.contains(a));
-    });
-  }
-
   void _update(Timer timer) {
     if (_isGameOver || _isPaused || _isCountingDown) return;
 
-    setState(() {
-      // Update projectiles
-      for (var projectile in _projectiles) {
-        projectile.update();
-      }
+    // Batch all updates before setState
+    for (var projectile in _projectiles) {
+      projectile.update();
+    }
 
-      // Update enemies and asteroids
-      for (var enemy in _enemies) {
-        enemy.update(_screenSize);
-      }
-      for (var asteroid in _asteroids) {
-        asteroid.update(_screenSize);
-      }
+    for (var enemy in _enemies) {
+      enemy.update(_screenSize);
+    }
 
-      // Update bonus items rotation
-      for (var bonus in _bonusItems) {
-        final newBonus = BonusItem(
-          type: bonus.type,
-          position: bonus.position,
-          rotation: bonus.rotation + GameConstants.bonusRotationStep,
-          size: bonus.size,
-        );
-        _bonusItems[_bonusItems.indexOf(bonus)] = newBonus;
-      }
+    for (var asteroid in _asteroids) {
+      asteroid.update(_screenSize);
+    }
 
-      // Check for bonus item collection
-      final playerRect = Rect.fromCenter(
-        center: _player.position,
-        width: AppConstants.playerSize,
-        height: AppConstants.playerSize,
+    // Update bonus items rotation - avoid object creation in loop
+    for (int i = 0; i < _bonusItems.length; i++) {
+      final bonus = _bonusItems[i];
+      _bonusItems[i] = BonusItem(
+        type: bonus.type,
+        position: bonus.position,
+        rotation: bonus.rotation + GameConstants.bonusRotationStep,
+        size: bonus.size,
       );
+    }
 
-      _bonusItems.toList().forEach((bonus) {
-        final bonusRect = Rect.fromCenter(
-          center: bonus.position,
-          width: bonus.size,
-          height: bonus.size,
-        );
+    // Update boss if present
+    if (_boss != null) {
+      _boss!.update(_screenSize, _player.position);
+    }
 
-        if (playerRect.overlaps(bonusRect)) {
-          _bonusItems.remove(bonus);
-          _collectBonus(bonus.type);
-        }
-      });
+    // Remove off-screen projectiles using removeWhere once
+    _projectiles.removeWhere((projectile) =>
+        projectile.position.dy < 0 ||
+        projectile.position.dy > _screenSize.height ||
+        projectile.position.dx < GameConstants.playAreaPadding ||
+        projectile.position.dx >
+            _screenSize.width - GameConstants.playAreaPadding);
 
-      // Update boss if present
-      if (_boss != null) {
-        _boss!.update(_screenSize, _player.position);
+    // Check collisions
+    _checkCollisions();
 
-        // Boss attack logic
-        if (_boss!.canAttack() && !_boss!.isAiming()) {
-          _boss!.startAiming();
-          Future.delayed(Boss.aimDuration, () {
-            if (_boss != null && mounted) {
-              final attackType = _boss!.chooseAttack();
-              if (attackType == BossAttackType.nova) {
-                _fireBossNova();
-              } else {
-                setState(() {
-                  _enemies.addAll(_boss!.spawnShips(_screenSize));
-                });
-              }
-            }
-          });
-        }
-      }
-
-      // Remove off-screen projectiles
-      _projectiles.removeWhere((projectile) =>
-          projectile.position.dy < 0 ||
-          projectile.position.dy > _screenSize.height ||
-          projectile.position.dx < GameConstants.playAreaPadding ||
-          projectile.position.dx >
-              _screenSize.width - GameConstants.playAreaPadding);
-
-      _checkCollisions();
-
-      // Check if level is complete
+    // Single setState for all updates
+    setState(() {
+      // Level completion check
       if (_enemies.isEmpty && _asteroids.isEmpty) {
         if (_boss == null && !_isBossFight) {
-          // Start boss fight
           _startBossFight();
         } else if (_boss == null && _isBossFight) {
-          // Level complete
           _level++;
           _isBossFight = false;
           _spawnEnemies();
@@ -511,6 +377,150 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
         }
       }
     });
+  }
+
+  void _checkCollisions() {
+    final projectilesToRemove =
+        <Projectile>{}; // Using Set for better performance
+    final enemiesToRemove = <Enemy>{};
+    final asteroidsToRemove = <Asteroid>{};
+    final bonusesToRemove = <BonusItem>{};
+    bool playerHit = false;
+
+    // Use squared distance for performance (avoid square root)
+    final collisionDistanceSq =
+        GameConstants.collisionDistance * GameConstants.collisionDistance;
+    final bossCollisionDistanceSq = collisionDistanceSq * 4;
+
+    // Check player bonus collection
+    if (!_isGameOver) {
+      final playerRect = Rect.fromCenter(
+        center: _player.position,
+        width: AppConstants.playerSize,
+        height: AppConstants.playerSize,
+      );
+
+      for (var bonus in _bonusItems) {
+        final bonusRect = Rect.fromCenter(
+          center: bonus.position,
+          width: bonus.size,
+          height: bonus.size,
+        );
+
+        if (playerRect.overlaps(bonusRect)) {
+          bonusesToRemove.add(bonus);
+          _collectBonus(bonus.type);
+        }
+      }
+    }
+
+    // Check projectile collisions
+    for (var projectile in _projectiles) {
+      if (projectile.isEnemy) {
+        if (!_isInvulnerable && !playerHit) {
+          final dx = _player.position.dx - projectile.position.dx;
+          final dy = _player.position.dy - projectile.position.dy;
+          if (dx * dx + dy * dy <= collisionDistanceSq) {
+            projectilesToRemove.add(projectile);
+            playerHit = true;
+          }
+        }
+        continue;
+      }
+
+      // Check boss hits first
+      if (_boss != null) {
+        final dx = projectile.position.dx - _boss!.position.dx;
+        final dy = projectile.position.dy - _boss!.position.dy;
+        if (dx * dx + dy * dy <= bossCollisionDistanceSq) {
+          _boss!.health -= projectile.damage;
+          projectilesToRemove.add(projectile);
+          if (_boss!.health <= 0) {
+            _score += GameConstants.bossScoreValue;
+            _boss = null;
+          }
+          continue;
+        }
+      }
+
+      // Check other collisions only if projectile hasn't hit boss
+      if (!projectilesToRemove.contains(projectile)) {
+        bool hit = false;
+
+        // Check asteroid hits with early exit
+        for (var asteroid in _asteroids) {
+          final dx = projectile.position.dx - asteroid.position.dx;
+          final dy = projectile.position.dy - asteroid.position.dy;
+          if (dx * dx + dy * dy <= collisionDistanceSq) {
+            asteroid.health -= projectile.damage;
+            projectilesToRemove.add(projectile);
+            if (asteroid.health <= 0) {
+              asteroidsToRemove.add(asteroid);
+              _score += AppConstants.scoreIncrement;
+              _handleAsteroidDestroyed(asteroid.position);
+            }
+            hit = true;
+            break; // Early exit after hit
+          }
+        }
+
+        // Check enemy hits if no asteroid was hit
+        if (!hit) {
+          for (var enemy in _enemies) {
+            final dx = projectile.position.dx - enemy.position.dx;
+            final dy = projectile.position.dy - enemy.position.dy;
+            if (dx * dx + dy * dy <= collisionDistanceSq) {
+              enemy.health -= projectile.damage;
+              projectilesToRemove.add(projectile);
+              if (enemy.health <= 0) {
+                enemiesToRemove.add(enemy);
+                _score += AppConstants.scoreIncrement;
+                _handleEnemyDestroyed(enemy.position);
+              }
+              break; // Early exit after hit
+            }
+          }
+        }
+      }
+    }
+
+    // Check direct collisions with player with early exits
+    if (!_isInvulnerable && !playerHit) {
+      for (var enemy in _enemies) {
+        final dx = _player.position.dx - enemy.position.dx;
+        final dy = _player.position.dy - enemy.position.dy;
+        if (dx * dx + dy * dy <= collisionDistanceSq) {
+          playerHit = true;
+          break;
+        }
+      }
+
+      if (!playerHit) {
+        for (var asteroid in _asteroids) {
+          final dx = _player.position.dx - asteroid.position.dx;
+          final dy = _player.position.dy - asteroid.position.dy;
+          if (dx * dx + dy * dy <= collisionDistanceSq) {
+            playerHit = true;
+            break;
+          }
+        }
+      }
+    }
+
+    // Apply all changes in a single setState
+    if (projectilesToRemove.isNotEmpty ||
+        enemiesToRemove.isNotEmpty ||
+        asteroidsToRemove.isNotEmpty ||
+        bonusesToRemove.isNotEmpty ||
+        playerHit) {
+      setState(() {
+        _projectiles.removeWhere((p) => projectilesToRemove.contains(p));
+        _enemies.removeWhere((e) => enemiesToRemove.contains(e));
+        _asteroids.removeWhere((a) => asteroidsToRemove.contains(a));
+        _bonusItems.removeWhere((b) => bonusesToRemove.contains(b));
+        if (playerHit) _handleCollision();
+      });
+    }
   }
 
   void _gameOver() {
