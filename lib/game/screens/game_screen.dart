@@ -350,6 +350,24 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
     // Update boss if present
     if (_boss != null) {
       _boss!.update(_screenSize, _player.position);
+
+      // Boss attack logic
+      if (_boss!.canAttack() && !_boss!.isAiming()) {
+        _boss!.startAiming();
+        Future.delayed(Boss.aimDuration, () {
+          if (_boss != null && mounted) {
+            final attackType = _boss!.chooseAttack();
+            if (attackType == BossAttackType.nova) {
+              _fireBossNova();
+            } else {
+              // Spawn ships in a single setState
+              setState(() {
+                _enemies.addAll(_boss!.spawnShips(_screenSize));
+              });
+            }
+          }
+        });
+      }
     }
 
     // Remove off-screen projectiles using removeWhere once
