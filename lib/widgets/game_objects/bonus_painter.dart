@@ -1,40 +1,12 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
-
-enum BonusType {
-  damageMultiplier,
-  goldOre,
-}
-
-class BonusItem {
-  final BonusType type;
-  final Offset position;
-  final double rotation;
-  final double size;
-
-  BonusItem({
-    required this.type,
-    required this.position,
-    this.rotation = 0,
-    this.size = 30,
-  });
-
-  static bool shouldDropBonus(BonusType type) {
-    final random = math.Random();
-    switch (type) {
-      case BonusType.damageMultiplier:
-        return random.nextDouble() < 0.3; // 30% chance
-      case BonusType.goldOre:
-        return random.nextDouble() < 0.3; // 30% chance
-    }
-  }
-}
+import '../../game/entities/bonus_item.dart';
 
 class BonusPainter extends CustomPainter {
   final BonusType type;
   final double rotation;
 
-  BonusPainter({
+  const BonusPainter({
     required this.type,
     required this.rotation,
   });

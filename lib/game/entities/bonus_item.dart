@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:math' as math;
 
 enum BonusType {
   damageMultiplier,
@@ -30,5 +31,15 @@ class BonusItem {
       rotation: rotation ?? this.rotation,
       size: size ?? this.size,
     );
+  }
+
+  static bool shouldDropBonus(BonusType type) {
+    final random = math.Random();
+    switch (type) {
+      case BonusType.damageMultiplier:
+        return random.nextDouble() < 0.3; // 30% chance
+      case BonusType.goldOre:
+        return random.nextDouble() < 0.3; // 30% chance
+    }
   }
 }

@@ -6,24 +6,28 @@ import 'dart:math' as math;
 import '../../widgets/controls.dart';
 import '../../widgets/menu_button.dart';
 import '../../widgets/performance_overlay.dart';
+import '../../widgets/background.dart';
+import '../../widgets/game_objects.dart';
+import '../../widgets/game_objects/boss_widget.dart';
+import '../../widgets/game_objects/bonus_painter.dart';
+import '../../widgets/round_space_button.dart' as space_buttons;
+
 import '../entities/player.dart';
 import '../entities/enemy.dart';
 import '../entities/projectile.dart';
 import '../entities/asteroid.dart';
 import '../entities/boss.dart';
-import '../../utils/app_constants.dart';
-import '../../widgets/background.dart';
+import '../entities/bonus_item.dart';
+
 import '../utils/constants.dart';
 import '../utils/painters.dart' as game_painters;
+import '../../utils/app_constants.dart';
 import '../../utils/high_scores.dart';
-import '../../widgets/game_objects.dart';
-import '../../widgets/game_objects/boss_widget.dart';
-import '../../entities/bonus_item.dart';
-import '../../widgets/round_space_button.dart' as space_buttons;
 import '../../utils/transitions.dart';
+import '../../utils/collision_utils.dart';
+
 import '../../screens/main_menu.dart';
 import '../../widgets/performance_overlay.dart';
-import '../../utils/collision_utils.dart';
 
 class GameScreen extends StatefulWidget {
   const GameScreen({super.key});
