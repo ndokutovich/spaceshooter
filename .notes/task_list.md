@@ -10,6 +10,10 @@
     5. Different approaches to haptic feedback
     6. Different size constants and styling
     7. Recommendation: Merge into game version with configurable options
+  - Subtasks:
+    - [x] SSHOTER-001.1: Create configurable version of game controls in lib/widgets/controls.dart
+    - [x] SSHOTER-001.2: Update all references to use new controls
+    - [~] SSHOTER-001.3: Remove duplicate controls file
 - [ ] SSHOTER-002: Analyze game_objects folder structure and organization
 - [ ] SSHOTER-003: Review and optimize widget exports in game_objects.dart barrel file
 

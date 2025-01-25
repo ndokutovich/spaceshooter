@@ -212,11 +212,13 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
     }
   }
 
-  void _handleJoystickMove(double dx, double dy) {
+  void _handleJoystickMove(Offset movement) {
     if (_isPaused) return;
     setState(() {
-      final newX = _player.position.dx + dx * GameConstants.playerSpeed;
-      final newY = _player.position.dy + dy * GameConstants.playerSpeed;
+      final newX =
+          _player.position.dx + movement.dx * GameConstants.playerSpeed;
+      final newY =
+          _player.position.dy + movement.dy * GameConstants.playerSpeed;
 
       // Constrain to play area
       _player.position = Offset(
