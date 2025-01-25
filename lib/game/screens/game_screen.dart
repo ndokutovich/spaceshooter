@@ -208,14 +208,26 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
     }
   }
 
-  void _handleJoystickMove(Offset delta) {
+  void _handleJoystickMove(double dx, double dy) {
     if (_isPaused) return;
+    setState(() {
+      final newX = _player.position.dx + dx * GameConstants.playerSpeed;
+      final newY = _player.position.dy + dy * GameConstants.playerSpeed;
 
-    if (delta != Offset.zero) {
-      setState(() {
-        _player.move(delta, _screenSize);
-      });
-    }
+      // Constrain to play area
+      _player.position = Offset(
+        newX.clamp(
+          GameConstants.playAreaPadding + GameConstants.playerSize / 2,
+          _screenSize.width -
+              GameConstants.playAreaPadding -
+              GameConstants.playerSize / 2,
+        ),
+        newY.clamp(
+          GameConstants.playerSize / 2,
+          _screenSize.height - GameConstants.playerSize / 2,
+        ),
+      );
+    });
   }
 
   void _spawnEnemies() {
@@ -752,19 +764,27 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
             ),
           ),
 
-          // Controls
+          // Controls - 5px from left screen edge with container for visibility
           Positioned(
-            left: AppConstants.uiPadding,
-            bottom: AppConstants.uiPadding,
-            child: JoystickController(
-              onMove: _handleJoystickMove,
+            left: 5.0,
+            bottom: AppConstants.uiPadding + GameConstants.actionButtonSize,
+            child: Container(
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: Colors.white.withOpacity(0.2),
+                  width: 1,
+                ),
+              ),
+              child: JoystickController(
+                onMove: _handleJoystickMove,
+              ),
             ),
           ),
 
-          // Action buttons
+          // Action buttons - 5px from right screen edge
           Positioned(
-            right: AppConstants.uiPadding,
-            bottom: AppConstants.uiPadding,
+            right: 5.0,
+            bottom: AppConstants.uiPadding + GameConstants.actionButtonSize,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [

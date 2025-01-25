@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'dart:math' as math;
 
 class JoystickController extends StatefulWidget {
-  final Function(Offset) onMove;
+  final Function(double dx, double dy) onMove;
 
   const JoystickController({
     super.key,
@@ -16,67 +17,85 @@ class JoystickController extends StatefulWidget {
 class _JoystickControllerState extends State<JoystickController> {
   Offset _stickPosition = Offset.zero;
   bool _isDragging = false;
-  static const _stickRadius = 20.0;
-  static const _baseRadius = 40.0;
-  static const _minSpeed = 0.2;
-  static const _maxSpeed = 0.5;
-  Offset? _startPosition;
+  static const double _size = 120.0;
+  static const double _innerCircleSize = 50.0;
 
-  void _updateStick(Offset position) {
-    final center = _startPosition ?? Offset(_baseRadius, _baseRadius);
-    final delta = position - center;
+  void _updateStickPosition(Offset position) {
+    final RenderBox renderBox = context.findRenderObject() as RenderBox;
+    final center = renderBox.size.center(Offset.zero);
+    var stickOffset = position - renderBox.localToGlobal(center);
+
+    final distance = stickOffset.distance;
+    final maxDistance = _size / 2 - _innerCircleSize / 2;
+
+    if (distance > maxDistance) {
+      stickOffset = stickOffset * (maxDistance / distance);
+    }
+
     setState(() {
-      if (delta.distance > _baseRadius) {
-        _stickPosition = delta * (_baseRadius / delta.distance);
-      } else {
-        _stickPosition = delta;
-      }
+      _stickPosition = stickOffset;
     });
 
-    final distanceRatio = _stickPosition.distance / _baseRadius;
-    final speedFactor = _minSpeed + (_maxSpeed - _minSpeed) * distanceRatio;
-
-    HapticFeedback.lightImpact();
-    widget.onMove(_stickPosition / _baseRadius * speedFactor);
+    // Calculate movement values
+    final dx = stickOffset.dx / maxDistance;
+    final dy = stickOffset.dy / maxDistance;
+    widget.onMove(dx, dy);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 60.0, top: 60.0),
-      child: SizedBox(
-        width: _baseRadius * 2,
-        height: _baseRadius * 2,
-        child: GestureDetector(
-          onPanStart: (details) {
-            _isDragging = true;
-            final box = context.findRenderObject() as RenderBox;
-            _startPosition = box.globalToLocal(details.globalPosition);
-            _updateStick(_startPosition!);
-            HapticFeedback.mediumImpact();
-          },
-          onPanUpdate: (details) {
-            if (_isDragging) {
-              final box = context.findRenderObject() as RenderBox;
-              final localPosition = box.globalToLocal(details.globalPosition);
-              _updateStick(localPosition);
-            }
-          },
-          onPanEnd: (_) {
-            _isDragging = false;
-            _startPosition = null;
-            setState(() {
-              _stickPosition = Offset.zero;
-            });
-            widget.onMove(Offset.zero);
-          },
-          child: CustomPaint(
-            painter: JoystickPainter(
-              stickPosition: _stickPosition,
-              stickRadius: _stickRadius,
-              baseRadius: _baseRadius,
+    return Container(
+      width: _size,
+      height: _size,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: Colors.white.withOpacity(0.1),
+        border: Border.all(
+          color: Colors.white.withOpacity(0.3),
+          width: 2,
+        ),
+      ),
+      child: GestureDetector(
+        onPanStart: (details) {
+          _isDragging = true;
+          _updateStickPosition(details.globalPosition);
+        },
+        onPanUpdate: (details) {
+          if (_isDragging) {
+            _updateStickPosition(details.globalPosition);
+          }
+        },
+        onPanEnd: (details) {
+          _isDragging = false;
+          setState(() {
+            _stickPosition = Offset.zero;
+          });
+          widget.onMove(0, 0);
+        },
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            Container(
+              width: _innerCircleSize,
+              height: _innerCircleSize,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white.withOpacity(0.5),
+              ),
             ),
-          ),
+            if (_isDragging)
+              Transform.translate(
+                offset: _stickPosition,
+                child: Container(
+                  width: _innerCircleSize,
+                  height: _innerCircleSize,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.white.withOpacity(0.8),
+                  ),
+                ),
+              ),
+          ],
         ),
       ),
     );
