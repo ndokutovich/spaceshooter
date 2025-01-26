@@ -50,7 +50,7 @@
         - [x] options_screen.dart
         - [x] high_scores_screen.dart
         - [x] splash_screen.dart
-        - [ ] menu_button.dart
+        - [x] menu_button.dart
         - [ ] performance_overlay.dart
         - [ ] game_logo.dart
         - [ ] controls_tab.dart

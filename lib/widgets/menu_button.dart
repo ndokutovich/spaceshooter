@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../utils/app_constants.dart';
+import '../utils/constants/ui_constants.dart';
+import '../utils/constants/style_constants.dart';
 import 'dart:math' as math;
 
 class MenuButton extends StatelessWidget {
@@ -24,25 +25,27 @@ class MenuButton extends StatelessWidget {
     return GestureDetector(
       onTapDown: (_) => onPressed(),
       child: Container(
-        width: width ?? AppConstants.menuButtonWidth,
-        height: height ?? AppConstants.menuButtonHeight,
+        width: width ?? UIConstants.menuButtonWidth,
+        height: height ?? UIConstants.menuButtonHeight,
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              AppConstants.playerColor.withOpacity(0.8),
-              AppConstants.playerColor.withOpacity(0.3),
+              StyleConstants.playerColor
+                  .withOpacity(StyleConstants.opacityHigh),
+              StyleConstants.playerColor.withOpacity(StyleConstants.opacityLow),
             ],
           ),
-          borderRadius: BorderRadius.circular(AppConstants.menuButtonRadius),
+          borderRadius: BorderRadius.circular(UIConstants.menuButtonRadius),
           border: Border.all(
-            color: AppConstants.playerColor,
+            color: StyleConstants.playerColor,
             width: 2,
           ),
           boxShadow: [
             BoxShadow(
-              color: AppConstants.playerColor.withOpacity(0.5),
+              color: StyleConstants.playerColor
+                  .withOpacity(StyleConstants.opacityMedium),
               blurRadius: 10,
               spreadRadius: 2,
             ),
@@ -54,12 +57,12 @@ class MenuButton extends StatelessWidget {
             Container(
               decoration: BoxDecoration(
                 borderRadius:
-                    BorderRadius.circular(AppConstants.menuButtonRadius),
+                    BorderRadius.circular(UIConstants.menuButtonRadius),
                 gradient: RadialGradient(
                   center: Alignment.topLeft,
                   radius: 1.5,
                   colors: [
-                    Colors.white.withOpacity(0.3),
+                    Colors.white.withOpacity(StyleConstants.opacityLow),
                     Colors.transparent,
                   ],
                 ),
@@ -71,14 +74,14 @@ class MenuButton extends StatelessWidget {
                 text,
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  color: AppConstants.textColor,
+                  color: StyleConstants.textColor,
                   fontSize: fontSize,
                   fontWeight: FontWeight.bold,
                   letterSpacing: 0.3,
                   height: 1.0,
-                  shadows: const [
+                  shadows: [
                     Shadow(
-                      color: AppConstants.playerColor,
+                      color: StyleConstants.playerColor,
                       blurRadius: 10,
                     ),
                   ],
@@ -87,38 +90,38 @@ class MenuButton extends StatelessWidget {
             ),
             // Side accents
             Positioned(
-              left: (width ?? AppConstants.menuButtonWidth) *
-                  0.05, // 5% from left
-              top: (height ?? AppConstants.menuButtonHeight) *
+              left:
+                  (width ?? UIConstants.menuButtonWidth) * 0.05, // 5% from left
+              top: (height ?? UIConstants.menuButtonHeight) *
                   0.2, // Center vertically
-              bottom: (height ?? AppConstants.menuButtonHeight) *
+              bottom: (height ?? UIConstants.menuButtonHeight) *
                   0.2, // Center vertically
               child: Center(
                 child: CustomPaint(
-                  painter: AccentPainter(AppConstants.playerColor),
+                  painter: AccentPainter(StyleConstants.playerColor),
                   size: Size(
-                    (width ?? AppConstants.menuButtonWidth) *
+                    (width ?? UIConstants.menuButtonWidth) *
                         0.06, // 6% of width
-                    (height ?? AppConstants.menuButtonHeight) *
+                    (height ?? UIConstants.menuButtonHeight) *
                         0.6, // 60% of height
                   ),
                 ),
               ),
             ),
             Positioned(
-              right: (width ?? AppConstants.menuButtonWidth) *
+              right: (width ?? UIConstants.menuButtonWidth) *
                   0.05, // 5% from right
-              top: (height ?? AppConstants.menuButtonHeight) *
+              top: (height ?? UIConstants.menuButtonHeight) *
                   0.2, // Center vertically
-              bottom: (height ?? AppConstants.menuButtonHeight) *
+              bottom: (height ?? UIConstants.menuButtonHeight) *
                   0.2, // Center vertically
               child: Center(
                 child: CustomPaint(
-                  painter: AccentPainter(AppConstants.playerColor),
+                  painter: AccentPainter(StyleConstants.playerColor),
                   size: Size(
-                    (width ?? AppConstants.menuButtonWidth) *
+                    (width ?? UIConstants.menuButtonWidth) *
                         0.06, // 6% of width
-                    (height ?? AppConstants.menuButtonHeight) *
+                    (height ?? UIConstants.menuButtonHeight) *
                         0.6, // 60% of height
                   ),
                 ),
@@ -144,7 +147,7 @@ class SpaceButton extends StatelessWidget {
     super.key,
     required this.text,
     required this.onPressed,
-    this.color = AppConstants.playerColor,
+    this.color = StyleConstants.playerColor,
     this.counterWidget,
     this.width = 60,
     this.height = 60,
@@ -163,8 +166,8 @@ class SpaceButton extends StatelessWidget {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              color.withOpacity(0.8),
-              color.withOpacity(0.3),
+              color.withOpacity(StyleConstants.opacityHigh),
+              color.withOpacity(StyleConstants.opacityLow),
             ],
           ),
           borderRadius: BorderRadius.circular(height / 3),
@@ -174,7 +177,7 @@ class SpaceButton extends StatelessWidget {
           ),
           boxShadow: [
             BoxShadow(
-              color: color.withOpacity(0.5),
+              color: color.withOpacity(StyleConstants.opacityMedium),
               blurRadius: 5,
               spreadRadius: 1,
             ),
@@ -190,7 +193,7 @@ class SpaceButton extends StatelessWidget {
                   center: Alignment.topLeft,
                   radius: 1.5,
                   colors: [
-                    Colors.white.withOpacity(0.3),
+                    Colors.white.withOpacity(StyleConstants.opacityLow),
                     Colors.transparent,
                   ],
                 ),
@@ -205,7 +208,7 @@ class SpaceButton extends StatelessWidget {
                     text,
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      color: AppConstants.textColor,
+                      color: StyleConstants.textColor,
                       fontSize: fontSize,
                       fontWeight: FontWeight.bold,
                       letterSpacing: 0.3,
@@ -331,14 +334,14 @@ class RoundSpaceButton extends StatelessWidget {
                     text,
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      color: AppConstants.textColor,
+                      color: StyleConstants.textColor,
                       fontSize: fontSize,
                       fontWeight: FontWeight.bold,
                       letterSpacing: 0.3,
                       height: 1.0,
                       shadows: const [
                         Shadow(
-                          color: AppConstants.playerColor,
+                          color: StyleConstants.playerColor,
                           blurRadius: 10,
                         ),
                       ],
