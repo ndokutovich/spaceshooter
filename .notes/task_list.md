@@ -1,7 +1,7 @@
 # Task List
 
 ## Controls & Widgets
-- [~] SSHOTER-001: Compare and analyze controls.dart files in widgets and game/widgets for potential merge
+- [x] SSHOTER-001: Compare and analyze controls.dart files in widgets and game/widgets for potential merge
   - Analysis Notes:
     1. Both files contain JoystickController and ActionButton
     2. Game version has more optimized movement calculations
@@ -13,7 +13,7 @@
   - Subtasks:
     - [x] SSHOTER-001.1: Create configurable version of game controls in lib/widgets/controls.dart
     - [x] SSHOTER-001.2: Update all references to use new controls
-    - [~] SSHOTER-001.3: Remove duplicate controls file
+    - [x] SSHOTER-001.3: Remove duplicate controls file
 - [ ] SSHOTER-002: Analyze game_objects folder structure and organization
 - [ ] SSHOTER-003: Review and optimize widget exports in game_objects.dart barrel file
 
