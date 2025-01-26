@@ -3,7 +3,8 @@ import 'package:flutter/services.dart';
 import '../widgets/menu_button.dart';
 import '../widgets/options/controls_tab.dart';
 import '../widgets/options/misc_tab.dart';
-import '../utils/app_constants.dart';
+import '../utils/constants/ui_constants.dart';
+import '../utils/constants/style_constants.dart';
 import '../utils/options_constants.dart';
 import '../models/key_binding.dart';
 
@@ -76,20 +77,20 @@ class _OptionsScreenState extends State<OptionsScreen> {
     return DefaultTabController(
       length: 2,
       child: Scaffold(
-        backgroundColor: Colors.black,
+        backgroundColor: StyleConstants.backgroundColor,
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           elevation: 0,
           leadingWidth: 220,
           title: Text(
-            AppConstants.menuOptionsText,
+            UIConstants.menuOptionsText,
             style: TextStyle(
-              color: AppConstants.textColor,
-              fontSize: 28,
+              color: StyleConstants.textColor,
+              fontSize: StyleConstants.subtitleFontSize,
               fontWeight: FontWeight.bold,
-              shadows: const [
+              shadows: [
                 Shadow(
-                  color: AppConstants.playerColor,
+                  color: StyleConstants.playerColor,
                   blurRadius: 10,
                 ),
               ],
@@ -98,20 +99,20 @@ class _OptionsScreenState extends State<OptionsScreen> {
           leading: Padding(
             padding: const EdgeInsets.only(left: 8.0),
             child: MenuButton(
-              text: '← Back',
+              text: UIConstants.backText,
               onPressed: () => Navigator.of(context).pop(),
               width: 200,
               height: 40,
             ),
           ),
           bottom: TabBar(
-            tabs: const [
+            tabs: [
               Tab(
                 child: Text(
                   OptionsConstants.controlsTabText,
                   style: TextStyle(
-                    color: AppConstants.textColor,
-                    fontSize: 16,
+                    color: StyleConstants.textColor,
+                    fontSize: StyleConstants.bodyFontSize,
                   ),
                 ),
               ),
@@ -119,13 +120,13 @@ class _OptionsScreenState extends State<OptionsScreen> {
                 child: Text(
                   OptionsConstants.miscTabText,
                   style: TextStyle(
-                    color: AppConstants.textColor,
-                    fontSize: 16,
+                    color: StyleConstants.textColor,
+                    fontSize: StyleConstants.bodyFontSize,
                   ),
                 ),
               ),
             ],
-            indicatorColor: AppConstants.playerColor,
+            indicatorColor: StyleConstants.playerColor,
             indicatorWeight: OptionsConstants.tabIndicatorWeight,
             indicatorPadding: EdgeInsets.symmetric(
               horizontal: OptionsConstants.tabIndicatorPadding,
@@ -136,11 +137,12 @@ class _OptionsScreenState extends State<OptionsScreen> {
           decoration: BoxDecoration(
             color: Colors.black87,
             border: Border.all(
-              color: AppConstants.playerColor.withOpacity(0.3),
+              color: StyleConstants.playerColor
+                  .withOpacity(StyleConstants.opacityLow),
             ),
             borderRadius: BorderRadius.circular(16),
           ),
-          margin: const EdgeInsets.all(AppConstants.uiPadding),
+          margin: EdgeInsets.all(UIConstants.uiPadding),
           child: TabBarView(
             children: [
               ControlsTab(

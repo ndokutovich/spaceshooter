@@ -47,7 +47,7 @@
       - [x] Search for constant usages
       - [~] Update import statements
         - [x] main_menu.dart
-        - [ ] options_screen.dart
+        - [x] options_screen.dart
         - [ ] high_scores_screen.dart
         - [ ] splash_screen.dart
         - [ ] menu_button.dart
