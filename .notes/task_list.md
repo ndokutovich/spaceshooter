@@ -32,7 +32,7 @@
        - Standardize painter implementations
   - Subtasks:
     - [x] SSHOTER-002.1: Create base painter class for game objects
-    - [~] SSHOTER-002.2: Update barrel file exports
+    - [x] SSHOTER-002.2: Update barrel file exports
     - [ ] SSHOTER-002.3: Refactor boss_widget.dart (needs discussion)
 - [ ] SSHOTER-003: Review and optimize widget exports in game_objects.dart barrel file
 
