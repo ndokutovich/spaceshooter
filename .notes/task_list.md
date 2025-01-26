@@ -1,6 +1,6 @@
 # Task List
 
-## Controls & Widgets
+## Completed Tasks
 - [x] SSHOTER-001: Compare and analyze controls.dart files in widgets and game/widgets for potential merge
   - Analysis Notes:
     1. Both files contain JoystickController and ActionButton
@@ -14,31 +14,59 @@
     - [x] SSHOTER-001.1: Create configurable version of game controls in lib/widgets/controls.dart
     - [x] SSHOTER-001.2: Update all references to use new controls
     - [x] SSHOTER-001.3: Remove duplicate controls file
-- [~] SSHOTER-002: Analyze game_objects folder structure and organization
+
+## In Progress Tasks
+- [~] SSHOTER-020: Analyze and consolidate app_constants.dart and game/utils/constants.dart
   - Analysis Notes:
     1. Current Structure:
-       - Base widget: game_object_widget.dart (reusable CustomPaint wrapper)
-       - Painters: *_painter.dart files for each game object
-       - Special case: boss_widget.dart (much larger, complex widget)
+       - app_constants.dart: General app-wide constants
+       - game/utils/constants.dart: Game-specific constants
+       - utils/constants/: Specialized constant files
     2. Issues Found:
-       - boss_widget.dart doesn't follow painter pattern
-       - Missing exports for boss_widget.dart in barrel file
-       - No shared base painter class for common functionality
-       - Inconsistent file sizes suggest potential refactoring needs
+       - Duplicate constants between files (e.g., playerSize, actionButtonSize)
+       - Mixed concerns in app_constants.dart (UI, game, animations)
+       - Inconsistent organization (some in specialized files, some mixed)
     3. Recommendations:
-       - Create base painter class for shared functionality
-       - Split boss_widget.dart into smaller components
-       - Add missing exports to barrel file
-       - Standardize painter implementations
+       - Move all constants to utils/constants/
+       - Create clear separation of concerns
+       - Eliminate duplicates
+       - Use consistent naming and organization
+  - Subtasks:
+    - [x] SSHOTER-020.1: Create new constant file structure
+      - [x] Create game_constants.dart for game mechanics
+      - [x] Create player_constants.dart for player settings
+      - [x] Create enemy_constants.dart for enemy/boss settings
+      - [x] Move UI constants to ui_constants.dart
+    - [ ] SSHOTER-020.2: Migrate constants to new files
+      - [ ] Move remaining constants from app_constants.dart
+      - [ ] Move remaining constants from game/utils/constants.dart
+      - [ ] Resolve duplicate constants
+      - [ ] Update values to match latest requirements
+    - [ ] SSHOTER-020.3: Update imports in all files
+    - [ ] SSHOTER-020.4: Remove old constant files
+
+## Pending Tasks
+- [~] SSHOTER-002: Analyze game_objects folder structure and organization
   - Subtasks:
     - [x] SSHOTER-002.1: Create base painter class for game objects
     - [x] SSHOTER-002.2: Update barrel file exports
-    - [?] SSHOTER-002.3: Refactor boss_widget.dart
+    - [?] SSHOTER-002.3: Refactor boss_widget.dart (postponed)
       - [ ] SSHOTER-002.3.1: Extract common painting utilities to BaseGamePainter
-      - [ ] SSHOTER-002.3.2: Split BossPainter into component painters (shield, body, etc.)
+      - [ ] SSHOTER-002.3.2: Split BossPainter into component painters
       - [ ] SSHOTER-002.3.3: Create configuration objects for visual properties
       - [ ] SSHOTER-002.3.4: Implement caching for complex paths and gradients
       - [ ] SSHOTER-002.3.5: Extract magic numbers to constants
+
+- [ ] SSHOTER-003: Review and optimize widget exports in game_objects.dart barrel file
+- [ ] SSHOTER-010: Analyze and optimize asteroid entity-painter relationship
+- [ ] SSHOTER-011: Analyze and optimize bonus_item entity-painter relationship
+- [ ] SSHOTER-012: Analyze and optimize projectile entity-painter relationship
+- [ ] SSHOTER-013: Create shared interfaces for entity-painter relationships
+- [ ] SSHOTER-021: Review and optimize collision utils organization
+- [ ] SSHOTER-022: Create specialized constant files based on functionality
+
+## Controls & Widgets
+- [ ] SSHOTER-002: Analyze game_objects folder structure and organization
 - [ ] SSHOTER-003: Review and optimize widget exports in game_objects.dart barrel file
 
 ## Entity-Painter Relationships
