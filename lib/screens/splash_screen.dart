@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'main_menu.dart';
-import '../utils/app_constants.dart';
+import '../utils/constants/ui_constants.dart';
+import '../utils/constants/style_constants.dart';
+import '../utils/constants/animation_constants.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -20,7 +22,7 @@ class _SplashScreenState extends State<SplashScreen>
   void initState() {
     super.initState();
     _controller = AnimationController(
-      duration: AppConstants.splashAnimationDuration,
+      duration: AnimationConstants.splashAnimationDuration,
       vsync: this,
     );
     _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(_controller);
@@ -28,17 +30,17 @@ class _SplashScreenState extends State<SplashScreen>
   }
 
   void _startSplashSequence() async {
-    await Future.delayed(AppConstants.splashDelayDuration);
+    await Future.delayed(AnimationConstants.splashDelayDuration);
     if (!mounted) return;
 
     await _controller.forward();
-    await Future.delayed(AppConstants.splashAnimationDuration);
+    await Future.delayed(AnimationConstants.splashAnimationDuration);
     if (!mounted) return;
 
     setState(() => _showingPlatform = false);
     _controller.reset();
     await _controller.forward();
-    await Future.delayed(AppConstants.splashAnimationDuration);
+    await Future.delayed(AnimationConstants.splashAnimationDuration);
     if (!mounted) return;
 
     _navigateToMainMenu();
@@ -57,7 +59,7 @@ class _SplashScreenState extends State<SplashScreen>
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           return FadeTransition(opacity: animation, child: child);
         },
-        transitionDuration: AppConstants.menuTransitionDuration,
+        transitionDuration: AnimationConstants.menuTransitionDuration,
       ),
     );
   }
@@ -71,7 +73,7 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: StyleConstants.backgroundColor,
       body: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTapDown: (details) {
@@ -85,11 +87,11 @@ class _SplashScreenState extends State<SplashScreen>
             opacity: _fadeAnimation,
             child: Text(
               _showingPlatform
-                  ? AppConstants.splashTextPlatform
-                  : AppConstants.splashTextStudio,
-              style: const TextStyle(
-                color: AppConstants.textColor,
-                fontSize: AppConstants.titleFontSize,
+                  ? UIConstants.splashTextPlatform
+                  : UIConstants.splashTextStudio,
+              style: TextStyle(
+                color: StyleConstants.textColor,
+                fontSize: StyleConstants.titleFontSize,
                 fontWeight: FontWeight.bold,
               ),
             ),
