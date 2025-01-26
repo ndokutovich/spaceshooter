@@ -37,11 +37,11 @@
       - [x] Create player_constants.dart for player settings
       - [x] Create enemy_constants.dart for enemy/boss settings
       - [x] Move UI constants to ui_constants.dart
-    - [ ] SSHOTER-020.2: Migrate constants to new files
-      - [ ] Move remaining constants from app_constants.dart
-      - [ ] Move remaining constants from game/utils/constants.dart
-      - [ ] Resolve duplicate constants
-      - [ ] Update values to match latest requirements
+    - [x] SSHOTER-020.2: Migrate constants to new files
+      - [x] Move remaining constants from app_constants.dart
+      - [x] Move remaining constants from game/utils/constants.dart
+      - [x] Resolve duplicate constants
+      - [x] Update values to match latest requirements
     - [ ] SSHOTER-020.3: Update imports in all files
     - [ ] SSHOTER-020.4: Remove old constant files
 
