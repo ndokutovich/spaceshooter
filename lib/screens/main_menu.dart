@@ -3,7 +3,8 @@ import 'package:flutter/services.dart';
 import '../widgets/menu_button.dart';
 import '../widgets/background.dart';
 import '../widgets/game_logo.dart';
-import '../utils/app_constants.dart';
+import '../utils/constants/ui_constants.dart';
+import '../utils/constants/style_constants.dart';
 import '../utils/transitions.dart';
 import 'options_screen.dart';
 import 'high_scores_screen.dart';
@@ -21,7 +22,7 @@ class MainMenu extends StatelessWidget {
     final buttonSpacing = screenSize.height * 0.02; // 2% of screen height
 
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: StyleConstants.backgroundColor,
       body: Stack(
         children: [
           StarBackground(screenSize: screenSize),
@@ -38,7 +39,7 @@ class MainMenu extends StatelessWidget {
                     GameLogo(size: logoSize),
                     SizedBox(height: buttonSpacing * 2),
                     MenuButton(
-                      text: AppConstants.menuPlayText,
+                      text: UIConstants.menuPlayText,
                       onPressed: () {
                         Navigator.of(context).push(
                           FadeSlideTransition(page: const GameScreen()),
@@ -49,7 +50,7 @@ class MainMenu extends StatelessWidget {
                     ),
                     SizedBox(height: buttonSpacing),
                     MenuButton(
-                      text: AppConstants.menuOptionsText,
+                      text: UIConstants.menuOptionsText,
                       onPressed: () {
                         Navigator.of(context).push(
                           FadeSlideTransition(page: const OptionsScreen()),
@@ -60,7 +61,7 @@ class MainMenu extends StatelessWidget {
                     ),
                     SizedBox(height: buttonSpacing),
                     MenuButton(
-                      text: AppConstants.menuHighScoresText,
+                      text: UIConstants.menuHighScoresText,
                       onPressed: () {
                         Navigator.of(context).push(
                           FadeSlideTransition(page: const HighScoresScreen()),
@@ -71,7 +72,7 @@ class MainMenu extends StatelessWidget {
                     ),
                     SizedBox(height: buttonSpacing),
                     MenuButton(
-                      text: AppConstants.menuExitText,
+                      text: UIConstants.menuExitText,
                       onPressed: () => SystemNavigator.pop(),
                       width: buttonWidth,
                       height: buttonHeight,

@@ -42,7 +42,21 @@
       - [x] Move remaining constants from game/utils/constants.dart
       - [x] Resolve duplicate constants
       - [x] Update values to match latest requirements
-    - [ ] SSHOTER-020.3: Update imports in all files
+    - [~] SSHOTER-020.3: Update imports in all files
+      - [x] Remove duplicate constants between files
+      - [x] Search for constant usages
+      - [~] Update import statements
+        - [x] main_menu.dart
+        - [ ] options_screen.dart
+        - [ ] high_scores_screen.dart
+        - [ ] splash_screen.dart
+        - [ ] menu_button.dart
+        - [ ] performance_overlay.dart
+        - [ ] game_logo.dart
+        - [ ] controls_tab.dart
+        - [ ] misc_tab.dart
+        - [ ] game_screen.dart
+      - [ ] Test all changes
     - [ ] SSHOTER-020.4: Remove old constant files
 
 ## Pending Tasks
