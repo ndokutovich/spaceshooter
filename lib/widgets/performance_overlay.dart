@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import '../utils/app_constants.dart';
+import '../utils/constants/style_constants.dart';
 
 class GamePerformanceOverlay extends StatefulWidget {
   const GamePerformanceOverlay({super.key});
@@ -53,10 +53,10 @@ class _GamePerformanceOverlayState extends State<GamePerformanceOverlay>
       child: Container(
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
-          color: Colors.black54,
+          color: StyleConstants.overlayColor,
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
-            color: AppConstants.playerColor.withOpacity(0.3),
+            color: StyleConstants.playerColor.withOpacity(StyleConstants.opacityLow),
           ),
         ),
         child: Column(
@@ -68,15 +68,15 @@ class _GamePerformanceOverlayState extends State<GamePerformanceOverlay>
                 color: _fps >= 55
                     ? Colors.green
                     : (_fps >= 30 ? Colors.yellow : Colors.red),
-                fontSize: 14,
+                fontSize: StyleConstants.bodyFontSize,
                 fontWeight: FontWeight.bold,
               ),
             ),
             Text(
               'Frame Time: ${_frameTime.toStringAsFixed(1)}ms',
-              style: const TextStyle(
-                color: Colors.white70,
-                fontSize: 12,
+              style: TextStyle(
+                color: StyleConstants.textColor.withOpacity(StyleConstants.opacityMedium),
+                fontSize: StyleConstants.bodyFontSize * 0.8,
               ),
             ),
           ],
