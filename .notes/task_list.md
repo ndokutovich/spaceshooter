@@ -54,7 +54,7 @@
         - [x] performance_overlay.dart
         - [x] game_logo.dart
         - [x] controls_tab.dart
-        - [ ] misc_tab.dart
+        - [x] misc_tab.dart
         - [ ] game_screen.dart
       - [ ] Test all changes
     - [ ] SSHOTER-020.4: Remove old constant files

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../utils/app_constants.dart';
+import '../../utils/constants/ui_constants.dart';
+import '../../utils/constants/style_constants.dart';
 
 class MiscTab extends StatelessWidget {
   final double volume;
@@ -14,43 +15,48 @@ class MiscTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(AppConstants.uiPadding),
+      padding: const EdgeInsets.all(UIConstants.uiPadding),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            AppConstants.volumeText,
+            UIConstants.volumeText,
             style: TextStyle(
-              color: AppConstants.playerColor,
-              fontSize: 20,
+              color: StyleConstants.playerColor,
+              fontSize: StyleConstants.bodyFontSize * 1.25,
               fontWeight: FontWeight.bold,
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: UIConstants.uiElementSpacing * 2),
           Container(
             decoration: BoxDecoration(
               color: Colors.black26,
               borderRadius: BorderRadius.circular(8),
               border: Border.all(
-                color: AppConstants.playerColor.withOpacity(0.3),
+                color: StyleConstants.playerColor
+                    .withOpacity(StyleConstants.opacityLow),
               ),
             ),
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            padding: const EdgeInsets.symmetric(
+              horizontal: UIConstants.uiPadding * 0.8,
+              vertical: UIConstants.uiPadding * 0.4,
+            ),
             child: Row(
               children: [
                 Icon(
                   Icons.volume_up,
-                  color: AppConstants.playerColor,
+                  color: StyleConstants.playerColor,
                 ),
-                const SizedBox(width: 16),
+                const SizedBox(width: UIConstants.uiElementSpacing * 2),
                 Expanded(
                   child: SliderTheme(
                     data: SliderThemeData(
-                      activeTrackColor: AppConstants.playerColor,
-                      inactiveTrackColor:
-                          AppConstants.playerColor.withOpacity(0.3),
-                      thumbColor: AppConstants.playerColor,
-                      overlayColor: AppConstants.playerColor.withOpacity(0.1),
+                      activeTrackColor: StyleConstants.playerColor,
+                      inactiveTrackColor: StyleConstants.playerColor
+                          .withOpacity(StyleConstants.opacityLow),
+                      thumbColor: StyleConstants.playerColor,
+                      overlayColor: StyleConstants.playerColor
+                          .withOpacity(StyleConstants.opacityVeryLow),
                       trackHeight: 4,
                     ),
                     child: Slider(
@@ -59,12 +65,12 @@ class MiscTab extends StatelessWidget {
                     ),
                   ),
                 ),
-                const SizedBox(width: 16),
+                const SizedBox(width: UIConstants.uiElementSpacing * 2),
                 Text(
                   '${(volume * 100).round()}%',
                   style: TextStyle(
-                    color: AppConstants.textColor,
-                    fontSize: 16,
+                    color: StyleConstants.textColor,
+                    fontSize: StyleConstants.bodyFontSize,
                   ),
                 ),
               ],
