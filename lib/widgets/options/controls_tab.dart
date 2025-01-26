@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../models/key_binding.dart';
 import '../../utils/options_constants.dart';
-import '../../utils/app_constants.dart';
+import '../../utils/constants/style_constants.dart';
 
 class ControlsTab extends StatefulWidget {
   final Map<String, KeyBinding> bindings;
@@ -76,7 +76,7 @@ class _ControlsTabState extends State<ControlsTab> {
             child: Text(
               binding.action,
               style: TextStyle(
-                color: AppConstants.textColor,
+                color: StyleConstants.textColor,
                 fontSize: OptionsConstants.bindingTextSize,
               ),
             ),
@@ -89,13 +89,15 @@ class _ControlsTabState extends State<ControlsTab> {
               height: OptionsConstants.bindingButtonHeight,
               decoration: BoxDecoration(
                 color: isListening
-                    ? AppConstants.playerColor.withOpacity(0.3)
+                    ? StyleConstants.playerColor
+                        .withOpacity(StyleConstants.opacityLow)
                     : Colors.black45,
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(
                   color: isListening
-                      ? AppConstants.playerColor
-                      : AppConstants.textColor.withOpacity(0.5),
+                      ? StyleConstants.playerColor
+                      : StyleConstants.textColor
+                          .withOpacity(StyleConstants.opacityMedium),
                 ),
               ),
               child: Center(
@@ -104,8 +106,8 @@ class _ControlsTabState extends State<ControlsTab> {
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     color: isListening
-                        ? AppConstants.playerColor
-                        : AppConstants.textColor,
+                        ? StyleConstants.playerColor
+                        : StyleConstants.textColor,
                     fontSize: OptionsConstants.bindingTextSize,
                   ),
                 ),
@@ -124,7 +126,7 @@ class _ControlsTabState extends State<ControlsTab> {
         Text(
           title,
           style: TextStyle(
-            color: AppConstants.playerColor,
+            color: StyleConstants.playerColor,
             fontSize: OptionsConstants.categoryTitleSize,
             fontWeight: FontWeight.bold,
           ),
@@ -149,7 +151,7 @@ class _ControlsTabState extends State<ControlsTab> {
         onTapDown: (_) => _finishBinding(),
         behavior: HitTestBehavior.translucent,
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(AppConstants.uiPadding),
+          padding: const EdgeInsets.all(OptionsConstants.tabIndicatorPadding),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

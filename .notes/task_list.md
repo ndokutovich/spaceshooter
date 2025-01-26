@@ -53,7 +53,7 @@
         - [x] menu_button.dart
         - [x] performance_overlay.dart
         - [x] game_logo.dart
-        - [ ] controls_tab.dart
+        - [x] controls_tab.dart
         - [ ] misc_tab.dart
         - [ ] game_screen.dart
       - [ ] Test all changes
