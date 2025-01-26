@@ -36,7 +36,7 @@
     - [~] SSHOTER-002.3: Refactor boss_widget.dart
       - [x] SSHOTER-002.3.1: Extract common painting utilities to BaseGamePainter
       - [ ] SSHOTER-002.3.2: Split BossPainter into component painters (shield, body, etc.)
-      - [ ] SSHOTER-002.3.3: Create configuration objects for visual properties
+      - [x] SSHOTER-002.3.3: Create configuration objects for visual properties
       - [ ] SSHOTER-002.3.4: Implement caching for complex paths and gradients
       - [x] SSHOTER-002.3.5: Extract magic numbers to constants
 - [ ] SSHOTER-003: Review and optimize widget exports in game_objects.dart barrel file
