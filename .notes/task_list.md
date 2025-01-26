@@ -52,7 +52,7 @@
         - [x] splash_screen.dart
         - [x] menu_button.dart
         - [x] performance_overlay.dart
-        - [ ] game_logo.dart
+        - [x] game_logo.dart
         - [ ] controls_tab.dart
         - [ ] misc_tab.dart
         - [ ] game_screen.dart
