@@ -14,7 +14,26 @@
     - [x] SSHOTER-001.1: Create configurable version of game controls in lib/widgets/controls.dart
     - [x] SSHOTER-001.2: Update all references to use new controls
     - [x] SSHOTER-001.3: Remove duplicate controls file
-- [ ] SSHOTER-002: Analyze game_objects folder structure and organization
+- [~] SSHOTER-002: Analyze game_objects folder structure and organization
+  - Analysis Notes:
+    1. Current Structure:
+       - Base widget: game_object_widget.dart (reusable CustomPaint wrapper)
+       - Painters: *_painter.dart files for each game object
+       - Special case: boss_widget.dart (much larger, complex widget)
+    2. Issues Found:
+       - boss_widget.dart doesn't follow painter pattern
+       - Missing exports for boss_widget.dart in barrel file
+       - No shared base painter class for common functionality
+       - Inconsistent file sizes suggest potential refactoring needs
+    3. Recommendations:
+       - Create base painter class for shared functionality
+       - Split boss_widget.dart into smaller components
+       - Add missing exports to barrel file
+       - Standardize painter implementations
+  - Subtasks:
+    - [x] SSHOTER-002.1: Create base painter class for game objects
+    - [~] SSHOTER-002.2: Update barrel file exports
+    - [ ] SSHOTER-002.3: Refactor boss_widget.dart (needs discussion)
 - [ ] SSHOTER-003: Review and optimize widget exports in game_objects.dart barrel file
 
 ## Entity-Painter Relationships
