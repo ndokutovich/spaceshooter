@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../utils/high_scores.dart';
-import '../utils/app_constants.dart';
+import '../utils/constants/ui_constants.dart';
+import '../utils/constants/style_constants.dart';
 import '../widgets/menu_button.dart';
 
 class HighScoresScreen extends StatelessWidget {
@@ -15,7 +16,7 @@ class HighScoresScreen extends StatelessWidget {
     final buttonSpacing = screenSize.height * 0.02;
 
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: StyleConstants.backgroundColor,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -26,15 +27,15 @@ class HighScoresScreen extends StatelessWidget {
           height: buttonHeight,
         ),
         title: Text(
-          'High Scores',
+          UIConstants.menuHighScoresText,
           style: TextStyle(
-            color: AppConstants.textColor,
-            fontSize: AppConstants.highScoresTitleSize,
+            color: StyleConstants.textColor,
+            fontSize: UIConstants.highScoresTitleSize,
             fontWeight: FontWeight.bold,
-            shadows: const [
+            shadows: [
               Shadow(
-                color: AppConstants.playerColor,
-                blurRadius: AppConstants.logoBlurRadius,
+                color: StyleConstants.playerColor,
+                blurRadius: StyleConstants.logoBlurRadius,
               ),
             ],
           ),
@@ -44,15 +45,15 @@ class HighScoresScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text(
+            Text(
               'Top Scores',
               style: TextStyle(
-                color: AppConstants.textColor,
-                fontSize: AppConstants.highScoresSubtitleSize,
+                color: StyleConstants.textColor,
+                fontSize: UIConstants.highScoresSubtitleSize,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(height: AppConstants.menuButtonSpacing * 2),
+            SizedBox(height: UIConstants.menuButtonSpacing * 2),
             FutureBuilder<List<HighScore>>(
               future: HighScoreService.getHighScores(),
               builder: (context, snapshot) {
@@ -62,36 +63,36 @@ class HighScoresScreen extends StatelessWidget {
 
                 final scores = snapshot.data ?? [];
                 if (scores.isEmpty) {
-                  return const Text(
+                  return Text(
                     'No scores yet!',
                     style: TextStyle(
-                      color: AppConstants.textColor,
-                      fontSize: AppConstants.highScoresSubtitleSize,
+                      color: StyleConstants.textColor,
+                      fontSize: UIConstants.highScoresSubtitleSize,
                     ),
                   );
                 }
 
                 return Container(
-                  padding: EdgeInsets.all(AppConstants.highScoresPadding),
+                  padding: EdgeInsets.all(UIConstants.highScoresPadding),
                   decoration: BoxDecoration(
-                    color: AppConstants.playerColor
-                        .withOpacity(AppConstants.opacityUltraLow),
+                    color: StyleConstants.playerColor
+                        .withOpacity(StyleConstants.opacityUltraLow),
                     borderRadius: BorderRadius.circular(
-                        AppConstants.highScoresBorderRadius),
+                        UIConstants.highScoresBorderRadius),
                     border: Border.all(
-                      color: AppConstants.playerColor
-                          .withOpacity(AppConstants.opacityVeryLow),
-                      width: AppConstants.highScoresBorderWidth,
+                      color: StyleConstants.playerColor
+                          .withOpacity(StyleConstants.opacityVeryLow),
+                      width: UIConstants.highScoresBorderWidth,
                     ),
                   ),
                   child: DataTable(
-                    columnSpacing: AppConstants.highScoresColumnSpacing,
-                    columns: const [
+                    columnSpacing: UIConstants.highScoresColumnSpacing,
+                    columns: [
                       DataColumn(
                         label: Text(
                           'Rank',
                           style: TextStyle(
-                            color: AppConstants.textColor,
+                            color: StyleConstants.textColor,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -100,7 +101,7 @@ class HighScoresScreen extends StatelessWidget {
                         label: Text(
                           'Score',
                           style: TextStyle(
-                            color: AppConstants.textColor,
+                            color: StyleConstants.textColor,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -109,7 +110,7 @@ class HighScoresScreen extends StatelessWidget {
                         label: Text(
                           'Date',
                           style: TextStyle(
-                            color: AppConstants.textColor,
+                            color: StyleConstants.textColor,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -123,24 +124,24 @@ class HighScoresScreen extends StatelessWidget {
                           DataCell(
                             Text(
                               '${index + 1}',
-                              style: const TextStyle(
-                                color: AppConstants.textColor,
+                              style: TextStyle(
+                                color: StyleConstants.textColor,
                               ),
                             ),
                           ),
                           DataCell(
                             Text(
                               '${score.score}',
-                              style: const TextStyle(
-                                color: AppConstants.textColor,
+                              style: TextStyle(
+                                color: StyleConstants.textColor,
                               ),
                             ),
                           ),
                           DataCell(
                             Text(
                               dateFormat.format(score.date),
-                              style: const TextStyle(
-                                color: AppConstants.textColor,
+                              style: TextStyle(
+                                color: StyleConstants.textColor,
                               ),
                             ),
                           ),
@@ -153,7 +154,7 @@ class HighScoresScreen extends StatelessWidget {
             ),
             SizedBox(height: buttonSpacing * 2),
             MenuButton(
-              text: AppConstants.backText,
+              text: UIConstants.backText,
               onPressed: () => Navigator.of(context).pop(),
               width: buttonWidth,
               height: buttonHeight,

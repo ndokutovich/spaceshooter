@@ -48,7 +48,7 @@
       - [~] Update import statements
         - [x] main_menu.dart
         - [x] options_screen.dart
-        - [ ] high_scores_screen.dart
+        - [x] high_scores_screen.dart
         - [ ] splash_screen.dart
         - [ ] menu_button.dart
         - [ ] performance_overlay.dart
