@@ -66,7 +66,14 @@
     - [x] SSHOTER-002.2: Update barrel file exports
     - [x] SSHOTER-002.3: Refactor boss_widget.dart (postponed)
       - [x] SSHOTER-002.3.1: Extract common painting utilities to BaseGamePainter
-      - [ ] SSHOTER-002.3.2: Split BossPainter into component painters
+      - [x] SSHOTER-002.3.2: Split BossPainter into component painters
+        - [x] Create BossShieldPainter
+        - [x] Create BossBodyPainter
+        - [x] Create BossLaunchPadPainter
+        - [x] Create BossEnergyCircuitPainter
+        - [x] Create BossCorePainter
+        - [x] Create BossHealthBarPainter
+        - [x] Create barrel file for component exports
       - [ ] SSHOTER-002.3.3: Create configuration objects for visual properties
       - [ ] SSHOTER-002.3.4: Implement caching for complex paths and gradients
       - [ ] SSHOTER-002.3.5: Extract magic numbers to constants
