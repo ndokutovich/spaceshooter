@@ -113,10 +113,10 @@
     - [x] Extend CachedGamePainter
     - [x] Implement caching for paths and paints
     - [x] Update shouldRepaint method
-  - [ ] SSHOTER-010.3: Optimize entity-painter relationship
-    - [ ] Create AsteroidController for animation logic
-    - [ ] Move rotation logic to controller
-    - [ ] Update widget to use controller
+  - [x] SSHOTER-010.3: Optimize entity-painter relationship
+    - [x] Create AsteroidController for animation logic
+    - [x] Move rotation logic to controller
+    - [x] Update widget to use controller
 
 - [ ] SSHOTER-011: Analyze and optimize bonus_item entity-painter relationship
 - [ ] SSHOTER-012: Analyze and optimize projectile entity-painter relationship
