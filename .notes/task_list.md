@@ -103,7 +103,22 @@
     - [x] Game object painters
   - [x] Add documentation comments
 
-- [ ] SSHOTER-010: Analyze and optimize asteroid entity-painter relationship
+- [x] SSHOTER-010: Analyze and optimize asteroid entity-painter relationship
+  - [x] SSHOTER-010.1: Create asteroid visual configuration
+    - [x] Create AsteroidVisualConfig class
+    - [x] Extract color constants
+    - [x] Extract size and shape constants
+    - [x] Extract damage effect constants
+  - [ ] SSHOTER-010.2: Update AsteroidPainter to use CachedGamePainter
+    - [ ] Extend CachedGamePainter
+    - [ ] Implement path caching
+    - [ ] Implement shader caching
+    - [ ] Update damage effects to use caching
+  - [ ] SSHOTER-010.3: Optimize entity-painter relationship
+    - [ ] Create AsteroidController for animation logic
+    - [ ] Move rotation logic to controller
+    - [ ] Update widget to use controller
+
 - [ ] SSHOTER-011: Analyze and optimize bonus_item entity-painter relationship
 - [ ] SSHOTER-012: Analyze and optimize projectile entity-painter relationship
 - [ ] SSHOTER-013: Create shared interfaces for entity-painter relationships
