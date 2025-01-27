@@ -82,7 +82,9 @@
         - [x] Create energy circuit configuration
         - [x] Create core configuration
         - [x] Create health bar configuration
-      - [ ] SSHOTER-002.3.4: Implement caching for complex paths and gradients
+      - [x] SSHOTER-002.3.4: Implement caching for complex paths and gradients
+        - [x] Create PainterCacheMixin
+        - [x] Create CachedGamePainter base class
       - [ ] SSHOTER-002.3.5: Extract magic numbers to constants
 
 - [ ] SSHOTER-003: Review and optimize widget exports in game_objects.dart barrel file
