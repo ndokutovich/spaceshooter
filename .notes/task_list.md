@@ -128,10 +128,10 @@
     - [x] Extend CachedGamePainter
     - [x] Implement caching for paths and paints
     - [x] Update shouldRepaint method
-  - [ ] SSHOTER-011.3: Optimize entity-painter relationship
-    - [ ] Create BonusController for animation logic
-    - [ ] Move rotation logic to controller
-    - [ ] Update widget to use controller
+  - [x] SSHOTER-011.3: Optimize entity-painter relationship
+    - [x] Create BonusController for animation logic
+    - [x] Move rotation logic to controller
+    - [x] Update widget to use controller
 
 - [ ] SSHOTER-012: Analyze and optimize projectile entity-painter relationship
 - [ ] SSHOTER-013: Create shared interfaces for entity-painter relationships
