@@ -118,7 +118,21 @@
     - [x] Move rotation logic to controller
     - [x] Update widget to use controller
 
-- [ ] SSHOTER-011: Analyze and optimize bonus_item entity-painter relationship
+- [x] SSHOTER-011: Analyze and optimize bonus_item entity-painter relationship
+  - [x] SSHOTER-011.1: Create bonus item visual configuration
+    - [x] Create BonusVisualConfig class
+    - [x] Extract color constants
+    - [x] Extract size and glow constants
+    - [x] Extract sparkle effect constants
+  - [ ] SSHOTER-011.2: Update BonusPainter to use CachedGamePainter
+    - [ ] Extend CachedGamePainter
+    - [ ] Implement caching for paths and paints
+    - [ ] Update shouldRepaint method
+  - [ ] SSHOTER-011.3: Optimize entity-painter relationship
+    - [ ] Create BonusController for animation logic
+    - [ ] Move rotation logic to controller
+    - [ ] Update widget to use controller
+
 - [ ] SSHOTER-012: Analyze and optimize projectile entity-painter relationship
 - [ ] SSHOTER-013: Create shared interfaces for entity-painter relationships
 - [ ] SSHOTER-021: Review and optimize collision utils organization
