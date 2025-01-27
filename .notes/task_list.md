@@ -64,8 +64,8 @@
   - Subtasks:
     - [x] SSHOTER-002.1: Create base painter class for game objects
     - [x] SSHOTER-002.2: Update barrel file exports
-    - [?] SSHOTER-002.3: Refactor boss_widget.dart (postponed)
-      - [ ] SSHOTER-002.3.1: Extract common painting utilities to BaseGamePainter
+    - [x] SSHOTER-002.3: Refactor boss_widget.dart (postponed)
+      - [x] SSHOTER-002.3.1: Extract common painting utilities to BaseGamePainter
       - [ ] SSHOTER-002.3.2: Split BossPainter into component painters
       - [ ] SSHOTER-002.3.3: Create configuration objects for visual properties
       - [ ] SSHOTER-002.3.4: Implement caching for complex paths and gradients

@@ -91,4 +91,25 @@ abstract class BaseGamePainter extends CustomPainter {
       enableGlow != oldDelegate.enableGlow ||
       glowIntensity != oldDelegate.glowIntensity ||
       glowStyle != oldDelegate.glowStyle;
+
+  // Add the drawEnergyCircuit method
+  static void drawEnergyCircuit(
+      Canvas canvas, Offset start, Offset end, Color color) {
+    final circuitPaint = Paint()
+      ..color = color
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2
+      ..maskFilter = const MaskFilter.blur(BlurStyle.outer, 2);
+
+    canvas.drawLine(start, end, circuitPaint);
+
+    // Draw energy nodes at endpoints
+    final nodePaint = Paint()
+      ..color = color
+      ..style = PaintingStyle.fill
+      ..maskFilter = const MaskFilter.blur(BlurStyle.outer, 4);
+
+    canvas.drawCircle(start, 3, nodePaint);
+    canvas.drawCircle(end, 3, nodePaint);
+  }
 }

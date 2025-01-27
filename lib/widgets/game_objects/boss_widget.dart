@@ -38,26 +38,6 @@ class BossPainter extends CustomPainter {
     required this.isAiming,
   });
 
-  void _drawEnergyCircuit(
-      Canvas canvas, Offset start, Offset end, Color color) {
-    final circuitPaint = Paint()
-      ..color = color
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 2
-      ..maskFilter = const MaskFilter.blur(BlurStyle.outer, 2);
-
-    canvas.drawLine(start, end, circuitPaint);
-
-    // Draw energy nodes at endpoints
-    final nodePaint = Paint()
-      ..color = color
-      ..style = PaintingStyle.fill
-      ..maskFilter = const MaskFilter.blur(BlurStyle.outer, 4);
-
-    canvas.drawCircle(start, 3, nodePaint);
-    canvas.drawCircle(end, 3, nodePaint);
-  }
-
   @override
   void paint(Canvas canvas, Size size) {
     final center = Offset(size.width / 2, size.height / 2);
@@ -419,13 +399,13 @@ class BossPainter extends CustomPainter {
         isAiming ? Colors.red.shade300 : Colors.purple.shade300;
 
     // Left side circuits
-    _drawEnergyCircuit(
+    BaseGamePainter.drawEnergyCircuit(
       canvas,
       Offset(center.dx - 60, center.dy - 20),
       Offset(center.dx - 90, center.dy + 25),
       circuitColor,
     );
-    _drawEnergyCircuit(
+    BaseGamePainter.drawEnergyCircuit(
       canvas,
       Offset(center.dx - 40, center.dy),
       Offset(center.dx - 85, center.dy + 30),
@@ -433,13 +413,13 @@ class BossPainter extends CustomPainter {
     );
 
     // Right side circuits
-    _drawEnergyCircuit(
+    BaseGamePainter.drawEnergyCircuit(
       canvas,
       Offset(center.dx + 60, center.dy - 20),
       Offset(center.dx + 90, center.dy + 25),
       circuitColor,
     );
-    _drawEnergyCircuit(
+    BaseGamePainter.drawEnergyCircuit(
       canvas,
       Offset(center.dx + 40, center.dy),
       Offset(center.dx + 85, center.dy + 30),
@@ -447,13 +427,13 @@ class BossPainter extends CustomPainter {
     );
 
     // Center circuits
-    _drawEnergyCircuit(
+    BaseGamePainter.drawEnergyCircuit(
       canvas,
       Offset(center.dx - 20, center.dy),
       Offset(center.dx, center.dy - 20),
       circuitColor,
     );
-    _drawEnergyCircuit(
+    BaseGamePainter.drawEnergyCircuit(
       canvas,
       Offset(center.dx + 20, center.dy),
       Offset(center.dx, center.dy - 20),
