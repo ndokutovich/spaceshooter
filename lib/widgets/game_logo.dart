@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
-import '../utils/constants/ui_constants.dart';
 import '../utils/constants/style_constants.dart';
 import '../utils/constants/animation_constants.dart';
 import '../utils/constants/game_constants.dart';

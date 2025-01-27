@@ -13,4 +13,4 @@ class PlayerConstants {
   static const double projectileSpeed = 10.0;
   static const double novaAngleStep = 45.0;
   static const int initialNovaBlasts = 3;
-} 
+}

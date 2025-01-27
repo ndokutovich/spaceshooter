@@ -20,4 +20,4 @@ class EnemyConstants {
   static const double bossNovaProjectileSpeedMultiplier = 0.8;
   static const double bossNovaAngleStep = 30.0;
   static const int bossNovaProjectileCount = 12;
-} 
+}
