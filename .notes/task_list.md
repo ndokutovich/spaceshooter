@@ -124,10 +124,10 @@
     - [x] Extract color constants
     - [x] Extract size and glow constants
     - [x] Extract sparkle effect constants
-  - [ ] SSHOTER-011.2: Update BonusPainter to use CachedGamePainter
-    - [ ] Extend CachedGamePainter
-    - [ ] Implement caching for paths and paints
-    - [ ] Update shouldRepaint method
+  - [x] SSHOTER-011.2: Update BonusPainter to use CachedGamePainter
+    - [x] Extend CachedGamePainter
+    - [x] Implement caching for paths and paints
+    - [x] Update shouldRepaint method
   - [ ] SSHOTER-011.3: Optimize entity-painter relationship
     - [ ] Create BonusController for animation logic
     - [ ] Move rotation logic to controller
