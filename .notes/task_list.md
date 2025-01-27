@@ -85,7 +85,15 @@
       - [x] SSHOTER-002.3.4: Implement caching for complex paths and gradients
         - [x] Create PainterCacheMixin
         - [x] Create CachedGamePainter base class
-      - [ ] SSHOTER-002.3.5: Extract magic numbers to constants
+      - [x] SSHOTER-002.3.5: Extract magic numbers to constants
+        - [x] Create BossPainterConstants class
+        - [x] Extract shield constants
+        - [x] Extract body constants
+        - [x] Extract launch pad constants
+        - [x] Extract energy circuit constants
+        - [x] Extract core constants
+        - [x] Extract health bar constants
+        - [x] Extract shared constants (gradients, opacity, glow, animation)
 
 - [ ] SSHOTER-003: Review and optimize widget exports in game_objects.dart barrel file
 - [ ] SSHOTER-010: Analyze and optimize asteroid entity-painter relationship
