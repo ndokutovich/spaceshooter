@@ -110,7 +110,7 @@
     - [x] Extract size and shape constants
     - [x] Extract damage effect constants
   - [ ] SSHOTER-010.2: Update AsteroidPainter to use CachedGamePainter
-    - [ ] Extend CachedGamePainter
+    - [x] Extend CachedGamePainter
     - [ ] Implement path caching
     - [ ] Implement shader caching
     - [ ] Update damage effects to use caching
