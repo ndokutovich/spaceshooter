@@ -74,7 +74,14 @@
         - [x] Create BossCorePainter
         - [x] Create BossHealthBarPainter
         - [x] Create barrel file for component exports
-      - [ ] SSHOTER-002.3.3: Create configuration objects for visual properties
+      - [x] SSHOTER-002.3.3: Create configuration objects for visual properties
+        - [x] Create base configuration class
+        - [x] Create shield configuration
+        - [x] Create body configuration
+        - [x] Create launch pad configuration
+        - [x] Create energy circuit configuration
+        - [x] Create core configuration
+        - [x] Create health bar configuration
       - [ ] SSHOTER-002.3.4: Implement caching for complex paths and gradients
       - [ ] SSHOTER-002.3.5: Extract magic numbers to constants
 
