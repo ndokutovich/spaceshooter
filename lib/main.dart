@@ -6,16 +6,18 @@ import 'package:window_size/window_size.dart';
 import 'dart:html' if (dart.library.io) 'dart:io' as device;
 
 import 'screens/splash_screen.dart';
-import 'utils/app_constants.dart';
+import 'utils/constants/ui_constants.dart';
+import 'utils/constants/style_constants.dart';
+import 'utils/constants/game_constants.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
 
   // Desktop window settings
   if (!kIsWeb && (Platform.isMacOS || Platform.isWindows || Platform.isLinux)) {
-    setWindowTitle(AppConstants.appTitle);
+    setWindowTitle(UIConstants.appTitle);
     setWindowMinSize(
-        const Size(AppConstants.minWindowWidth, AppConstants.minWindowHeight));
+        const Size(UIConstants.minWindowWidth, UIConstants.minWindowHeight));
     setWindowMaxSize(Size.infinite);
     getCurrentScreen().then((screen) {
       if (screen != null) {
@@ -43,10 +45,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: AppConstants.appTitle,
+      title: UIConstants.appTitle,
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: AppConstants.primaryColor),
+        colorScheme:
+            ColorScheme.fromSeed(seedColor: StyleConstants.primaryColor),
         useMaterial3: true,
       ),
       home: const SplashScreen(),

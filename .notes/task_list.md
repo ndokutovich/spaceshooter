@@ -57,7 +57,7 @@
         - [x] misc_tab.dart
         - [x] game_screen.dart
       - [x] Test all changes
-    - [ ] SSHOTER-020.4: Remove old constant files
+    - [x] SSHOTER-020.4: Remove old constant files
 
 ## Pending Tasks
 - [~] SSHOTER-002: Analyze game_objects folder structure and organization
