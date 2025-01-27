@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 class UIConstants {
   // Window settings
   static const String appTitle = 'Space Shooter';
@@ -20,6 +22,13 @@ class UIConstants {
   static const String fireText = 'Fire';
   static const String novaText = 'Nova';
   static const String livesText = 'Lives: ';
+  static const String countdownText1 = '1';
+  static const String countdownText2 = '2';
+  static const String countdownText3 = '3';
+  static const String countdownTextGo = 'GO!';
+  static const String pauseButtonText = 'Pause';
+  static const String pausedText = 'Paused';
+  static const String resumeText = 'Resume';
 
   // UI Dimensions
   static const double titleFontSize = 48.0;
@@ -33,6 +42,7 @@ class UIConstants {
   static const double uiPadding = 20.0;
   static const double uiElementSpacing = 8.0;
   static const double uiPaddingMultiplier = 5.0;
+  static const double countdownTextSize = 64.0;
 
   // High Scores UI
   static const double highScoresTitleSize = 28.0;
@@ -43,4 +53,19 @@ class UIConstants {
   static const double highScoresColumnSpacing = 40.0;
   static const double highScoresBackButtonSize = 40.0;
   static const double highScoresBackButtonFontSize = 24.0;
+
+  // Durations
+  static const Duration countdownDuration = Duration(seconds: 1);
+  static const Duration gameLoopDuration = Duration(milliseconds: 16);
+  static const Duration invulnerabilityDuration = Duration(seconds: 2);
+
+  // Colors
+  static const Color textColor = Colors.white;
+  static const Color playerColor = Colors.blue;
+  static const Color enemyColor = Colors.red;
+  static const Color projectileColor = Colors.yellow;
+  static const Color borderColor = Colors.grey;
+
+  // Add missing constants
+  static const int scoreIncrement = 100;
 }

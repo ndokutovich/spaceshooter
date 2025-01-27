@@ -45,7 +45,7 @@
     - [~] SSHOTER-020.3: Update imports in all files
       - [x] Remove duplicate constants between files
       - [x] Search for constant usages
-      - [~] Update import statements
+      - [x] Update import statements
         - [x] main_menu.dart
         - [x] options_screen.dart
         - [x] high_scores_screen.dart
@@ -55,8 +55,8 @@
         - [x] game_logo.dart
         - [x] controls_tab.dart
         - [x] misc_tab.dart
-        - [ ] game_screen.dart
-      - [ ] Test all changes
+        - [x] game_screen.dart
+      - [x] Test all changes
     - [ ] SSHOTER-020.4: Remove old constant files
 
 ## Pending Tasks
