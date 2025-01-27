@@ -109,11 +109,10 @@
     - [x] Extract color constants
     - [x] Extract size and shape constants
     - [x] Extract damage effect constants
-  - [ ] SSHOTER-010.2: Update AsteroidPainter to use CachedGamePainter
+  - [x] SSHOTER-010.2: Update AsteroidPainter to use CachedGamePainter
     - [x] Extend CachedGamePainter
-    - [ ] Implement path caching
-    - [ ] Implement shader caching
-    - [ ] Update damage effects to use caching
+    - [x] Implement caching for paths and paints
+    - [x] Update shouldRepaint method
   - [ ] SSHOTER-010.3: Optimize entity-painter relationship
     - [ ] Create AsteroidController for animation logic
     - [ ] Move rotation logic to controller
