@@ -194,6 +194,26 @@
 - [ ] SSHOTER-070: Implement consistent error handling
 - [ ] SSHOTER-071: Review and fix any circular dependencies
 - [ ] SSHOTER-072: Implement consistent naming conventions
+- [ ] SSHOTER-073: Remove code duplication and consolidate implementations
+  - [ ] SSHOTER-073.1: Consolidate constants
+    - [ ] Analyze and map all constants from different files
+    - [ ] Create unified constants structure
+    - [ ] Migrate old constants to new structure
+    - [ ] Remove deprecated constant files
+  - [ ] SSHOTER-073.2: Unify player implementation
+    - [ ] Analyze current player-related implementations
+    - [ ] Design unified player architecture
+    - [ ] Consolidate player logic into single responsibility classes
+    - [ ] Update all references to use new player implementation
+  - [ ] SSHOTER-073.3: Consolidate movement and control logic
+    - [ ] Extract common movement logic
+    - [ ] Create unified input handling system
+    - [ ] Implement movement controller
+    - [ ] Update all components to use new movement system
+  - [ ] SSHOTER-073.4: Standardize game constants usage
+    - [ ] Audit all game constant references
+    - [ ] Create migration plan
+    - [ ] Update all components to use standardized constants
 
 ## Task Status Legend
 - [ ] Not Started
