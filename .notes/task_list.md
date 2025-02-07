@@ -180,6 +180,10 @@
   - [x] SSHOTER-053.2: Add LICENSE file
   - [x] SSHOTER-053.3: Create CONTRIBUTING.md
   - [x] SSHOTER-053.4: Add code of conduct
+  - [x] SSHOTER-054: Implement SVG assets for game objects
+    - [x] SSHOTER-054.1: Create player ship SVG
+    - [x] SSHOTER-054.2: Create PlayerShipWidget
+    - [x] SSHOTER-054.3: Add SVG support to project
 
 ## Performance & Optimization
 - [ ] SSHOTER-060: Review and optimize game loop performance
