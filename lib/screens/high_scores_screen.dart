@@ -32,7 +32,7 @@ class HighScoresScreen extends StatelessWidget {
             color: StyleConstants.textColor,
             fontSize: UIConstants.highScoresTitleSize,
             fontWeight: FontWeight.bold,
-            shadows: [
+            shadows: const [
               Shadow(
                 color: StyleConstants.playerColor,
                 blurRadius: StyleConstants.logoBlurRadius,
@@ -87,7 +87,7 @@ class HighScoresScreen extends StatelessWidget {
                   ),
                   child: DataTable(
                     columnSpacing: UIConstants.highScoresColumnSpacing,
-                    columns: [
+                    columns: const [
                       DataColumn(
                         label: Text(
                           'Rank',

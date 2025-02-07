@@ -492,7 +492,7 @@ class BossPainter extends CustomPainter {
       canvas.drawCircle(center, 40 + i * 10, ringPaint);
 
       // Add small energy nodes along the rings
-      final nodeCount = 8;
+      const nodeCount = 8;
       for (var j = 0; j < nodeCount; j++) {
         final angle = j * 2 * math.pi / nodeCount;
         final nodeX = center.dx + math.cos(angle) * (40 + i * 10);

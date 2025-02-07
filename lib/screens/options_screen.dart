@@ -88,7 +88,7 @@ class _OptionsScreenState extends State<OptionsScreen> {
               color: StyleConstants.textColor,
               fontSize: StyleConstants.subtitleFontSize,
               fontWeight: FontWeight.bold,
-              shadows: [
+              shadows: const [
                 Shadow(
                   color: StyleConstants.playerColor,
                   blurRadius: 10,
@@ -106,7 +106,7 @@ class _OptionsScreenState extends State<OptionsScreen> {
             ),
           ),
           bottom: TabBar(
-            tabs: [
+            tabs: const [
               Tab(
                 child: Text(
                   OptionsConstants.controlsTabText,

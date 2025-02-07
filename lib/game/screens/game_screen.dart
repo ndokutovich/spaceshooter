@@ -8,8 +8,6 @@ import '../../widgets/menu_button.dart';
 import '../../widgets/performance_overlay.dart';
 import '../../widgets/background.dart';
 import '../../widgets/game_objects.dart';
-import '../../widgets/game_objects/boss_widget.dart';
-import '../../widgets/game_objects/bonus_painter.dart';
 import '../../widgets/round_space_button.dart' as space_buttons;
 
 import '../entities/player.dart';
