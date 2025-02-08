@@ -198,33 +198,18 @@
   - [x] SSHOTER-073.1: Consolidate constants
     - [x] Analyze and map all constants from different files
     - [x] Create unified constants structure
-    - [ ] Migrate old constants to new structure
-      - [x] SSHOTER-073.1.1: Migrate player constants
-        - [x] Update imports in affected files
-        - [x] Add deprecation warnings to old constants
-        - [x] Verify all player settings are migrated
-      - [x] SSHOTER-073.1.2: Migrate gameplay constants
-        - [x] Update imports in affected files
-        - [x] Add deprecation warnings to old constants
-        - [x] Verify all gameplay settings are migrated
-      - [ ] SSHOTER-073.1.3: Migrate UI constants
-      - [ ] SSHOTER-073.1.4: Migrate animation constants
-      - [ ] SSHOTER-073.1.5: Migrate enemy constants
-    - [ ] Remove deprecated constant files
-  - [ ] SSHOTER-073.2: Unify player implementation
-    - [ ] Analyze current player-related implementations
-    - [ ] Design unified player architecture
-    - [ ] Consolidate player logic into single responsibility classes
-    - [ ] Update all references to use new player implementation
-  - [ ] SSHOTER-073.3: Consolidate movement and control logic
-    - [ ] Extract common movement logic
-    - [ ] Create unified input handling system
-    - [ ] Implement movement controller
-    - [ ] Update all components to use new movement system
-  - [ ] SSHOTER-073.4: Standardize game constants usage
-    - [ ] Audit all game constant references
-    - [ ] Create migration plan
-    - [ ] Update all components to use standardized constants
+    - [x] SSHOTER-073.1.1: Migrate player constants
+      - [x] Update imports in affected files
+      - [x] Add deprecation warnings to old constants
+      - [x] Verify all player settings are migrated
+    - [x] SSHOTER-073.1.2: Migrate gameplay constants
+      - [x] Update imports in affected files
+      - [x] Add deprecation warnings to old constants
+      - [x] Verify all gameplay settings are migrated
+    - [x] SSHOTER-073.1.3: Migrate UI constants
+    - [ ] SSHOTER-073.1.4: Migrate animation constants
+    - [ ] SSHOTER-073.1.5: Migrate enemy constants
+    - [ ] SSHOTER-073.2 Remove deprecated constant files and unify player implementation
 
 ## Task Status Legend
 - [ ] Not Started
