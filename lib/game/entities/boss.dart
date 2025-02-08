@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 import 'enemy.dart';
-import '../utils/constants.dart';
+import '../../utils/constants/gameplay_constants.dart';
+import '../../utils/constants/enemy_constants.dart';
 
 enum BossAttackType {
   nova,
@@ -44,8 +45,8 @@ class Boss {
       final random = math.Random();
       targetPosition = Offset(
         random.nextDouble() *
-                (screenSize.width - 2 * GameConstants.playAreaPadding) +
-            GameConstants.playAreaPadding,
+                (screenSize.width - 2 * GameplayConstants.playAreaPadding) +
+            GameplayConstants.playAreaPadding,
         random.nextDouble() * screenSize.height * 0.25 + // Only in top quarter
             screenSize.height * 0.05, // Minimum distance from top
       );
@@ -64,8 +65,8 @@ class Boss {
 
     position = Offset(
       (position.dx + directionX).clamp(
-        GameConstants.playAreaPadding,
-        screenSize.width - GameConstants.playAreaPadding,
+        GameplayConstants.playAreaPadding,
+        screenSize.width - GameplayConstants.playAreaPadding,
       ),
       (position.dy + directionY).clamp(
         screenSize.height * 0.05,

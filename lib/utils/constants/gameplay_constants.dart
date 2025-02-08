@@ -19,6 +19,8 @@ class GameplayConstants {
   static const double asteroidSize = 50.0;
   static const double baseAsteroidSpeed = 1.0;
   static const double maxAsteroidSpeedVariation = 2.0;
+  static const int baseAsteroidHealth = 3;
+  static const int asteroidHealthIncreaseLevel = 2;
 
   // Projectile settings
   static const double projectileWidth = 4.0;

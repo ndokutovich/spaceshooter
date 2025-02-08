@@ -14,6 +14,8 @@
     - [x] SSHOTER-001.1: Create configurable version of game controls in lib/widgets/controls.dart
     - [x] SSHOTER-001.2: Update all references to use new controls
     - [x] SSHOTER-001.3: Remove duplicate controls file
+- [x] Refactor constants to new structure (2024-02-08)
+- [x] Set up basic game structure
 
 - [x] SSHOTER-080: Add SVG support for player ship view
   - [x] SSHOTER-080.1: Create SVG-capable ShipSkin widget

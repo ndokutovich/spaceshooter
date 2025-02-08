@@ -36,8 +36,14 @@ class UIConstants {
   static const double menuButtonHeight = 60.0;
   static const double menuButtonSpacing = 25.0;
   static const double menuButtonRadius = 30.0;
-  static const double actionButtonSize = 40.0;
+  static const double actionButtonSize = 70.0;
   static const double actionButtonSpacing = 15.0;
+  static const double novaCounterSize = 30.0;
+  static const double novaCounterDisplaySize = 40.0;
+  static const double menuButtonWidthRatio = 0.35;
+  static const double menuButtonHeightRatio = 0.08;
+  static const double menuButtonSpacingRatio = 0.02;
+  static const double overlayOpacity = 0.54;
   static const double volumeSliderWidth = 300.0;
   static const double uiPadding = 20.0;
   static const double uiElementSpacing = 8.0;
@@ -68,4 +74,10 @@ class UIConstants {
 
   // Add missing constants
   static const int scoreIncrement = 100;
+
+  // Text Sizes
+  static const double subtitleFontSize = 24.0;
+  static const double bodyFontSize = 16.0;
+  static const double scoreTextSize = 20.0;
+  static const double livesTextSize = 20.0;
 }
