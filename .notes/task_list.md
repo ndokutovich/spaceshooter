@@ -195,21 +195,13 @@
 - [ ] SSHOTER-071: Review and fix any circular dependencies
 - [ ] SSHOTER-072: Implement consistent naming conventions
 - [ ] SSHOTER-073: Remove code duplication and consolidate implementations
-  - [x] SSHOTER-073.1: Consolidate constants
-    - [x] Analyze and map all constants from different files
-    - [x] Create unified constants structure
-    - [x] SSHOTER-073.1.1: Migrate player constants
-      - [x] Update imports in affected files
-      - [x] Add deprecation warnings to old constants
-      - [x] Verify all player settings are migrated
-    - [x] SSHOTER-073.1.2: Migrate gameplay constants
-      - [x] Update imports in affected files
-      - [x] Add deprecation warnings to old constants
-      - [x] Verify all gameplay settings are migrated
-    - [x] SSHOTER-073.1.3: Migrate UI constants
-    - [ ] SSHOTER-073.1.4: Migrate animation constants
-    - [ ] SSHOTER-073.1.5: Migrate enemy constants
-    - [ ] SSHOTER-073.2 Remove deprecated constant files and unify player implementation
+  - [x] SSHOTER-073.1 Migrate constants to new configuration system
+    - [x] SSHOTER-073.1.1 Migrate player constants
+    - [x] SSHOTER-073.1.2 Migrate gameplay constants
+    - [x] SSHOTER-073.1.3 Migrate UI constants
+    - [x] SSHOTER-073.1.4 Migrate animation constants
+    - [ ] SSHOTER-073.1.5 Migrate enemy constants
+  - [ ] SSHOTER-073.2 Remove deprecated constant files and unify player implementation
 
 ## Task Status Legend
 - [ ] Not Started
