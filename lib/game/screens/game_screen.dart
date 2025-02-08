@@ -10,15 +10,17 @@ import '../../widgets/background.dart';
 import '../../widgets/game_objects.dart';
 import '../../widgets/round_space_button.dart' as space_buttons;
 
-import '../entities/player.dart';
+import '../entities/player_entity.dart';
 import '../entities/enemy.dart';
 import '../entities/projectile.dart';
 import '../entities/asteroid.dart';
 import '../entities/boss.dart';
 import '../entities/bonus_item.dart';
 
-import '../utils/constants.dart' as old_game_constants;
-import '../utils/painters.dart' as game_painters;
+import '../controllers/player_controller.dart';
+import '../views/player_view.dart';
+
+import '../../utils/constants/game/config.dart';
 import '../../utils/high_scores.dart';
 import '../../utils/transitions.dart';
 import '../../utils/collision_utils.dart';
@@ -34,7 +36,8 @@ class GameScreen extends StatefulWidget {
 }
 
 class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
-  final Player _player = Player();
+  late final PlayerEntity _player;
+  late final PlayerController _playerController;
   final List<Enemy> _enemies = [];
   final List<Projectile> _projectiles = [];
   final List<Asteroid> _asteroids = [];
@@ -56,6 +59,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
   int _damageMultiplier = 1;
   Boss? _boss;
   bool _isBossFight = false;
+  final GameConfig _config = const GameConfig();
 
   void _startCountdown({bool isResume = false}) {
     setState(() {
@@ -110,51 +114,38 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
+    _player = PlayerEntity(config: _config.player);
+    _playerController = PlayerController(player: _player);
     HardwareKeyboard.instance.addHandler(_handleKeyEvent);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _screenSize = MediaQuery.of(context).size;
       _player.position = Offset(
-        (_screenSize.width -
-                    2 * old_game_constants.GameConstants.playAreaPadding) /
-                2 +
-            old_game_constants.GameConstants.playAreaPadding,
-        _screenSize.height *
-            old_game_constants.GameConstants.playerStartHeightRatio,
+        (_screenSize.width - 2 * _config.gameplay.playAreaPadding) / 2 +
+            _config.gameplay.playAreaPadding,
+        _screenSize.height * _config.player.startHeightRatio,
       );
       _startCountdown();
     });
-    _keyboardMoveTimer = Timer.periodic(UIConstants.gameLoopDuration, (_) {
-      _handleKeyboardMovement();
-    });
+    _keyboardMoveTimer = Timer.periodic(
+      Duration(milliseconds: 1000 ~/ _config.gameplay.targetFPS),
+      (_) {
+        _playerController.handleKeyboardMovement(_screenSize);
+      },
+    );
   }
 
   void _startGame() {
     _spawnEnemies();
     _spawnAsteroids();
     _gameLoop = Timer.periodic(
-      UIConstants.gameLoopDuration,
+      Duration(milliseconds: 1000 ~/ _config.gameplay.targetFPS),
       _update,
     );
   }
 
   bool _handleKeyEvent(KeyEvent event) {
-    if (event is KeyDownEvent) {
-      _pressedKeys.add(event.logicalKey);
-
-      if (event.logicalKey == LogicalKeyboardKey.space &&
-          !_isGameOver &&
-          !_isPaused) {
-        _fireNova();
-        return true;
-      } else if (event.logicalKey == LogicalKeyboardKey.keyF && !_isPaused) {
-        _shoot();
-      } else if (event.logicalKey == LogicalKeyboardKey.escape) {
-        _togglePause();
-      }
-    } else if (event is KeyUpEvent) {
-      _pressedKeys.remove(event.logicalKey);
-    }
-    return false;
+    if (_isGameOver || _isPaused) return false;
+    return _playerController.handleKeyEvent(event);
   }
 
   void _togglePause() {
@@ -174,89 +165,41 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
 
   void _resumeGame() {
     _gameLoop = Timer.periodic(
-      UIConstants.gameLoopDuration,
+      Duration(milliseconds: 1000 ~/ _config.gameplay.targetFPS),
       _update,
     );
-    _keyboardMoveTimer = Timer.periodic(UIConstants.gameLoopDuration, (_) {
-      _handleKeyboardMovement();
-    });
-  }
-
-  void _handleKeyboardMovement() {
-    if (_pressedKeys.isEmpty || _isPaused) return;
-
-    double dx = 0;
-    double dy = 0;
-
-    if (_pressedKeys.contains(LogicalKeyboardKey.keyW) ||
-        _pressedKeys.contains(LogicalKeyboardKey.arrowUp)) {
-      dy -= old_game_constants.GameConstants.playerSpeed;
-    }
-    if (_pressedKeys.contains(LogicalKeyboardKey.keyS) ||
-        _pressedKeys.contains(LogicalKeyboardKey.arrowDown)) {
-      dy += old_game_constants.GameConstants.playerSpeed;
-    }
-    if (_pressedKeys.contains(LogicalKeyboardKey.keyA) ||
-        _pressedKeys.contains(LogicalKeyboardKey.arrowLeft)) {
-      dx -= old_game_constants.GameConstants.playerSpeed;
-    }
-    if (_pressedKeys.contains(LogicalKeyboardKey.keyD) ||
-        _pressedKeys.contains(LogicalKeyboardKey.arrowRight)) {
-      dx += old_game_constants.GameConstants.playerSpeed;
-    }
-
-    if (dx != 0 || dy != 0) {
-      setState(() {
-        _player.move(Offset(dx, dy), _screenSize);
-      });
-    }
+    _keyboardMoveTimer = Timer.periodic(
+      Duration(milliseconds: 1000 ~/ _config.gameplay.targetFPS),
+      (_) {
+        _playerController.handleKeyboardMovement(_screenSize);
+      },
+    );
   }
 
   void _handleJoystickMove(Offset movement) {
     if (_isPaused) return;
     setState(() {
-      final newX = _player.position.dx +
-          movement.dx * old_game_constants.GameConstants.playerSpeed;
-      final newY = _player.position.dy +
-          movement.dy * old_game_constants.GameConstants.playerSpeed;
-
-      // Constrain to play area
-      _player.position = Offset(
-        newX.clamp(
-          old_game_constants.GameConstants.playAreaPadding +
-              old_game_constants.GameConstants.playerSize / 2,
-          _screenSize.width -
-              old_game_constants.GameConstants.playAreaPadding -
-              old_game_constants.GameConstants.playerSize / 2,
-        ),
-        newY.clamp(
-          old_game_constants.GameConstants.playerSize / 2,
-          _screenSize.height - old_game_constants.GameConstants.playerSize / 2,
-        ),
-      );
+      _player.move(movement * _config.player.speed, _screenSize);
     });
   }
 
   void _spawnEnemies() {
     _enemies.clear();
     final random = math.Random();
-    for (int i = 0; i < old_game_constants.GameConstants.enemyCount; i++) {
+    for (int i = 0; i < _config.gameplay.asteroids.count; i++) {
       _enemies.add(
         Enemy(
           position: Offset(
-            old_game_constants.GameConstants.playAreaPadding +
+            _config.gameplay.playAreaPadding +
                 random.nextDouble() *
-                    (_screenSize.width -
-                        2 * old_game_constants.GameConstants.playAreaPadding),
+                    (_screenSize.width - 2 * _config.gameplay.playAreaPadding),
             random.nextDouble() *
                 _screenSize.height *
-                old_game_constants.GameConstants.enemySpawnHeightRatio,
+                _config.player.startHeightRatio,
           ),
-          speed: old_game_constants.GameConstants.baseEnemySpeed +
-              _level * old_game_constants.GameConstants.enemyLevelSpeedIncrease,
-          health: old_game_constants.GameConstants.baseEnemyHealth +
-              (_level ~/
-                  old_game_constants.GameConstants.enemyHealthIncreaseLevel),
+          speed: _config.gameplay.difficulty.levelSpeedIncrease * _level,
+          health: 1 +
+              (_level - 1) ~/ _config.gameplay.difficulty.healthIncreaseLevel,
         ),
       );
     }
@@ -265,163 +208,55 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
   void _spawnAsteroids() {
     _asteroids.clear();
     final random = math.Random();
-    for (int i = 0; i < old_game_constants.GameConstants.asteroidCount; i++) {
+    for (int i = 0; i < _config.gameplay.asteroids.count; i++) {
       _asteroids.add(
         Asteroid(
           position: Offset(
-            old_game_constants.GameConstants.playAreaPadding +
+            _config.gameplay.playAreaPadding +
                 random.nextDouble() *
-                    (_screenSize.width -
-                        2 * old_game_constants.GameConstants.playAreaPadding),
+                    (_screenSize.width - 2 * _config.gameplay.playAreaPadding),
             random.nextDouble() *
                 _screenSize.height *
-                old_game_constants.GameConstants.enemySpawnHeightRatio,
+                _config.player.startHeightRatio,
           ),
-          speed: old_game_constants.GameConstants.baseAsteroidSpeed +
+          speed: _config.gameplay.asteroids.baseSpeed +
               random.nextDouble() *
-                  old_game_constants.GameConstants.maxAsteroidSpeedVariation,
-          health: old_game_constants.GameConstants.baseAsteroidHealth +
-              (_level ~/
-                  old_game_constants.GameConstants.asteroidHealthIncreaseLevel),
+                  _config.gameplay.asteroids.maxSpeedVariation,
         ),
       );
-    }
-  }
-
-  void _shoot() {
-    if (_isPaused || _isGameOver || _isCountingDown) return;
-    HapticFeedback.mediumImpact();
-    setState(() {
-      _projectiles.add(
-        Projectile(
-          position: _player.position
-              .translate(0, -old_game_constants.GameConstants.projectileOffset),
-          speed: old_game_constants.GameConstants.projectileSpeed,
-          isEnemy: false,
-          angle: -90,
-          damage: _damageMultiplier,
-        ),
-      );
-    });
-  }
-
-  void _fireNova() {
-    if (_isPaused) return;
-    if (_novaBlastsRemaining > 0) {
-      HapticFeedback.heavyImpact();
-      setState(() {
-        for (double angle = 0; angle < 360; angle += 45) {
-          _projectiles.add(
-            Projectile(
-              position: _player.position,
-              speed: old_game_constants.GameConstants.projectileSpeed,
-              isEnemy: false,
-              angle: angle,
-            ),
-          );
-        }
-        _novaBlastsRemaining--;
-      });
-    }
-  }
-
-  void _handleCollision() {
-    if (!_isInvulnerable) {
-      setState(() {
-        _lives--;
-        if (_lives <= 0) {
-          _gameOver();
-        } else {
-          _isInvulnerable = true;
-          Future.delayed(UIConstants.invulnerabilityDuration, () {
-            if (mounted) {
-              setState(() {
-                _isInvulnerable = false;
-              });
-            }
-          });
-        }
-      });
     }
   }
 
   void _update(Timer timer) {
-    if (_isGameOver || _isPaused || _isCountingDown) return;
+    if (_isPaused) return;
 
-    // Batch all updates before setState
-    for (var projectile in _projectiles) {
-      projectile.update();
-    }
-
-    for (var enemy in _enemies) {
-      enemy.update(_screenSize);
-    }
-
-    for (var asteroid in _asteroids) {
-      asteroid.update(_screenSize);
-    }
-
-    // Update bonus items rotation - avoid object creation in loop
-    for (int i = 0; i < _bonusItems.length; i++) {
-      final bonus = _bonusItems[i];
-      _bonusItems[i] = BonusItem(
-        type: bonus.type,
-        position: bonus.position,
-        rotation:
-            bonus.rotation + old_game_constants.GameConstants.bonusRotationStep,
-        size: bonus.size,
-      );
-    }
-
-    // Update boss if present
-    if (_boss != null) {
-      _boss!.update(_screenSize, _player.position);
-
-      // Boss attack logic
-      if (_boss!.canAttack() && !_boss!.isAiming()) {
-        _boss!.startAiming();
-        Future.delayed(Boss.aimDuration, () {
-          if (_boss != null && mounted) {
-            final attackType = _boss!.chooseAttack();
-            if (attackType == BossAttackType.nova) {
-              _fireBossNova();
-            } else {
-              // Spawn ships in a single setState
-              setState(() {
-                _enemies.addAll(_boss!.spawnShips(_screenSize));
-              });
-            }
-          }
-        });
-      }
-    }
-
-    // Remove off-screen projectiles using removeWhere once
-    _projectiles.removeWhere((projectile) =>
-        projectile.position.dy < 0 ||
-        projectile.position.dy > _screenSize.height ||
-        projectile.position.dx <
-            old_game_constants.GameConstants.playAreaPadding ||
-        projectile.position.dx >
-            _screenSize.width -
-                old_game_constants.GameConstants.playAreaPadding);
-
-    // Check collisions
-    _checkCollisions();
-
-    // Single setState for all updates
     setState(() {
-      // Level completion check
-      if (_enemies.isEmpty && _asteroids.isEmpty) {
-        if (_boss == null && !_isBossFight) {
-          _startBossFight();
-        } else if (_boss == null && _isBossFight) {
-          _level++;
-          _isBossFight = false;
-          _spawnEnemies();
-          _spawnAsteroids();
-        }
+      // Update player
+      _playerController.update(_screenSize, 1.0 / _config.gameplay.targetFPS);
+
+      // Update projectiles
+      for (var projectile in _projectiles) {
+        projectile.update();
       }
+      _projectiles.removeWhere((projectile) =>
+          projectile.position.dy < 0 ||
+          projectile.position.dy > _screenSize.height ||
+          projectile.position.dx < _config.gameplay.playAreaPadding ||
+          projectile.position.dx >
+              _screenSize.width - _config.gameplay.playAreaPadding);
+
+      // Update enemies
+      for (var enemy in _enemies) {
+        enemy.update(_screenSize);
+      }
+
+      // Update asteroids
+      for (var asteroid in _asteroids) {
+        asteroid.update(_screenSize);
+      }
+
+      // Check collisions
+      _checkCollisions();
     });
   }
 
@@ -675,36 +510,29 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
 
           // Play area borders
           Positioned(
-            left: old_game_constants.GameConstants.playAreaPadding,
+            left: _config.gameplay.playAreaPadding,
             top: 0,
             bottom: 0,
             child: Container(
-              width: old_game_constants.GameConstants.borderWidth,
+              width: _config.gameplay.borderWidth,
               color: UIConstants.borderColor.withOpacity(0.3),
             ),
           ),
           Positioned(
-            right: old_game_constants.GameConstants.playAreaPadding,
+            right: _config.gameplay.playAreaPadding,
             top: 0,
             bottom: 0,
             child: Container(
-              width: old_game_constants.GameConstants.borderWidth,
+              width: _config.gameplay.borderWidth,
               color: UIConstants.borderColor.withOpacity(0.3),
             ),
           ),
 
           // Player
           Positioned(
-            left: _player.position.dx -
-                old_game_constants.GameConstants.playerSize / 2,
-            top: _player.position.dy -
-                old_game_constants.GameConstants.playerSize / 2,
-            child: Opacity(
-              opacity: _isInvulnerable
-                  ? old_game_constants.GameConstants.invulnerabilityOpacity
-                  : 1.0,
-              child: const PlayerWidget(),
-            ),
+            left: _player.position.dx - _config.player.size / 2,
+            top: _player.position.dy - _config.player.size / 2,
+            child: PlayerView(player: _player),
           ),
 
           // Game objects

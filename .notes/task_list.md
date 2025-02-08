@@ -207,7 +207,10 @@
       - [x] Create PlayerEntity class
       - [x] Create PlayerController class
       - [x] Create PlayerView class
-      - [ ] Update all references to use new player implementation
+      - [~] Update all references to use new player implementation
+        - [x] Update EntityManager
+        - [x] Update InputManager
+        - [~] Update GameScreen
     - [ ] SSHOTER-073.2.3 Remove old player implementation files
 
 ## Task Status Legend
