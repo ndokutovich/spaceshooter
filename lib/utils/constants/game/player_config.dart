@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'base_config.dart';
+import 'weapon_config.dart';
+import 'nova_config.dart';
 
 /// Configuration for player settings
 class PlayerConfig extends BaseGameConfig with JsonSerializable, Validatable {
   /// Player dimensions
   final double size;
   final double startHeightRatio;
+  final double playAreaPadding;
 
   /// Movement settings
   final double speed;
@@ -44,6 +47,7 @@ class PlayerConfig extends BaseGameConfig with JsonSerializable, Validatable {
   const PlayerConfig({
     this.size = 50.0,
     this.startHeightRatio = 0.8,
+    this.playAreaPadding = 100.0,
     this.speed = 5.0,
     this.rotationSpeed = 0.1,
     this.acceleration = 0.5,
@@ -79,6 +83,7 @@ class PlayerConfig extends BaseGameConfig with JsonSerializable, Validatable {
     if (startHeightRatio <= 0 || startHeightRatio > 1) {
       errors.add('Start height ratio must be between 0 and 1');
     }
+    if (playAreaPadding < 0) errors.add('Play area padding cannot be negative');
     if (speed < 0) errors.add('Speed cannot be negative');
     if (rotationSpeed < 0) errors.add('Rotation speed cannot be negative');
     if (acceleration < 0) errors.add('Acceleration cannot be negative');
@@ -100,6 +105,7 @@ class PlayerConfig extends BaseGameConfig with JsonSerializable, Validatable {
   Map<String, dynamic> toJson() => {
         'size': size,
         'startHeightRatio': startHeightRatio,
+        'playAreaPadding': playAreaPadding,
         'speed': speed,
         'rotationSpeed': rotationSpeed,
         'acceleration': acceleration,
@@ -132,6 +138,7 @@ class PlayerConfig extends BaseGameConfig with JsonSerializable, Validatable {
   factory PlayerConfig.fromJson(Map<String, dynamic> json) => PlayerConfig(
         size: json['size'] as double,
         startHeightRatio: json['startHeightRatio'] as double,
+        playAreaPadding: json['playAreaPadding'] as double,
         speed: json['speed'] as double,
         rotationSpeed: json['rotationSpeed'] as double,
         acceleration: json['acceleration'] as double,
@@ -166,6 +173,7 @@ class PlayerConfig extends BaseGameConfig with JsonSerializable, Validatable {
   PlayerConfig copyWith({
     double? size,
     double? startHeightRatio,
+    double? playAreaPadding,
     double? speed,
     double? rotationSpeed,
     double? acceleration,
@@ -196,6 +204,7 @@ class PlayerConfig extends BaseGameConfig with JsonSerializable, Validatable {
     return PlayerConfig(
       size: size ?? this.size,
       startHeightRatio: startHeightRatio ?? this.startHeightRatio,
+      playAreaPadding: playAreaPadding ?? this.playAreaPadding,
       speed: speed ?? this.speed,
       rotationSpeed: rotationSpeed ?? this.rotationSpeed,
       acceleration: acceleration ?? this.acceleration,
@@ -236,6 +245,7 @@ class PlayerConfig extends BaseGameConfig with JsonSerializable, Validatable {
     return other is PlayerConfig &&
         other.size == size &&
         other.startHeightRatio == startHeightRatio &&
+        other.playAreaPadding == playAreaPadding &&
         other.speed == speed &&
         other.rotationSpeed == rotationSpeed &&
         other.acceleration == acceleration &&
@@ -265,36 +275,36 @@ class PlayerConfig extends BaseGameConfig with JsonSerializable, Validatable {
   }
 
   @override
-  int get hashCode => Object.hash(
-        size,
-        startHeightRatio,
-        speed,
-        rotationSpeed,
-        acceleration,
-        deceleration,
-        maxSpeed,
-        initialLives,
-        invulnerabilityDuration,
-        invulnerabilityOpacity,
-        healthRegenRate,
-        maxHealth,
-        primaryWeapon,
-        secondaryWeapon,
-        nova,
-        scoreTextSize,
-        livesIconSize,
-        livesTextSize,
-        actionButtonSize,
-        novaCounterSize,
-        novaCounterDisplaySize,
-        gameOverTextSize,
-        gameOverSpacing,
-        scoreDisplayTextSize,
-        menuButtonWidthRatio,
-        menuButtonHeightRatio,
-        menuButtonSpacingRatio,
-        overlayOpacity,
-      );
+  int get hashCode =>
+      size.hashCode ^
+      startHeightRatio.hashCode ^
+      playAreaPadding.hashCode ^
+      speed.hashCode ^
+      rotationSpeed.hashCode ^
+      acceleration.hashCode ^
+      deceleration.hashCode ^
+      maxSpeed.hashCode ^
+      initialLives.hashCode ^
+      invulnerabilityDuration.hashCode ^
+      invulnerabilityOpacity.hashCode ^
+      healthRegenRate.hashCode ^
+      maxHealth.hashCode ^
+      primaryWeapon.hashCode ^
+      secondaryWeapon.hashCode ^
+      nova.hashCode ^
+      scoreTextSize.hashCode ^
+      livesIconSize.hashCode ^
+      livesTextSize.hashCode ^
+      actionButtonSize.hashCode ^
+      novaCounterSize.hashCode ^
+      novaCounterDisplaySize.hashCode ^
+      gameOverTextSize.hashCode ^
+      gameOverSpacing.hashCode ^
+      scoreDisplayTextSize.hashCode ^
+      menuButtonWidthRatio.hashCode ^
+      menuButtonHeightRatio.hashCode ^
+      menuButtonSpacingRatio.hashCode ^
+      overlayOpacity.hashCode;
 }
 
 /// Configuration for weapon settings
