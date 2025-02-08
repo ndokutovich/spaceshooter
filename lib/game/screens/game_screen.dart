@@ -29,6 +29,7 @@ import '../../utils/constants/ui_constants.dart';
 import '../../utils/constants/player_constants.dart';
 import '../../utils/constants/gameplay_constants.dart';
 import '../../utils/constants/enemy_constants.dart';
+import '../../utils/constants/style_constants.dart';
 
 class GameScreen extends StatefulWidget {
   const GameScreen({super.key});
@@ -238,7 +239,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
   void _spawnEnemies() {
     _enemies.clear();
     final random = math.Random();
-    for (int i = 0; i < GameplayConstants.enemyCount; i++) {
+    for (int i = 0; i < EnemyConstants.count; i++) {
       _enemies.add(
         Enemy(
           position: Offset(
@@ -247,12 +248,11 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                     (_screenSize.width - 2 * GameplayConstants.playAreaPadding),
             random.nextDouble() *
                 _screenSize.height *
-                GameplayConstants.enemySpawnHeightRatio,
+                EnemyConstants.spawnHeightRatio,
           ),
-          speed: GameplayConstants.baseEnemySpeed +
-              _level * GameplayConstants.enemyLevelSpeedIncrease,
-          health: EnemyConstants.baseHealth +
-              (_level ~/ EnemyConstants.healthIncreaseLevel),
+          speed: EnemyConstants.baseSpeed +
+              _level * EnemyConstants.levelSpeedIncrease,
+          health: 1 + (_level ~/ EnemyConstants.healthIncreaseLevel),
         ),
       );
     }
@@ -270,7 +270,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                     (_screenSize.width - 2 * GameplayConstants.playAreaPadding),
             random.nextDouble() *
                 _screenSize.height *
-                GameplayConstants.enemySpawnHeightRatio,
+                EnemyConstants.spawnHeightRatio,
           ),
           speed: GameplayConstants.baseAsteroidSpeed +
               random.nextDouble() * GameplayConstants.maxAsteroidSpeedVariation,
@@ -743,14 +743,14 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                         painter: game_painters.HeartPainter(
                           color: UIConstants.playerColor,
                         ),
-                        size: GameplayConstants.livesIconSize,
+                        size: UIConstants.livesIconSize,
                       ),
                       SizedBox(width: UIConstants.uiElementSpacing),
                       Text(
                         'x $_lives',
                         style: TextStyle(
                           color: UIConstants.enemyColor,
-                          fontSize: GameplayConstants.livesTextSize,
+                          fontSize: StyleConstants.livesTextSize,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -838,7 +838,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                       UIConstants.gameOverText,
                       style: TextStyle(
                         color: UIConstants.enemyColor,
-                        fontSize: GameplayConstants.gameOverTextSize,
+                        fontSize: StyleConstants.gameOverTextSize,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -847,7 +847,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                       '${UIConstants.scoreText}$_score',
                       style: TextStyle(
                         color: UIConstants.textColor,
-                        fontSize: GameplayConstants.scoreDisplayTextSize,
+                        fontSize: StyleConstants.scoreDisplayTextSize,
                       ),
                     ),
                     SizedBox(height: GameplayConstants.gameOverSpacing),
@@ -883,7 +883,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                       UIConstants.pausedText,
                       style: TextStyle(
                         color: UIConstants.playerColor,
-                        fontSize: GameplayConstants.gameOverTextSize,
+                        fontSize: StyleConstants.gameOverTextSize,
                         fontWeight: FontWeight.bold,
                         shadows: [
                           Shadow(
@@ -946,7 +946,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: UIConstants.playerColor,
-                    fontSize: UIConstants.countdownTextSize,
+                    fontSize: StyleConstants.countdownTextSize,
                     fontWeight: FontWeight.bold,
                     shadows: [
                       Shadow(

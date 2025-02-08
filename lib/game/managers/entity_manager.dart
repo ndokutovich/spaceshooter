@@ -5,6 +5,7 @@ import '../entities/enemy.dart';
 import '../entities/projectile.dart';
 import '../entities/asteroid.dart';
 import '../../utils/constants/gameplay_constants.dart';
+import '../../utils/constants/enemy_constants.dart';
 
 class EntityManager {
   final Player player;
@@ -41,7 +42,7 @@ class EntityManager {
     enemies.clear();
     final random = Random();
 
-    for (int i = 0; i < GameplayConstants.enemyCount; i++) {
+    for (int i = 0; i < EnemyConstants.count; i++) {
       enemies.add(
         Enemy(
           position: Offset(
@@ -50,11 +51,11 @@ class EntityManager {
                     (screenSize.width - 2 * GameplayConstants.playAreaPadding),
             random.nextDouble() *
                 screenSize.height *
-                GameplayConstants.enemySpawnHeightRatio,
+                EnemyConstants.spawnHeightRatio,
           ),
-          speed: GameplayConstants.baseEnemySpeed +
-              (level - 1) * GameplayConstants.enemyLevelSpeedIncrease,
-          health: 1 + (level - 1) ~/ GameplayConstants.enemyHealthIncreaseLevel,
+          speed: EnemyConstants.baseSpeed +
+              (level - 1) * EnemyConstants.levelSpeedIncrease,
+          health: 1 + (level - 1) ~/ EnemyConstants.healthIncreaseLevel,
         ),
       );
     }
@@ -73,7 +74,7 @@ class EntityManager {
                     (screenSize.width - 2 * GameplayConstants.playAreaPadding),
             random.nextDouble() *
                 screenSize.height *
-                GameplayConstants.enemySpawnHeightRatio,
+                EnemyConstants.spawnHeightRatio,
           ),
           speed: GameplayConstants.baseAsteroidSpeed +
               random.nextDouble() * GameplayConstants.maxAsteroidSpeedVariation,

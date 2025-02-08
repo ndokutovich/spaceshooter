@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../utils/constants/gameplay_constants.dart';
+import '../../utils/constants/enemy_constants.dart';
 import '../entities/boss.dart';
 import '../entities/enemy.dart';
 import 'entity_manager.dart';
@@ -22,10 +22,10 @@ class BossManager {
     _boss = Boss(
       position: Offset(
         _screenSize.width / 2,
-        _screenSize.height * GameplayConstants.enemySpawnHeightRatio,
+        _screenSize.height * EnemyConstants.spawnHeightRatio,
       ),
-      speed: GameplayConstants.baseEnemySpeed * 2,
-      health: GameplayConstants.enemyCount * 2,
+      speed: EnemyConstants.baseSpeed * 2,
+      health: EnemyConstants.count * 2,
     );
   }
 
@@ -59,13 +59,13 @@ class BossManager {
   void _spawnEnemyShips() {
     if (_boss != null) {
       final enemies = List.generate(3, (index) {
-        final xOffset = (index - 1) * GameplayConstants.enemySize * 2;
+        final xOffset = (index - 1) * EnemyConstants.size * 2;
         return Enemy(
           position: Offset(
             _boss!.position.dx + xOffset,
-            _boss!.position.dy + GameplayConstants.enemySize,
+            _boss!.position.dy + EnemyConstants.size,
           ),
-          speed: GameplayConstants.baseEnemySpeed,
+          speed: EnemyConstants.baseSpeed,
           health: 1,
         );
       });

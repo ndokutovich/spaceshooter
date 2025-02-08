@@ -42,4 +42,11 @@ class StyleConstants {
   static const double subtitleFontSize = 24.0;
   static const double bodyFontSize = 16.0;
   static const double buttonFontSize = 18.0;
+
+  // Game Text Sizes
+  static const double gameOverTextSize = 48.0;
+  static const double scoreDisplayTextSize = 24.0;
+  static const double scoreTextSize = 20.0;
+  static const double livesTextSize = 20.0;
+  static const double countdownTextSize = 64.0;
 }

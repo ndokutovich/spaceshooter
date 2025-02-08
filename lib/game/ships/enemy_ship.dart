@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../utils/constants/gameplay_constants.dart';
+import '../../utils/constants/enemy_constants.dart';
 import '../../utils/constants/style_constants.dart';
 import 'base_ship.dart';
 
@@ -8,7 +8,7 @@ class EnemyShip extends BaseShip {
     required super.position,
     required super.speed,
     required super.health,
-  }) : super(size: GameplayConstants.enemySize);
+  }) : super(size: EnemyConstants.size);
 
   @override
   void update(Size screenSize) {
@@ -16,7 +16,7 @@ class EnemyShip extends BaseShip {
     if (position.dy > screenSize.height) {
       position = Offset(
         position.dx,
-        GameplayConstants.enemyRespawnHeight,
+        EnemyConstants.respawnHeight,
       );
     }
   }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'style_constants.dart';
 
 class UIConstants {
   // Window settings
@@ -31,7 +32,7 @@ class UIConstants {
   static const String resumeText = 'Resume';
 
   // UI Dimensions
-  static const double titleFontSize = 48.0;
+  static const double titleFontSize = StyleConstants.titleFontSize;
   static const double menuButtonWidth = 280.0;
   static const double menuButtonHeight = 60.0;
   static const double menuButtonSpacing = 25.0;
@@ -48,7 +49,7 @@ class UIConstants {
   static const double uiPadding = 20.0;
   static const double uiElementSpacing = 8.0;
   static const double uiPaddingMultiplier = 5.0;
-  static const double countdownTextSize = 64.0;
+  static const double livesIconSize = 24.0;
 
   // High Scores UI
   static const double highScoresTitleSize = 28.0;
@@ -65,12 +66,17 @@ class UIConstants {
   static const Duration gameLoopDuration = Duration(milliseconds: 16);
   static const Duration invulnerabilityDuration = Duration(seconds: 2);
 
-  // Colors
-  static const Color textColor = Colors.white;
-  static const Color playerColor = Colors.blue;
-  static const Color enemyColor = Colors.red;
-  static const Color projectileColor = Colors.yellow;
-  static const Color borderColor = Colors.grey;
+  // Game over UI
+  static const double gameOverButtonPaddingH = 32.0;
+  static const double gameOverButtonPaddingV = 16.0;
+  static const double gameOverSpacing = 20.0;
+
+  // Colors (referencing StyleConstants)
+  static const Color textColor = StyleConstants.textColor;
+  static const Color playerColor = StyleConstants.playerColor;
+  static const Color enemyColor = StyleConstants.enemyColor;
+  static const Color projectileColor = StyleConstants.projectileColor;
+  static const Color borderColor = StyleConstants.borderColor;
 
   // Add missing constants
   static const int scoreIncrement = 100;

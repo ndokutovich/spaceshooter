@@ -1,13 +1,4 @@
 class GameplayConstants {
-  // Enemy settings
-  static const int enemyCount = 10;
-  static const double enemySize = 40.0;
-  static const double enemySpawnHeightRatio = 0.3;
-  static const double baseEnemySpeed = 2.0;
-  static const double enemyLevelSpeedIncrease = 0.5;
-  static const int enemyHealthIncreaseLevel = 2;
-  static const double enemyRespawnHeight = -50.0;
-
   // Asteroid settings
   static const int asteroidCount = 5;
   static const double asteroidSize = 50.0;
@@ -34,14 +25,7 @@ class GameplayConstants {
   static const double bonusDropRate = 0.3;
 
   // Game over screen settings
-  static const double gameOverTextSize = 48.0;
-  static const double scoreDisplayTextSize = 24.0;
   static const double gameOverSpacing = 20.0;
   static const double gameOverButtonPaddingH = 32.0;
   static const double gameOverButtonPaddingV = 16.0;
-
-  // UI settings specific to gameplay
-  static const double scoreTextSize = 20.0;
-  static const double livesIconSize = 24.0;
-  static const double livesTextSize = 20.0;
 }
