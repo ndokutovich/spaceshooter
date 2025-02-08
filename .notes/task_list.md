@@ -200,7 +200,7 @@
     - [x] SSHOTER-073.1.2 Migrate gameplay constants
     - [x] SSHOTER-073.1.3 Migrate UI constants
     - [x] SSHOTER-073.1.4 Migrate animation constants
-    - [ ] SSHOTER-073.1.5 Migrate enemy constants
+    - [x] SSHOTER-073.1.5 Migrate enemy constants
   - [ ] SSHOTER-073.2 Remove deprecated constant files and unify player implementation
 
 ## Task Status Legend
