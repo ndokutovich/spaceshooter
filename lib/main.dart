@@ -8,7 +8,6 @@ import 'dart:html' if (dart.library.io) 'dart:io' as device;
 import 'screens/splash_screen.dart';
 import 'utils/constants/ui_constants.dart';
 import 'utils/constants/style_constants.dart';
-import 'utils/constants/game_constants.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
