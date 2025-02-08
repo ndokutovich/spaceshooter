@@ -15,6 +15,13 @@
     - [x] SSHOTER-001.2: Update all references to use new controls
     - [x] SSHOTER-001.3: Remove duplicate controls file
 
+- [x] SSHOTER-080: Add SVG support for player ship view
+  - [x] SSHOTER-080.1: Create SVG-capable ShipSkin widget
+  - [x] SSHOTER-080.2: Add flutter_svg dependency
+  - [x] SSHOTER-080.3: Create default player ship SVG
+  - [x] SSHOTER-080.4: Update PlayerWidget to support both SVG and custom painted ships
+  - [x] SSHOTER-080.5: Update game screen to use new PlayerWidget implementation
+
 ## In Progress Tasks
 - [~] SSHOTER-020: Analyze and consolidate app_constants.dart and game/utils/constants.dart
   - Analysis Notes:

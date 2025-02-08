@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class PlayerShipPainter extends CustomPainter {
   final Color primaryColor;
@@ -718,20 +719,50 @@ class EnemyShipPainter extends CustomPainter {
 }
 
 class ShipSkin extends StatelessWidget {
-  final CustomPainter painter;
+  final CustomPainter? painter;
+  final String? svgAsset;
   final double size;
+  final Color? tint;
 
   const ShipSkin({
     super.key,
-    required this.painter,
-    this.size = 100,
-  });
+    this.painter,
+    this.svgAsset,
+    required this.size,
+    this.tint,
+  }) : assert(painter != null || svgAsset != null,
+            'Either painter or svgAsset must be provided');
 
   @override
   Widget build(BuildContext context) {
+    if (svgAsset != null) {
+      return SizedBox(
+        width: size,
+        height: size,
+        child: SvgPicture.asset(
+          svgAsset!,
+          colorFilter:
+              tint != null ? ColorFilter.mode(tint!, BlendMode.srcIn) : null,
+          fit: BoxFit.contain,
+          width: size,
+          height: size,
+          // Add error builder to help debug loading issues
+          placeholderBuilder: (BuildContext context) => Container(
+            decoration: BoxDecoration(
+              color: Colors.grey.withOpacity(0.3),
+              border: Border.all(
+                color: Colors.grey,
+                width: 1,
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
     return CustomPaint(
-      painter: painter,
       size: Size(size, size),
+      painter: painter,
     );
   }
 }

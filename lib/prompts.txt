@@ -13,4 +13,5 @@ Implement action buttons for shooting and nova blasts
 Add keyboard controls support
 Add boundary checks for movement
 Normalize movement speeds
-Add haptic feedback for controls 
+Add haptic feedback for controls
+[2024-02-08 17:05] Add SVG support for player ship view while maintaining existing functionality (size, control, etc.) 

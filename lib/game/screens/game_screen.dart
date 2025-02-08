@@ -27,6 +27,7 @@ import '../../utils/collision_utils.dart';
 
 import '../../screens/main_menu.dart';
 import '../../utils/constants/ui_constants.dart';
+import '../../utils/constants/player_constants.dart';
 
 class GameScreen extends StatefulWidget {
   const GameScreen({super.key});
@@ -697,15 +698,16 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
 
           // Player
           Positioned(
-            left: _player.position.dx -
-                old_game_constants.GameConstants.playerSize / 2,
-            top: _player.position.dy -
-                old_game_constants.GameConstants.playerSize / 2,
+            left: _player.position.dx - PlayerConstants.size / 2,
+            top: _player.position.dy - PlayerConstants.size / 2,
             child: Opacity(
               opacity: _isInvulnerable
-                  ? old_game_constants.GameConstants.invulnerabilityOpacity
+                  ? PlayerConstants.invulnerabilityOpacity
                   : 1.0,
-              child: const PlayerWidget(),
+              child: PlayerWidget(
+                player: _player,
+                size: PlayerConstants.size,
+              ),
             ),
           ),
 

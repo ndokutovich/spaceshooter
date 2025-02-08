@@ -3,7 +3,8 @@ class AnimationConstants {
   static const Duration splashAnimationDuration = Duration(seconds: 2);
   static const Duration splashDelayDuration = Duration(seconds: 1);
   static const Duration menuTransitionDuration = Duration(milliseconds: 500);
-  static const Duration gameLoopDuration = Duration(milliseconds: 16); // ~60 FPS
+  static const Duration gameLoopDuration =
+      Duration(milliseconds: 16); // ~60 FPS
   static const Duration invulnerabilityDuration = Duration(seconds: 2);
   static const Duration countdownDuration = Duration(seconds: 1);
   static const Duration countdownTotalDuration = Duration(seconds: 3);

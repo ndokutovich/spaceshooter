@@ -16,6 +16,7 @@ dependencies:
       ref: 6c66ad23ee79749f30a8eece542cf54eaf157ed8
   path_provider: ^2.1.2
   intl: ^0.19.0
+  flutter_svg: ^2.0.9
 
 dev_dependencies:
   flutter_test:
@@ -24,3 +25,6 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/
+    - assets/ships/
