@@ -842,7 +842,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    SizedBox(height: GameplayConstants.gameOverSpacing),
+                    SizedBox(height: UIConstants.gameOverSpacing),
                     Text(
                       '${UIConstants.scoreText}$_score',
                       style: TextStyle(
@@ -850,7 +850,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                         fontSize: StyleConstants.scoreDisplayTextSize,
                       ),
                     ),
-                    SizedBox(height: GameplayConstants.gameOverSpacing),
+                    SizedBox(height: UIConstants.gameOverSpacing),
                     MenuButton(
                       text: UIConstants.mainMenuText,
                       onPressed: () {
@@ -893,7 +893,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                         ],
                       ),
                     ),
-                    SizedBox(height: GameplayConstants.gameOverSpacing),
+                    SizedBox(height: UIConstants.gameOverSpacing),
                     MenuButton(
                       text: UIConstants.resumeText,
                       onPressed: _togglePause,

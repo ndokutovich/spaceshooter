@@ -52,14 +52,15 @@ class UIConstants {
   static const double livesIconSize = 24.0;
 
   // High Scores UI
-  static const double highScoresTitleSize = 28.0;
-  static const double highScoresSubtitleSize = 24.0;
+  static const double highScoresTitleSize = StyleConstants.titleFontSize;
+  static const double highScoresSubtitleSize = StyleConstants.subtitleFontSize;
   static const double highScoresPadding = 20.0;
   static const double highScoresBorderRadius = 15.0;
   static const double highScoresBorderWidth = 2.0;
   static const double highScoresColumnSpacing = 40.0;
   static const double highScoresBackButtonSize = 40.0;
-  static const double highScoresBackButtonFontSize = 24.0;
+  static const double highScoresBackButtonFontSize =
+      StyleConstants.subtitleFontSize;
 
   // Durations
   static const Duration countdownDuration = Duration(seconds: 1);
@@ -70,6 +71,8 @@ class UIConstants {
   static const double gameOverButtonPaddingH = 32.0;
   static const double gameOverButtonPaddingV = 16.0;
   static const double gameOverSpacing = 20.0;
+
+  
 
   // Colors (referencing StyleConstants)
   static const Color textColor = StyleConstants.textColor;

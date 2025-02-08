@@ -48,5 +48,5 @@ class StyleConstants {
   static const double scoreDisplayTextSize = 24.0;
   static const double scoreTextSize = 20.0;
   static const double livesTextSize = 20.0;
-  static const double countdownTextSize = 64.0;
+  static const double countdownTextSize = 64.0; 
 }

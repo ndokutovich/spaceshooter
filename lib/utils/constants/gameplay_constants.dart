@@ -23,9 +23,4 @@ class GameplayConstants {
   static const int bonusMultiplierValue = 2;
   static const int bonusGoldValue = 500;
   static const double bonusDropRate = 0.3;
-
-  // Game over screen settings
-  static const double gameOverSpacing = 20.0;
-  static const double gameOverButtonPaddingH = 32.0;
-  static const double gameOverButtonPaddingV = 16.0;
 }
