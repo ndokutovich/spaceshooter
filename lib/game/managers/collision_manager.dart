@@ -2,15 +2,17 @@ import '../entities/enemy.dart';
 import '../entities/projectile.dart';
 import './entity_manager.dart';
 import './game_state_manager.dart';
-import '../../utils/constants/gameplay_constants.dart';
+import '../../utils/constants/game/config.dart';
 
 class CollisionManager {
   final EntityManager entityManager;
   final GameStateManager gameState;
+  final GameConfig config;
 
   CollisionManager({
     required this.entityManager,
     required this.gameState,
+    this.config = const GameConfig(),
   });
 
   void checkCollisions() {
@@ -21,12 +23,12 @@ class CollisionManager {
     for (var projectile in entityManager.projectiles) {
       for (var enemy in entityManager.enemies) {
         if ((projectile.position - enemy.position).distance <
-            GameplayConstants.collisionDistance) {
+            config.gameplay.collisionDistance) {
           enemy.health--;
           projectilesToRemove.add(projectile);
           if (enemy.health <= 0) {
             enemiesToRemove.add(enemy);
-            gameState.incrementScore(GameplayConstants.scorePerKill);
+            gameState.incrementScore(config.gameplay.scorePerKill);
           }
           break;
         }
@@ -38,7 +40,7 @@ class CollisionManager {
     if (!gameState.isInvulnerable) {
       for (var asteroid in entityManager.asteroids) {
         if ((entityManager.player.position - asteroid.position).distance <
-            GameplayConstants.collisionDistance) {
+            config.gameplay.collisionDistance) {
           playerHit = true;
           break;
         }
@@ -48,7 +50,7 @@ class CollisionManager {
       if (!playerHit) {
         for (var enemy in entityManager.enemies) {
           if ((entityManager.player.position - enemy.position).distance <
-              GameplayConstants.collisionDistance) {
+              config.gameplay.collisionDistance) {
             playerHit = true;
             break;
           }

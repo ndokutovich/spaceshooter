@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
-import '../../utils/constants/gameplay_constants.dart';
+import '../../utils/constants/game/config.dart';
 import '../../utils/constants/style_constants.dart';
 import 'base_ship.dart';
 
 class PlayerShip extends BaseShip {
   bool isInvulnerable;
+  final PlayerConfig config;
 
   PlayerShip({
     required super.position,
     this.isInvulnerable = false,
+    this.config = const PlayerConfig(),
   }) : super(
-          speed: GameplayConstants.playerSpeed,
-          size: GameplayConstants.playerSize,
+          speed: config.speed,
+          size: config.size,
         );
 
   @override
@@ -24,8 +26,8 @@ class PlayerShip extends BaseShip {
     position += delta * speed;
     position = Offset(
       position.dx.clamp(
-        GameplayConstants.playAreaPadding,
-        screenSize.width - GameplayConstants.playAreaPadding,
+        config.startHeightRatio,
+        screenSize.width - config.startHeightRatio,
       ),
       position.dy.clamp(0, screenSize.height),
     );

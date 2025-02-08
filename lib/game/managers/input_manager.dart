@@ -1,5 +1,5 @@
 import 'package:flutter/services.dart';
-import '../../utils/constants/gameplay_constants.dart';
+import '../../utils/constants/game/config.dart';
 import '../entities/player.dart';
 import 'game_state_manager.dart';
 
@@ -8,8 +8,10 @@ class InputManager {
   final Player _player;
   final GameStateManager _gameState;
   final Size _screenSize;
+  final PlayerConfig config;
 
-  InputManager(this._player, this._gameState, this._screenSize);
+  InputManager(this._player, this._gameState, this._screenSize,
+      {this.config = const PlayerConfig()});
 
   bool handleKeyEvent(KeyEvent event) {
     if (_gameState.isPaused) return false;
@@ -42,19 +44,19 @@ class InputManager {
 
     if (_pressedKeys.contains(LogicalKeyboardKey.arrowLeft) ||
         _pressedKeys.contains(LogicalKeyboardKey.keyA)) {
-      dx -= GameplayConstants.playerSpeed;
+      dx -= config.speed;
     }
     if (_pressedKeys.contains(LogicalKeyboardKey.arrowRight) ||
         _pressedKeys.contains(LogicalKeyboardKey.keyD)) {
-      dx += GameplayConstants.playerSpeed;
+      dx += config.speed;
     }
     if (_pressedKeys.contains(LogicalKeyboardKey.arrowUp) ||
         _pressedKeys.contains(LogicalKeyboardKey.keyW)) {
-      dy -= GameplayConstants.playerSpeed;
+      dy -= config.speed;
     }
     if (_pressedKeys.contains(LogicalKeyboardKey.arrowDown) ||
         _pressedKeys.contains(LogicalKeyboardKey.keyS)) {
-      dy += GameplayConstants.playerSpeed;
+      dy += config.speed;
     }
 
     if (dx != 0 || dy != 0) {
@@ -63,9 +65,8 @@ class InputManager {
   }
 
   void handleJoystickMove(Offset delta) {
-    if (!_gameState.isPaused && delta != Offset.zero) {
-      _player.move(delta, _screenSize);
-    }
+    if (_gameState.isPaused) return;
+    _player.move(delta * config.speed, _screenSize);
   }
 
   void reset() {

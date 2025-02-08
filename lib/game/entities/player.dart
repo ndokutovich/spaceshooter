@@ -1,19 +1,23 @@
 import 'package:flutter/material.dart';
-import '../../utils/constants/gameplay_constants.dart';
+import '../../utils/constants/game/config.dart';
 import '../../widgets/ship_skins.dart';
 import 'projectile.dart';
 
 class Player {
   Offset position;
   bool isInvulnerable = false;
+  final PlayerConfig config;
 
-  Player({this.position = const Offset(0, 0)});
+  Player({
+    this.position = const Offset(0, 0),
+    this.config = const PlayerConfig(),
+  });
 
   void move(Offset delta, Size screenSize) {
     position += delta;
     position = Offset(
-      position.dx.clamp(GameplayConstants.playAreaPadding,
-          screenSize.width - GameplayConstants.playAreaPadding),
+      position.dx.clamp(
+          config.startHeightRatio, screenSize.width - config.startHeightRatio),
       position.dy.clamp(0, screenSize.height),
     );
   }
@@ -22,9 +26,9 @@ class Player {
     return Projectile(
       position: Offset(
         position.dx,
-        position.dy - GameplayConstants.projectileOffset,
+        position.dy - config.primaryWeapon.offset,
       ),
-      speed: GameplayConstants.projectileSpeed,
+      speed: config.primaryWeapon.speed,
       isEnemy: false,
     );
   }
@@ -35,7 +39,12 @@ class Player {
 }
 
 class PlayerWidget extends StatelessWidget {
-  const PlayerWidget({super.key});
+  final PlayerConfig config;
+
+  const PlayerWidget({
+    super.key,
+    this.config = const PlayerConfig(),
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +53,7 @@ class PlayerWidget extends StatelessWidget {
         primaryColor: Colors.blue,
         accentColor: Colors.lightBlueAccent,
       ),
-      size: 80,
+      size: config.size,
     );
   }
 }
