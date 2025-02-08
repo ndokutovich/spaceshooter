@@ -30,7 +30,7 @@ class HighScoresScreen extends StatelessWidget {
           UIConstants.menuHighScoresText,
           style: TextStyle(
             color: StyleConstants.textColor,
-            fontSize: UIConstants.highScoresTitleSize,
+            fontSize: StyleConstants.titleFontSize,
             fontWeight: FontWeight.bold,
             shadows: [
               Shadow(
@@ -49,7 +49,7 @@ class HighScoresScreen extends StatelessWidget {
               'Top Scores',
               style: TextStyle(
                 color: StyleConstants.textColor,
-                fontSize: UIConstants.highScoresSubtitleSize,
+                fontSize: StyleConstants.subtitleFontSize,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -67,7 +67,7 @@ class HighScoresScreen extends StatelessWidget {
                     'No scores yet!',
                     style: TextStyle(
                       color: StyleConstants.textColor,
-                      fontSize: UIConstants.highScoresSubtitleSize,
+                      fontSize: StyleConstants.subtitleFontSize,
                     ),
                   );
                 }

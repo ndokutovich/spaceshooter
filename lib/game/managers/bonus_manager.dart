@@ -1,6 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
-import '../../utils/constants/gameplay_constants.dart';
+import '../../utils/constants/bonus_constants.dart';
 import '../entities/bonus_item.dart';
 import 'game_state_manager.dart';
 
@@ -19,7 +19,7 @@ class BonusManager {
       _bonusItems[i] = BonusItem(
         type: bonus.type,
         position: bonus.position,
-        rotation: bonus.rotation + GameplayConstants.bonusRotationStep,
+        rotation: bonus.rotation + BonusConstants.rotationStep,
         size: bonus.size,
       );
     }
@@ -28,10 +28,10 @@ class BonusManager {
   void collectBonus(BonusType type) {
     switch (type) {
       case BonusType.damageMultiplier:
-        _gameState.multiplyDamage(GameplayConstants.bonusMultiplierValue);
+        _gameState.multiplyDamage(BonusConstants.multiplierValue);
         break;
       case BonusType.goldOre:
-        _gameState.incrementScore(GameplayConstants.bonusGoldValue);
+        _gameState.incrementScore(BonusConstants.goldValue);
         break;
     }
   }
@@ -43,13 +43,13 @@ class BonusManager {
             _random.nextBool() ? BonusType.damageMultiplier : BonusType.goldOre,
         position: position,
         rotation: 0,
-        size: GameplayConstants.bonusSize,
+        size: BonusConstants.size,
       ));
     }
   }
 
   bool _shouldDropBonus() {
-    return _random.nextDouble() < GameplayConstants.bonusDropRate;
+    return _random.nextDouble() < BonusConstants.dropRate;
   }
 
   void removeBonus(BonusItem bonus) {

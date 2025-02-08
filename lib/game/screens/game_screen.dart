@@ -3,13 +3,13 @@ import 'package:flutter/services.dart';
 import 'dart:async';
 import 'dart:math' as math;
 
+import '../../utils/constants/asteroid_constants.dart';
+import '../../utils/constants/bonus_constants.dart';
 import '../../widgets/controls.dart';
 import '../../widgets/menu_button.dart';
 import '../../widgets/performance_overlay.dart';
 import '../../widgets/background.dart';
 import '../../widgets/game_objects.dart';
-import '../../widgets/game_objects/boss_widget.dart';
-import '../../widgets/game_objects/bonus_painter.dart';
 import '../../widgets/round_space_button.dart' as space_buttons;
 
 import '../entities/player.dart';
@@ -261,7 +261,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
   void _spawnAsteroids() {
     _asteroids.clear();
     final random = math.Random();
-    for (int i = 0; i < GameplayConstants.asteroidCount; i++) {
+    for (int i = 0; i < AsteroidConstants.count; i++) {
       _asteroids.add(
         Asteroid(
           position: Offset(
@@ -272,10 +272,10 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                 _screenSize.height *
                 EnemyConstants.spawnHeightRatio,
           ),
-          speed: GameplayConstants.baseAsteroidSpeed +
-              random.nextDouble() * GameplayConstants.maxAsteroidSpeedVariation,
-          health: GameplayConstants.baseAsteroidHealth +
-              (_level ~/ GameplayConstants.asteroidHealthIncreaseLevel),
+          speed: AsteroidConstants.baseSpeed +
+              random.nextDouble() * AsteroidConstants.maxSpeedVariation,
+          health: AsteroidConstants.baseHealth +
+              (_level ~/ AsteroidConstants.healthIncreaseLevel),
         ),
       );
     }
@@ -360,7 +360,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
       _bonusItems[i] = BonusItem(
         type: bonus.type,
         position: bonus.position,
-        rotation: bonus.rotation + GameplayConstants.bonusRotationStep,
+        rotation: bonus.rotation + BonusConstants.rotationStep,
         size: bonus.size,
       );
     }
@@ -576,12 +576,12 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
     switch (type) {
       case BonusType.damageMultiplier:
         setState(() {
-          _damageMultiplier *= GameplayConstants.bonusMultiplierValue;
+          _damageMultiplier *= BonusConstants.multiplierValue;
         });
         break;
       case BonusType.goldOre:
         setState(() {
-          _score += GameplayConstants.bonusGoldValue;
+          _score += BonusConstants.goldValue;
         });
         break;
     }

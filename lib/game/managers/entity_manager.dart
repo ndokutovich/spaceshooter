@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import '../../utils/constants/asteroid_constants.dart';
 import '../entities/player.dart';
 import '../entities/enemy.dart';
 import '../entities/projectile.dart';
@@ -65,7 +66,7 @@ class EntityManager {
     asteroids.clear();
     final random = Random();
 
-    for (int i = 0; i < GameplayConstants.asteroidCount; i++) {
+    for (int i = 0; i < AsteroidConstants.count; i++) {
       asteroids.add(
         Asteroid(
           position: Offset(
@@ -76,8 +77,8 @@ class EntityManager {
                 screenSize.height *
                 EnemyConstants.spawnHeightRatio,
           ),
-          speed: GameplayConstants.baseAsteroidSpeed +
-              random.nextDouble() * GameplayConstants.maxAsteroidSpeedVariation,
+          speed: AsteroidConstants.baseSpeed +
+              random.nextDouble() * AsteroidConstants.maxSpeedVariation,
         ),
       );
     }
