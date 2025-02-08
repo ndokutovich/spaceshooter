@@ -195,9 +195,9 @@
 - [ ] SSHOTER-071: Review and fix any circular dependencies
 - [ ] SSHOTER-072: Implement consistent naming conventions
 - [ ] SSHOTER-073: Remove code duplication and consolidate implementations
-  - [ ] SSHOTER-073.1: Consolidate constants
-    - [ ] Analyze and map all constants from different files
-    - [ ] Create unified constants structure
+  - [x] SSHOTER-073.1: Consolidate constants
+    - [x] Analyze and map all constants from different files
+    - [x] Create unified constants structure
     - [ ] Migrate old constants to new structure
     - [ ] Remove deprecated constant files
   - [ ] SSHOTER-073.2: Unify player implementation
