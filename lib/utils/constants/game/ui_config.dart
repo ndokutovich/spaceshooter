@@ -246,6 +246,12 @@ class UIConfig extends BaseGameConfig with JsonSerializable, Validatable {
   final double actionButtonSize;
   final double actionButtonSpacing;
 
+  // Countdown text
+  final String countdownText1;
+  final String countdownText2;
+  final String countdownText3;
+  final String countdownTextGo;
+
   const UIConfig({
     this.colors = const ColorSchemeConfig(),
     this.opacity = const OpacityConfig(),
@@ -258,6 +264,10 @@ class UIConfig extends BaseGameConfig with JsonSerializable, Validatable {
     this.menuButtonRadius = 30.0,
     this.actionButtonSize = 40.0,
     this.actionButtonSpacing = 15.0,
+    this.countdownText1 = '1',
+    this.countdownText2 = '2',
+    this.countdownText3 = '3',
+    this.countdownTextGo = 'GO!',
   });
 
   @override
@@ -303,6 +313,10 @@ class UIConfig extends BaseGameConfig with JsonSerializable, Validatable {
         'menuButtonRadius': menuButtonRadius,
         'actionButtonSize': actionButtonSize,
         'actionButtonSpacing': actionButtonSpacing,
+        'countdownText1': countdownText1,
+        'countdownText2': countdownText2,
+        'countdownText3': countdownText3,
+        'countdownTextGo': countdownTextGo,
       };
 
   factory UIConfig.fromJson(Map<String, dynamic> json) => UIConfig(
@@ -320,6 +334,10 @@ class UIConfig extends BaseGameConfig with JsonSerializable, Validatable {
         menuButtonRadius: json['menuButtonRadius'] as double,
         actionButtonSize: json['actionButtonSize'] as double,
         actionButtonSpacing: json['actionButtonSpacing'] as double,
+        countdownText1: json['countdownText1'] as String,
+        countdownText2: json['countdownText2'] as String,
+        countdownText3: json['countdownText3'] as String,
+        countdownTextGo: json['countdownTextGo'] as String,
       );
 
   @override
@@ -335,6 +353,10 @@ class UIConfig extends BaseGameConfig with JsonSerializable, Validatable {
     double? menuButtonRadius,
     double? actionButtonSize,
     double? actionButtonSpacing,
+    String? countdownText1,
+    String? countdownText2,
+    String? countdownText3,
+    String? countdownTextGo,
   }) {
     return UIConfig(
       colors: colors ?? this.colors,
@@ -348,6 +370,10 @@ class UIConfig extends BaseGameConfig with JsonSerializable, Validatable {
       menuButtonRadius: menuButtonRadius ?? this.menuButtonRadius,
       actionButtonSize: actionButtonSize ?? this.actionButtonSize,
       actionButtonSpacing: actionButtonSpacing ?? this.actionButtonSpacing,
+      countdownText1: countdownText1 ?? this.countdownText1,
+      countdownText2: countdownText2 ?? this.countdownText2,
+      countdownText3: countdownText3 ?? this.countdownText3,
+      countdownTextGo: countdownTextGo ?? this.countdownTextGo,
     );
   }
 }

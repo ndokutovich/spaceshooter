@@ -195,23 +195,24 @@
 - [ ] SSHOTER-071: Review and fix any circular dependencies
 - [ ] SSHOTER-072: Implement consistent naming conventions
 - [ ] SSHOTER-073: Remove code duplication and consolidate implementations
-  - [x] SSHOTER-073.1 Migrate constants to new configuration system
-    - [x] SSHOTER-073.1.1 Migrate player constants
-    - [x] SSHOTER-073.1.2 Migrate gameplay constants
-    - [x] SSHOTER-073.1.3 Migrate UI constants
-    - [x] SSHOTER-073.1.4 Migrate animation constants
-    - [x] SSHOTER-073.1.5 Migrate enemy constants
-  - [~] SSHOTER-073.2 Remove deprecated constant files and unify player implementation
-    - [x] SSHOTER-073.2.1 Remove deprecated constant files
-    - [~] SSHOTER-073.2.2 Create unified player implementation
-      - [x] Create PlayerEntity class
-      - [x] Create PlayerController class
-      - [x] Create PlayerView class
-      - [~] Update all references to use new player implementation
-        - [x] Update EntityManager
-        - [x] Update InputManager
-        - [~] Update GameScreen
-    - [ ] SSHOTER-073.2.3 Remove old player implementation files
+  - [x] SSHOTER-073.1: Migrate constants to new configuration system
+    - [x] SSHOTER-073.1.1: Analyze and map all constants
+    - [x] SSHOTER-073.1.2: Create unified constants structure
+    - [x] SSHOTER-073.1.3: Migrate UI constants
+    - [x] SSHOTER-073.1.4: Migrate animation constants
+    - [x] SSHOTER-073.1.5: Migrate enemy constants
+  - [~] SSHOTER-073.2: Unify player implementation
+    - [x] SSHOTER-073.2.1: Create unified player classes
+    - [x] SSHOTER-073.2.2: Update EntityManager to use new player implementation
+    - [x] SSHOTER-073.2.3: Update InputManager to use new player implementation
+    - [x] SSHOTER-073.2.4: Update GameScreen to use new player implementation
+    - [~] SSHOTER-073.2.5: Remove old player files
+  - [ ] SSHOTER-073.3: Testing and validation
+    - [ ] SSHOTER-073.3.1: Write tests for new configuration system
+    - [ ] SSHOTER-073.3.2: Write tests for unified player implementation
+    - [ ] SSHOTER-073.3.3: Validate game behavior with new implementations
+    - [ ] SSHOTER-073.3.4: Performance testing
+    - [ ] SSHOTER-073.3.5: Update documentation
 
 ## Task Status Legend
 - [ ] Not Started

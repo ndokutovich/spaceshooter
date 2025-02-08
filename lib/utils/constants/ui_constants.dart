@@ -77,6 +77,8 @@ class UIConstants {
   static const double uiPadding = 20.0;
   @Deprecated('Use UIConfig.uiElementSpacing instead')
   static const double uiElementSpacing = 8.0;
+  @Deprecated('Use UIConfig.uiPaddingMultiplier instead')
+  static const double uiPaddingMultiplier = 2.0;
   @Deprecated('Use UIConfig.textStyles.countdown instead')
   static const double countdownTextSize = 64.0;
 

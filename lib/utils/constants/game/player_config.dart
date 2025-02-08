@@ -19,11 +19,27 @@ class PlayerConfig extends BaseGameConfig with JsonSerializable, Validatable {
   final double invulnerabilityDuration;
   final double invulnerabilityOpacity;
   final double healthRegenRate;
+  final int maxHealth;
 
   /// Weapon settings
   final WeaponConfig primaryWeapon;
   final WeaponConfig secondaryWeapon;
   final NovaConfig nova;
+
+  /// UI settings
+  final double scoreTextSize;
+  final double livesIconSize;
+  final double livesTextSize;
+  final double actionButtonSize;
+  final double novaCounterSize;
+  final double novaCounterDisplaySize;
+  final double gameOverTextSize;
+  final double gameOverSpacing;
+  final double scoreDisplayTextSize;
+  final double menuButtonWidthRatio;
+  final double menuButtonHeightRatio;
+  final double menuButtonSpacingRatio;
+  final double overlayOpacity;
 
   const PlayerConfig({
     this.size = 50.0,
@@ -37,9 +53,23 @@ class PlayerConfig extends BaseGameConfig with JsonSerializable, Validatable {
     this.invulnerabilityDuration = 2.0,
     this.invulnerabilityOpacity = 0.5,
     this.healthRegenRate = 0.1,
+    this.maxHealth = 100,
     this.primaryWeapon = const WeaponConfig(),
     this.secondaryWeapon = const WeaponConfig(),
     this.nova = const NovaConfig(),
+    this.scoreTextSize = 24.0,
+    this.livesIconSize = 24.0,
+    this.livesTextSize = 20.0,
+    this.actionButtonSize = 60.0,
+    this.novaCounterSize = 24.0,
+    this.novaCounterDisplaySize = 32.0,
+    this.gameOverTextSize = 48.0,
+    this.gameOverSpacing = 20.0,
+    this.scoreDisplayTextSize = 32.0,
+    this.menuButtonWidthRatio = 0.4,
+    this.menuButtonHeightRatio = 0.08,
+    this.menuButtonSpacingRatio = 0.02,
+    this.overlayOpacity = 0.7,
   });
 
   @override
@@ -79,9 +109,23 @@ class PlayerConfig extends BaseGameConfig with JsonSerializable, Validatable {
         'invulnerabilityDuration': invulnerabilityDuration,
         'invulnerabilityOpacity': invulnerabilityOpacity,
         'healthRegenRate': healthRegenRate,
+        'maxHealth': maxHealth,
         'primaryWeapon': primaryWeapon.toJson(),
         'secondaryWeapon': secondaryWeapon.toJson(),
         'nova': nova.toJson(),
+        'scoreTextSize': scoreTextSize,
+        'livesIconSize': livesIconSize,
+        'livesTextSize': livesTextSize,
+        'actionButtonSize': actionButtonSize,
+        'novaCounterSize': novaCounterSize,
+        'novaCounterDisplaySize': novaCounterDisplaySize,
+        'gameOverTextSize': gameOverTextSize,
+        'gameOverSpacing': gameOverSpacing,
+        'scoreDisplayTextSize': scoreDisplayTextSize,
+        'menuButtonWidthRatio': menuButtonWidthRatio,
+        'menuButtonHeightRatio': menuButtonHeightRatio,
+        'menuButtonSpacingRatio': menuButtonSpacingRatio,
+        'overlayOpacity': overlayOpacity,
       };
 
   /// Creates a PlayerConfig from JSON
@@ -97,11 +141,25 @@ class PlayerConfig extends BaseGameConfig with JsonSerializable, Validatable {
         invulnerabilityDuration: json['invulnerabilityDuration'] as double,
         invulnerabilityOpacity: json['invulnerabilityOpacity'] as double,
         healthRegenRate: json['healthRegenRate'] as double,
+        maxHealth: json['maxHealth'] as int,
         primaryWeapon: WeaponConfig.fromJson(
             json['primaryWeapon'] as Map<String, dynamic>),
         secondaryWeapon: WeaponConfig.fromJson(
             json['secondaryWeapon'] as Map<String, dynamic>),
         nova: NovaConfig.fromJson(json['nova'] as Map<String, dynamic>),
+        scoreTextSize: json['scoreTextSize'] as double,
+        livesIconSize: json['livesIconSize'] as double,
+        livesTextSize: json['livesTextSize'] as double,
+        actionButtonSize: json['actionButtonSize'] as double,
+        novaCounterSize: json['novaCounterSize'] as double,
+        novaCounterDisplaySize: json['novaCounterDisplaySize'] as double,
+        gameOverTextSize: json['gameOverTextSize'] as double,
+        gameOverSpacing: json['gameOverSpacing'] as double,
+        scoreDisplayTextSize: json['scoreDisplayTextSize'] as double,
+        menuButtonWidthRatio: json['menuButtonWidthRatio'] as double,
+        menuButtonHeightRatio: json['menuButtonHeightRatio'] as double,
+        menuButtonSpacingRatio: json['menuButtonSpacingRatio'] as double,
+        overlayOpacity: json['overlayOpacity'] as double,
       );
 
   @override
@@ -117,9 +175,23 @@ class PlayerConfig extends BaseGameConfig with JsonSerializable, Validatable {
     double? invulnerabilityDuration,
     double? invulnerabilityOpacity,
     double? healthRegenRate,
+    int? maxHealth,
     WeaponConfig? primaryWeapon,
     WeaponConfig? secondaryWeapon,
     NovaConfig? nova,
+    double? scoreTextSize,
+    double? livesIconSize,
+    double? livesTextSize,
+    double? actionButtonSize,
+    double? novaCounterSize,
+    double? novaCounterDisplaySize,
+    double? gameOverTextSize,
+    double? gameOverSpacing,
+    double? scoreDisplayTextSize,
+    double? menuButtonWidthRatio,
+    double? menuButtonHeightRatio,
+    double? menuButtonSpacingRatio,
+    double? overlayOpacity,
   }) {
     return PlayerConfig(
       size: size ?? this.size,
@@ -135,9 +207,26 @@ class PlayerConfig extends BaseGameConfig with JsonSerializable, Validatable {
       invulnerabilityOpacity:
           invulnerabilityOpacity ?? this.invulnerabilityOpacity,
       healthRegenRate: healthRegenRate ?? this.healthRegenRate,
+      maxHealth: maxHealth ?? this.maxHealth,
       primaryWeapon: primaryWeapon ?? this.primaryWeapon,
       secondaryWeapon: secondaryWeapon ?? this.secondaryWeapon,
       nova: nova ?? this.nova,
+      scoreTextSize: scoreTextSize ?? this.scoreTextSize,
+      livesIconSize: livesIconSize ?? this.livesIconSize,
+      livesTextSize: livesTextSize ?? this.livesTextSize,
+      actionButtonSize: actionButtonSize ?? this.actionButtonSize,
+      novaCounterSize: novaCounterSize ?? this.novaCounterSize,
+      novaCounterDisplaySize:
+          novaCounterDisplaySize ?? this.novaCounterDisplaySize,
+      gameOverTextSize: gameOverTextSize ?? this.gameOverTextSize,
+      gameOverSpacing: gameOverSpacing ?? this.gameOverSpacing,
+      scoreDisplayTextSize: scoreDisplayTextSize ?? this.scoreDisplayTextSize,
+      menuButtonWidthRatio: menuButtonWidthRatio ?? this.menuButtonWidthRatio,
+      menuButtonHeightRatio:
+          menuButtonHeightRatio ?? this.menuButtonHeightRatio,
+      menuButtonSpacingRatio:
+          menuButtonSpacingRatio ?? this.menuButtonSpacingRatio,
+      overlayOpacity: overlayOpacity ?? this.overlayOpacity,
     );
   }
 
@@ -156,9 +245,23 @@ class PlayerConfig extends BaseGameConfig with JsonSerializable, Validatable {
         other.invulnerabilityDuration == invulnerabilityDuration &&
         other.invulnerabilityOpacity == invulnerabilityOpacity &&
         other.healthRegenRate == healthRegenRate &&
+        other.maxHealth == maxHealth &&
         other.primaryWeapon == primaryWeapon &&
         other.secondaryWeapon == secondaryWeapon &&
-        other.nova == nova;
+        other.nova == nova &&
+        other.scoreTextSize == scoreTextSize &&
+        other.livesIconSize == livesIconSize &&
+        other.livesTextSize == livesTextSize &&
+        other.actionButtonSize == actionButtonSize &&
+        other.novaCounterSize == novaCounterSize &&
+        other.novaCounterDisplaySize == novaCounterDisplaySize &&
+        other.gameOverTextSize == gameOverTextSize &&
+        other.gameOverSpacing == gameOverSpacing &&
+        other.scoreDisplayTextSize == scoreDisplayTextSize &&
+        other.menuButtonWidthRatio == menuButtonWidthRatio &&
+        other.menuButtonHeightRatio == menuButtonHeightRatio &&
+        other.menuButtonSpacingRatio == menuButtonSpacingRatio &&
+        other.overlayOpacity == overlayOpacity;
   }
 
   @override
@@ -174,9 +277,23 @@ class PlayerConfig extends BaseGameConfig with JsonSerializable, Validatable {
         invulnerabilityDuration,
         invulnerabilityOpacity,
         healthRegenRate,
+        maxHealth,
         primaryWeapon,
         secondaryWeapon,
         nova,
+        scoreTextSize,
+        livesIconSize,
+        livesTextSize,
+        actionButtonSize,
+        novaCounterSize,
+        novaCounterDisplaySize,
+        gameOverTextSize,
+        gameOverSpacing,
+        scoreDisplayTextSize,
+        menuButtonWidthRatio,
+        menuButtonHeightRatio,
+        menuButtonSpacingRatio,
+        overlayOpacity,
       );
 }
 

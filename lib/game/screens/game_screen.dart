@@ -9,6 +9,9 @@ import '../../widgets/performance_overlay.dart';
 import '../../widgets/background.dart';
 import '../../widgets/game_objects.dart';
 import '../../widgets/round_space_button.dart' as space_buttons;
+import '../../widgets/game_objects/heart_painter.dart';
+import '../../widgets/game_objects/nova_counter_painter.dart';
+import '../../widgets/game_objects/bonus_painter.dart';
 
 import '../entities/player_entity.dart';
 import '../entities/enemy.dart';
@@ -26,7 +29,6 @@ import '../../utils/transitions.dart';
 import '../../utils/collision_utils.dart';
 
 import '../../screens/main_menu.dart';
-import '../../utils/constants/ui_constants.dart';
 
 class GameScreen extends StatefulWidget {
   const GameScreen({super.key});
@@ -51,8 +53,8 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
   bool _isCountingDown = false;
   String _countdownText = '';
   late Size _screenSize;
-  int _novaBlastsRemaining = old_game_constants.GameConstants.initialNovaBlasts;
-  int _lives = old_game_constants.GameConstants.initialLives;
+  int _novaBlastsRemaining = 0;
+  int _lives = 0;
   bool _isInvulnerable = false;
   final Set<LogicalKeyboardKey> _pressedKeys = {};
   final List<BonusItem> _bonusItems = [];
@@ -65,14 +67,14 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
     setState(() {
       _isCountingDown = true;
       _countdownText =
-          isResume ? UIConstants.countdownText1 : UIConstants.countdownText3;
+          isResume ? _config.ui.countdownText1 : _config.ui.countdownText3;
     });
 
     if (isResume) {
-      Future.delayed(UIConstants.countdownDuration, () {
+      Future.delayed(_config.gameplay.countdownDuration, () {
         if (!mounted) return;
         setState(() {
-          _countdownText = UIConstants.countdownTextGo;
+          _countdownText = _config.ui.countdownTextGo;
           Future.delayed(const Duration(milliseconds: 500), () {
             if (!mounted) return;
             setState(() {
@@ -84,18 +86,18 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
         });
       });
     } else {
-      Future.delayed(UIConstants.countdownDuration, () {
+      Future.delayed(_config.gameplay.countdownDuration, () {
         if (!mounted) return;
-        setState(() => _countdownText = UIConstants.countdownText2);
+        setState(() => _countdownText = _config.ui.countdownText2);
 
-        Future.delayed(UIConstants.countdownDuration, () {
+        Future.delayed(_config.gameplay.countdownDuration, () {
           if (!mounted) return;
-          setState(() => _countdownText = UIConstants.countdownText1);
+          setState(() => _countdownText = _config.ui.countdownText1);
 
-          Future.delayed(UIConstants.countdownDuration, () {
+          Future.delayed(_config.gameplay.countdownDuration, () {
             if (!mounted) return;
             setState(() {
-              _countdownText = UIConstants.countdownTextGo;
+              _countdownText = _config.ui.countdownTextGo;
               Future.delayed(const Duration(milliseconds: 500), () {
                 if (!mounted) return;
                 setState(() {
@@ -116,6 +118,8 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
     super.initState();
     _player = PlayerEntity(config: _config.player);
     _playerController = PlayerController(player: _player);
+    _novaBlastsRemaining = _config.player.nova.initialBlasts;
+    _lives = _config.player.initialLives;
     HardwareKeyboard.instance.addHandler(_handleKeyEvent);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _screenSize = MediaQuery.of(context).size;
@@ -272,7 +276,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
       for (var bonus in _bonusItems) {
         if (CollisionUtils.checkPlayerCollision(
           _player.position,
-          old_game_constants.GameConstants.playerSize,
+          _config.player.size,
           bonus.position,
           bonus.size,
         )) {
@@ -288,9 +292,9 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
         if (!_isInvulnerable && !playerHit) {
           if (CollisionUtils.checkPlayerCollision(
             _player.position,
-            old_game_constants.GameConstants.playerSize,
+            _config.player.size,
             projectile.position,
-            old_game_constants.GameConstants.projectileWidth,
+            _config.player.primaryWeapon.width,
           )) {
             projectilesToRemove.add(projectile);
             playerHit = true;
@@ -303,14 +307,16 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
       if (_boss != null) {
         if (CollisionUtils.checkBossCollision(
           _boss!.position,
-          old_game_constants.GameConstants.bossSize,
+          _config.player.size * 2, // Boss size is double player size
           projectile.position,
-          old_game_constants.GameConstants.projectileWidth,
+          _config.player.primaryWeapon.width,
         )) {
           _boss!.health -= projectile.damage;
           projectilesToRemove.add(projectile);
           if (_boss!.health <= 0) {
-            _score += old_game_constants.GameConstants.bossScoreValue;
+            _score += (_config.gameplay.scorePerKill *
+                    _config.gameplay.difficulty.bossScoreMultiplier)
+                .toInt();
             _boss = null;
           }
           continue;
@@ -325,15 +331,15 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
         for (var asteroid in _asteroids) {
           if (CollisionUtils.checkAsteroidCollision(
             asteroid.position,
-            old_game_constants.GameConstants.asteroidSize,
+            _config.gameplay.asteroids.size,
             projectile.position,
-            old_game_constants.GameConstants.projectileWidth,
+            _config.player.primaryWeapon.width,
           )) {
             asteroid.health -= projectile.damage;
             projectilesToRemove.add(projectile);
             if (asteroid.health <= 0) {
               asteroidsToRemove.add(asteroid);
-              _score += UIConstants.scoreIncrement;
+              _score += _config.gameplay.scorePerKill;
               _handleAsteroidDestroyed(asteroid.position);
             }
             hit = true;
@@ -346,15 +352,15 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
           for (var enemy in _enemies) {
             if (CollisionUtils.checkEnemyCollision(
               enemy.position,
-              old_game_constants.GameConstants.enemySize,
+              _config.gameplay.asteroids.size,
               projectile.position,
-              old_game_constants.GameConstants.projectileWidth,
+              _config.player.primaryWeapon.width,
             )) {
               enemy.health -= projectile.damage;
               projectilesToRemove.add(projectile);
               if (enemy.health <= 0) {
                 enemiesToRemove.add(enemy);
-                _score += UIConstants.scoreIncrement;
+                _score += _config.gameplay.scorePerKill;
                 _handleEnemyDestroyed(enemy.position);
               }
               break;
@@ -369,9 +375,9 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
       for (var enemy in _enemies) {
         if (CollisionUtils.checkPlayerCollision(
           _player.position,
-          old_game_constants.GameConstants.playerSize,
+          _config.player.size,
           enemy.position,
-          old_game_constants.GameConstants.enemySize,
+          _config.gameplay.asteroids.size,
         )) {
           playerHit = true;
           break;
@@ -382,9 +388,9 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
         for (var asteroid in _asteroids) {
           if (CollisionUtils.checkPlayerCollision(
             _player.position,
-            old_game_constants.GameConstants.playerSize,
+            _config.player.size,
             asteroid.position,
-            old_game_constants.GameConstants.asteroidSize,
+            _config.gameplay.asteroids.size,
           )) {
             playerHit = true;
             break;
@@ -421,13 +427,12 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
     switch (type) {
       case BonusType.damageMultiplier:
         setState(() {
-          _damageMultiplier *=
-              old_game_constants.GameConstants.bonusMultiplierValue;
+          _damageMultiplier *= _config.gameplay.bonuses.multiplierValue;
         });
         break;
       case BonusType.goldOre:
         setState(() {
-          _score += old_game_constants.GameConstants.bonusGoldValue;
+          _score += _config.gameplay.bonuses.goldValue;
         });
         break;
     }
@@ -461,11 +466,13 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
       _boss = Boss(
         position: Offset(
           _screenSize.width / 2,
-          _screenSize.height *
-              old_game_constants.GameConstants.bossStartHeightRatio,
+          _screenSize.height * _config.player.startHeightRatio,
         ),
-        speed: old_game_constants.GameConstants.bossSpeed,
-        health: old_game_constants.GameConstants.bossHealth,
+        speed: _config.player.speed *
+            _config.gameplay.difficulty.bossSpeedMultiplier,
+        health: (_config.player.maxHealth *
+                _config.gameplay.difficulty.bossHealthMultiplier)
+            .toInt(),
       );
     });
   }
@@ -475,14 +482,64 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
     setState(() {
       for (double angle = 0;
           angle < 360;
-          angle += old_game_constants.GameConstants.bossNovaAngleStep) {
+          angle += _config.gameplay.difficulty.bossNovaAngleStep) {
         _projectiles.add(
           Projectile(
             position: _boss!.position,
-            speed: old_game_constants.GameConstants.projectileSpeed *
-                old_game_constants
-                    .GameConstants.bossNovaProjectileSpeedMultiplier,
+            speed: _config.player.primaryWeapon.speed *
+                _config.gameplay.difficulty.bossNovaProjectileSpeedMultiplier,
             isEnemy: true,
+            angle: angle,
+          ),
+        );
+      }
+    });
+  }
+
+  void _handleCollision() {
+    if (_isInvulnerable) return;
+    _lives--;
+    if (_lives <= 0) {
+      _gameOver();
+    } else {
+      setState(() {
+        _isInvulnerable = true;
+        Future.delayed(
+            Duration(seconds: _config.player.invulnerabilityDuration.toInt()),
+            () {
+          if (mounted) {
+            setState(() => _isInvulnerable = false);
+          }
+        });
+      });
+    }
+  }
+
+  void _shoot() {
+    if (_isPaused || _isGameOver) return;
+    setState(() {
+      _projectiles.add(
+        Projectile(
+          position: _player.position,
+          speed: _config.player.primaryWeapon.speed,
+          damage: _damageMultiplier,
+          isEnemy: false,
+        ),
+      );
+    });
+  }
+
+  void _fireNova() {
+    if (_isPaused || _isGameOver || _novaBlastsRemaining <= 0) return;
+    setState(() {
+      _novaBlastsRemaining--;
+      for (double angle = 0; angle < 360; angle += 30) {
+        _projectiles.add(
+          Projectile(
+            position: _player.position,
+            speed: _config.player.primaryWeapon.speed * 1.5,
+            damage: _damageMultiplier * 2,
+            isEnemy: false,
             angle: angle,
           ),
         );
@@ -515,7 +572,8 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
             bottom: 0,
             child: Container(
               width: _config.gameplay.borderWidth,
-              color: UIConstants.borderColor.withOpacity(0.3),
+              color: _config.ui.colors.borderColor
+                  .withOpacity(_config.ui.opacity.low),
             ),
           ),
           Positioned(
@@ -524,7 +582,8 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
             bottom: 0,
             child: Container(
               width: _config.gameplay.borderWidth,
-              color: UIConstants.borderColor.withOpacity(0.3),
+              color: _config.ui.colors.borderColor
+                  .withOpacity(_config.ui.opacity.low),
             ),
           ),
 
@@ -538,23 +597,20 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
           // Game objects
           ..._projectiles.map((projectile) => Positioned(
                 left: projectile.position.dx -
-                    old_game_constants.GameConstants.projectileWidth / 2,
+                    _config.player.primaryWeapon.width / 2,
                 top: projectile.position.dy -
-                    old_game_constants.GameConstants.projectileHeight / 2,
+                    _config.player.primaryWeapon.height / 2,
                 child: const ProjectileWidget(),
               )),
           ..._enemies.map((enemy) => Positioned(
-                left: enemy.position.dx -
-                    old_game_constants.GameConstants.enemySize / 2,
-                top: enemy.position.dy -
-                    old_game_constants.GameConstants.enemySize / 2,
+                left: enemy.position.dx - _config.gameplay.asteroids.size / 2,
+                top: enemy.position.dy - _config.gameplay.asteroids.size / 2,
                 child: const EnemyWidget(),
               )),
           ..._asteroids.map((asteroid) => Positioned(
-                left: asteroid.position.dx -
-                    old_game_constants.GameConstants.asteroidSize / 2,
-                top: asteroid.position.dy -
-                    old_game_constants.GameConstants.asteroidSize / 2,
+                left:
+                    asteroid.position.dx - _config.gameplay.asteroids.size / 2,
+                top: asteroid.position.dy - _config.gameplay.asteroids.size / 2,
                 child: AsteroidWidget(health: asteroid.health),
               )),
 
@@ -564,38 +620,36 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
               children: [
                 // Score and Level
                 Positioned(
-                  top: UIConstants.uiPadding,
-                  left: UIConstants.uiPadding,
+                  top: _config.ui.uiPadding,
+                  left: _config.ui.uiPadding,
                   child: Text(
-                    '${UIConstants.scoreText}$_score\n${UIConstants.levelText}$_level',
+                    'Score: $_score\nLevel: $_level',
                     style: TextStyle(
-                      color: UIConstants.textColor,
-                      fontSize: old_game_constants.GameConstants.scoreTextSize,
+                      color: _config.ui.colors.textColor,
+                      fontSize: _config.ui.textStyles.score,
                     ),
                   ),
                 ),
                 // Lives Counter
                 Positioned(
-                  top: UIConstants.uiPadding,
-                  right:
-                      UIConstants.uiPadding * UIConstants.uiPaddingMultiplier,
+                  top: _config.ui.uiPadding,
+                  right: _config.ui.uiPadding * 2,
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      SizedBox(width: UIConstants.uiElementSpacing),
+                      SizedBox(width: _config.ui.uiElementSpacing),
                       GameObjectWidget(
-                        painter: game_painters.HeartPainter(
-                          color: UIConstants.playerColor,
+                        painter: HeartPainter(
+                          color: _config.ui.colors.playerColor,
                         ),
-                        size: old_game_constants.GameConstants.livesIconSize,
+                        size: _config.player.livesIconSize,
                       ),
-                      SizedBox(width: UIConstants.uiElementSpacing),
+                      SizedBox(width: _config.ui.uiElementSpacing),
                       Text(
                         'x $_lives',
                         style: TextStyle(
-                          color: UIConstants.enemyColor,
-                          fontSize:
-                              old_game_constants.GameConstants.livesTextSize,
+                          color: _config.ui.colors.enemyColor,
+                          fontSize: _config.ui.textStyles.lives,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -604,14 +658,14 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                 ),
                 // Close button
                 Positioned(
-                  top: UIConstants.uiPadding,
-                  right: UIConstants.uiPadding,
+                  top: _config.ui.uiPadding,
+                  right: _config.ui.uiPadding,
                   child: space_buttons.RoundSpaceButton(
-                    text: UIConstants.pauseButtonText,
+                    text: 'Pause',
                     onPressed: _togglePause,
-                    color: UIConstants.playerColor,
-                    size: 40,
-                    fontSize: 16,
+                    color: _config.ui.colors.playerColor,
+                    size: _config.ui.actionButtonSize,
+                    fontSize: _config.ui.textStyles.button,
                   ),
                 ),
               ],
@@ -621,12 +675,12 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
           // Controls - 5px from left screen edge with container for visibility
           Positioned(
             left: 5.0,
-            bottom: UIConstants.uiPadding +
-                old_game_constants.GameConstants.actionButtonSize,
+            bottom: _config.ui.uiPadding + _config.ui.actionButtonSize,
             child: Container(
               decoration: BoxDecoration(
                 border: Border.all(
-                  color: Colors.white.withOpacity(0.2),
+                  color: _config.ui.colors.borderColor
+                      .withOpacity(_config.ui.opacity.veryLow),
                   width: 1,
                 ),
               ),
@@ -639,30 +693,27 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
           // Action buttons - 5px from right screen edge
           Positioned(
             right: 5.0,
-            bottom: UIConstants.uiPadding +
-                old_game_constants.GameConstants.actionButtonSize,
+            bottom: _config.ui.uiPadding + _config.ui.actionButtonSize,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 space_buttons.RoundSpaceButton(
-                  text: _damageMultiplier > 1
-                      ? '$_damageMultiplier×'
-                      : UIConstants.fireText,
+                  text: _damageMultiplier > 1 ? '$_damageMultiplier×' : 'Fire',
                   onPressed: _shoot,
-                  color: UIConstants.enemyColor,
-                  size: old_game_constants.GameConstants.actionButtonSize,
+                  color: _config.ui.colors.enemyColor,
+                  size: _config.ui.actionButtonSize,
                 ),
-                SizedBox(height: UIConstants.actionButtonSpacing),
+                SizedBox(height: _config.ui.actionButtonSpacing),
                 space_buttons.RoundSpaceButton(
-                  text: UIConstants.novaText,
+                  text: 'Nova',
                   onPressed: _fireNova,
-                  color: UIConstants.projectileColor,
-                  size: old_game_constants.GameConstants.actionButtonSize,
+                  color: _config.ui.colors.projectileColor,
+                  size: _config.ui.actionButtonSize,
                   counterWidget: CustomPaint(
-                    size: Size(old_game_constants.GameConstants.novaCounterSize,
-                        old_game_constants.GameConstants.novaCounterSize),
-                    painter: game_painters.NovaCounterPainter(
-                      color: UIConstants.playerColor,
+                    size: Size(_config.player.novaCounterSize,
+                        _config.player.novaCounterSize),
+                    painter: NovaCounterPainter(
+                      color: _config.ui.colors.playerColor,
                       count: _novaBlastsRemaining.toString(),
                     ),
                   ),
@@ -676,37 +727,30 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
             Container(
               width: _screenSize.width,
               height: _screenSize.height,
-              color: Colors.black
-                  .withOpacity(old_game_constants.GameConstants.overlayOpacity),
+              color: Colors.black.withOpacity(_config.ui.opacity.medium),
               child: Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      UIConstants.gameOverText,
+                      'Game Over',
                       style: TextStyle(
-                        color: UIConstants.enemyColor,
-                        fontSize:
-                            old_game_constants.GameConstants.gameOverTextSize,
+                        color: _config.ui.colors.enemyColor,
+                        fontSize: _config.ui.textStyles.gameOver,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    SizedBox(
-                        height:
-                            old_game_constants.GameConstants.gameOverSpacing),
+                    SizedBox(height: _config.player.gameOverSpacing),
                     Text(
-                      '${UIConstants.scoreText}$_score',
+                      'Score: $_score',
                       style: TextStyle(
-                        color: UIConstants.textColor,
-                        fontSize: old_game_constants
-                            .GameConstants.scoreDisplayTextSize,
+                        color: _config.ui.colors.textColor,
+                        fontSize: _config.ui.textStyles.score,
                       ),
                     ),
-                    SizedBox(
-                        height:
-                            old_game_constants.GameConstants.gameOverSpacing),
+                    SizedBox(height: _config.player.gameOverSpacing),
                     MenuButton(
-                      text: UIConstants.mainMenuText,
+                      text: 'Main Menu',
                       onPressed: () {
                         Navigator.of(context).pop();
                         Navigator.of(context).pushReplacement(
@@ -714,10 +758,9 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                         );
                       },
                       width: _screenSize.width *
-                          old_game_constants.GameConstants.menuButtonWidthRatio,
+                          _config.player.menuButtonWidthRatio,
                       height: _screenSize.height *
-                          old_game_constants
-                              .GameConstants.menuButtonHeightRatio,
+                          _config.player.menuButtonHeightRatio,
                     ),
                   ],
                 ),
@@ -729,45 +772,40 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
             Container(
               width: _screenSize.width,
               height: _screenSize.height,
-              color: Colors.black
-                  .withOpacity(old_game_constants.GameConstants.overlayOpacity),
+              color: Colors.black.withOpacity(_config.ui.opacity.medium),
               child: Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      UIConstants.pausedText,
+                      'Paused',
                       style: TextStyle(
-                        color: UIConstants.playerColor,
-                        fontSize:
-                            old_game_constants.GameConstants.gameOverTextSize,
+                        color: _config.ui.colors.playerColor,
+                        fontSize: _config.ui.textStyles.gameOver,
                         fontWeight: FontWeight.bold,
                         shadows: [
                           Shadow(
-                            color: UIConstants.playerColor.withOpacity(0.5),
+                            color: _config.ui.colors.playerColor
+                                .withOpacity(_config.ui.opacity.medium),
                             blurRadius: 10,
                           ),
                         ],
                       ),
                     ),
-                    SizedBox(
-                        height:
-                            old_game_constants.GameConstants.gameOverSpacing),
+                    SizedBox(height: _config.player.gameOverSpacing),
                     MenuButton(
-                      text: UIConstants.resumeText,
+                      text: 'Resume',
                       onPressed: _togglePause,
                       width: _screenSize.width *
-                          old_game_constants.GameConstants.menuButtonWidthRatio,
+                          _config.player.menuButtonWidthRatio,
                       height: _screenSize.height *
-                          old_game_constants
-                              .GameConstants.menuButtonHeightRatio,
+                          _config.player.menuButtonHeightRatio,
                     ),
                     SizedBox(
                         height: _screenSize.height *
-                            old_game_constants
-                                .GameConstants.menuButtonSpacingRatio),
+                            _config.player.menuButtonSpacingRatio),
                     MenuButton(
-                      text: UIConstants.mainMenuText,
+                      text: 'Main Menu',
                       onPressed: () {
                         Navigator.of(context).pop();
                         Navigator.of(context).pushReplacement(
@@ -775,23 +813,20 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                         );
                       },
                       width: _screenSize.width *
-                          old_game_constants.GameConstants.menuButtonWidthRatio,
+                          _config.player.menuButtonWidthRatio,
                       height: _screenSize.height *
-                          old_game_constants
-                              .GameConstants.menuButtonHeightRatio,
+                          _config.player.menuButtonHeightRatio,
                     ),
                     SizedBox(
                         height: _screenSize.height *
-                            old_game_constants
-                                .GameConstants.menuButtonSpacingRatio),
+                            _config.player.menuButtonSpacingRatio),
                     MenuButton(
-                      text: UIConstants.menuExitText,
+                      text: 'Exit',
                       onPressed: () => SystemNavigator.pop(),
                       width: _screenSize.width *
-                          old_game_constants.GameConstants.menuButtonWidthRatio,
+                          _config.player.menuButtonWidthRatio,
                       height: _screenSize.height *
-                          old_game_constants
-                              .GameConstants.menuButtonHeightRatio,
+                          _config.player.menuButtonHeightRatio,
                     ),
                   ],
                 ),
@@ -803,18 +838,18 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
             Container(
               width: _screenSize.width,
               height: _screenSize.height,
-              color: Colors.black54,
+              color: Colors.black.withOpacity(_config.ui.opacity.medium),
               child: Center(
                 child: Text(
                   _countdownText,
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    color: UIConstants.playerColor,
-                    fontSize: UIConstants.countdownTextSize,
+                    color: _config.ui.colors.textColor,
+                    fontSize: _config.ui.textStyles.countdown,
                     fontWeight: FontWeight.bold,
                     shadows: [
                       Shadow(
-                        color: UIConstants.playerColor.withOpacity(0.5),
+                        color: _config.ui.colors.textColor.withOpacity(0.5),
                         blurRadius: 20,
                       ),
                     ],
@@ -839,24 +874,22 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
           // Nova counter
           if (_novaBlastsRemaining > 0)
             Positioned(
-              right: UIConstants.uiPadding,
-              top: UIConstants.uiPadding,
+              right: _config.ui.uiPadding,
+              top: _config.ui.uiPadding,
               child: GameObjectWidget(
-                painter: game_painters.NovaCounterPainter(
-                  color: UIConstants.playerColor,
+                painter: NovaCounterPainter(
+                  color: _config.ui.colors.playerColor,
                   count: _novaBlastsRemaining.toString(),
                 ),
-                size: old_game_constants.GameConstants.novaCounterDisplaySize,
+                size: _config.player.novaCounterDisplaySize,
               ),
             ),
 
           // Boss
           if (_boss != null)
             Positioned(
-              left: _boss!.position.dx -
-                  old_game_constants.GameConstants.bossSize / 2,
-              top: _boss!.position.dy -
-                  old_game_constants.GameConstants.bossSize / 2,
+              left: _boss!.position.dx - _config.player.size / 2,
+              top: _boss!.position.dy - _config.player.size / 2,
               child: BossWidget(
                 healthPercentage: _boss!.healthPercentage,
                 isMovingRight: _boss!.isMovingRight,
