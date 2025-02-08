@@ -208,9 +208,15 @@
     - [x] SSHOTER-073.2.4: Update GameScreen to use new player implementation
     - [x] SSHOTER-073.2.5: Remove old player files
     - [x] SSHOTER-073.2.6: Remove deprecated constant files
-  - [ ] SSHOTER-073.3: Testing and validation
+    - [x] SSHOTER-073.2.7: Remove duplicate player implementations
+  - [~] SSHOTER-073.3: Testing and validation
     - [ ] SSHOTER-073.3.1: Write tests for new configuration system
     - [ ] SSHOTER-073.3.2: Write tests for unified player implementation
+      - [ ] Test player movement and rotation
+      - [ ] Test player shooting mechanics
+      - [ ] Test player health and lives system
+      - [ ] Test player collision handling
+      - [ ] Test player visual states (invulnerability, acceleration)
     - [ ] SSHOTER-073.3.3: Validate game behavior with new implementations
     - [ ] SSHOTER-073.3.4: Performance testing
     - [ ] SSHOTER-073.3.5: Update documentation
