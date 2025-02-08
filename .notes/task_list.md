@@ -203,10 +203,10 @@
     - [x] SSHOTER-073.1.5 Migrate enemy constants
   - [~] SSHOTER-073.2 Remove deprecated constant files and unify player implementation
     - [x] SSHOTER-073.2.1 Remove deprecated constant files
-    - [ ] SSHOTER-073.2.2 Create unified player implementation
-      - [ ] Create PlayerEntity class
-      - [ ] Create PlayerController class
-      - [ ] Create PlayerView class
+    - [~] SSHOTER-073.2.2 Create unified player implementation
+      - [x] Create PlayerEntity class
+      - [x] Create PlayerController class
+      - [x] Create PlayerView class
       - [ ] Update all references to use new player implementation
     - [ ] SSHOTER-073.2.3 Remove old player implementation files
 
