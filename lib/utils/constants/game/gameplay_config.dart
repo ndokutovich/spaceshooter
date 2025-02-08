@@ -42,6 +42,16 @@ class GameplayConfig extends BaseGameConfig with JsonSerializable, Validatable {
     if (collisionDistance < 0) {
       errors.add('Collision distance cannot be negative');
     }
+
+    if (!asteroids.validate()) {
+      errors.addAll(asteroids.validationErrors.map((e) => 'Asteroids: $e'));
+    }
+    if (!bonuses.validate()) {
+      errors.addAll(bonuses.validationErrors.map((e) => 'Bonuses: $e'));
+    }
+    if (!difficulty.validate()) {
+      errors.addAll(difficulty.validationErrors.map((e) => 'Difficulty: $e'));
+    }
     return errors;
   }
 
@@ -95,7 +105,7 @@ class GameplayConfig extends BaseGameConfig with JsonSerializable, Validatable {
 }
 
 /// Configuration for asteroid settings
-class AsteroidConfig extends BaseGameConfig with JsonSerializable {
+class AsteroidConfig extends BaseGameConfig with JsonSerializable, Validatable {
   final int count;
   final double size;
   final double baseSpeed;
@@ -111,6 +121,20 @@ class AsteroidConfig extends BaseGameConfig with JsonSerializable {
     this.baseHealth = 3,
     this.healthIncreaseLevel = 2,
   });
+
+  @override
+  List<String> get validationErrors {
+    final errors = <String>[];
+    if (count <= 0) errors.add('Asteroid count must be positive');
+    if (size <= 0) errors.add('Asteroid size must be positive');
+    if (baseSpeed <= 0) errors.add('Base speed must be positive');
+    if (maxSpeedVariation < 0)
+      errors.add('Speed variation must be non-negative');
+    if (baseHealth <= 0) errors.add('Base health must be positive');
+    if (healthIncreaseLevel <= 0)
+      errors.add('Health increase level must be positive');
+    return errors;
+  }
 
   @override
   Map<String, dynamic> toJson() => {
@@ -152,7 +176,7 @@ class AsteroidConfig extends BaseGameConfig with JsonSerializable {
 }
 
 /// Configuration for bonus settings
-class BonusConfig extends BaseGameConfig with JsonSerializable {
+class BonusConfig extends BaseGameConfig with JsonSerializable, Validatable {
   final int multiplierValue;
   final int goldValue;
   final double rotationStep;
@@ -166,6 +190,19 @@ class BonusConfig extends BaseGameConfig with JsonSerializable {
     this.dropRate = 0.3,
     this.size = 30.0,
   });
+
+  @override
+  List<String> get validationErrors {
+    final errors = <String>[];
+    if (multiplierValue <= 1)
+      errors.add('Multiplier value must be greater than 1');
+    if (goldValue <= 0) errors.add('Gold value must be positive');
+    if (rotationStep <= 0) errors.add('Rotation step must be positive');
+    if (dropRate <= 0 || dropRate > 1)
+      errors.add('Drop rate must be between 0 and 1');
+    if (size <= 0) errors.add('Size must be positive');
+    return errors;
+  }
 
   @override
   Map<String, dynamic> toJson() => {
@@ -203,20 +240,37 @@ class BonusConfig extends BaseGameConfig with JsonSerializable {
 }
 
 /// Configuration for difficulty settings
-class DifficultyConfig extends BaseGameConfig with JsonSerializable {
+class DifficultyConfig extends BaseGameConfig
+    with JsonSerializable, Validatable {
   final double levelSpeedIncrease;
   final int healthIncreaseLevel;
   final double bossSpeedMultiplier;
   final double bossHealthMultiplier;
-  final int bossScoreMultiplier;
+  final double bossScoreMultiplier;
 
   const DifficultyConfig({
     this.levelSpeedIncrease = 0.5,
     this.healthIncreaseLevel = 3,
     this.bossSpeedMultiplier = 1.5,
     this.bossHealthMultiplier = 2.0,
-    this.bossScoreMultiplier = 10,
+    this.bossScoreMultiplier = 10.0,
   });
+
+  @override
+  List<String> get validationErrors {
+    final errors = <String>[];
+    if (levelSpeedIncrease < 0)
+      errors.add('Level speed increase must be non-negative');
+    if (healthIncreaseLevel <= 0)
+      errors.add('Health increase level must be positive');
+    if (bossSpeedMultiplier <= 0)
+      errors.add('Boss speed multiplier must be positive');
+    if (bossHealthMultiplier <= 0)
+      errors.add('Boss health multiplier must be positive');
+    if (bossScoreMultiplier <= 0)
+      errors.add('Boss score multiplier must be positive');
+    return errors;
+  }
 
   @override
   Map<String, dynamic> toJson() => {
@@ -233,7 +287,7 @@ class DifficultyConfig extends BaseGameConfig with JsonSerializable {
         healthIncreaseLevel: json['healthIncreaseLevel'] as int,
         bossSpeedMultiplier: json['bossSpeedMultiplier'] as double,
         bossHealthMultiplier: json['bossHealthMultiplier'] as double,
-        bossScoreMultiplier: json['bossScoreMultiplier'] as int,
+        bossScoreMultiplier: json['bossScoreMultiplier'] as double,
       );
 
   @override
@@ -242,7 +296,7 @@ class DifficultyConfig extends BaseGameConfig with JsonSerializable {
     int? healthIncreaseLevel,
     double? bossSpeedMultiplier,
     double? bossHealthMultiplier,
-    int? bossScoreMultiplier,
+    double? bossScoreMultiplier,
   }) {
     return DifficultyConfig(
       levelSpeedIncrease: levelSpeedIncrease ?? this.levelSpeedIncrease,
