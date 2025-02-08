@@ -206,7 +206,8 @@
     - [x] SSHOTER-073.2.2: Update EntityManager to use new player implementation
     - [x] SSHOTER-073.2.3: Update InputManager to use new player implementation
     - [x] SSHOTER-073.2.4: Update GameScreen to use new player implementation
-    - [~] SSHOTER-073.2.5: Remove old player files
+    - [x] SSHOTER-073.2.5: Remove old player files
+    - [x] SSHOTER-073.2.6: Remove deprecated constant files
   - [ ] SSHOTER-073.3: Testing and validation
     - [ ] SSHOTER-073.3.1: Write tests for new configuration system
     - [ ] SSHOTER-073.3.2: Write tests for unified player implementation
