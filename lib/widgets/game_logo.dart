@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:math' as math;
 import '../utils/constants/style_constants.dart';
 import '../utils/constants/animation_constants.dart';
-import '../utils/constants/game_constants.dart';
+import '../utils/constants/ui_constants.dart';
 
 class GameLogo extends StatefulWidget {
   final double size;
@@ -61,7 +61,7 @@ class _GameLogoState extends State<GameLogo>
                   size: Size(widget.size * StyleConstants.logoWidthMultiplier,
                       widget.size * StyleConstants.logoHeightMultiplier),
                   painter: LogoPainter(
-                    text: GameConstants.appTitle.toUpperCase(),
+                    text: UIConstants.appTitle.toUpperCase(),
                     progress: _controller.value,
                   ),
                 ),
