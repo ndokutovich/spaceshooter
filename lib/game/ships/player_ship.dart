@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../utils/constants/gameplay_constants.dart';
+import '../../utils/constants/player_constants.dart';
 import '../../utils/constants/style_constants.dart';
 import 'base_ship.dart';
 
@@ -10,8 +11,8 @@ class PlayerShip extends BaseShip {
     required super.position,
     this.isInvulnerable = false,
   }) : super(
-          speed: GameplayConstants.playerSpeed,
-          size: GameplayConstants.playerSize,
+          speed: PlayerConstants.speed,
+          size: PlayerConstants.size,
         );
 
   @override

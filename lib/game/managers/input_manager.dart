@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../../utils/constants/gameplay_constants.dart';
+import '../../utils/constants/player_constants.dart';
 import '../entities/player.dart';
 import 'game_state_manager.dart';
 
@@ -43,19 +43,19 @@ class InputManager {
 
     if (_pressedKeys.contains(LogicalKeyboardKey.arrowLeft) ||
         _pressedKeys.contains(LogicalKeyboardKey.keyA)) {
-      dx -= GameplayConstants.playerSpeed;
+      dx -= PlayerConstants.speed;
     }
     if (_pressedKeys.contains(LogicalKeyboardKey.arrowRight) ||
         _pressedKeys.contains(LogicalKeyboardKey.keyD)) {
-      dx += GameplayConstants.playerSpeed;
+      dx += PlayerConstants.speed;
     }
     if (_pressedKeys.contains(LogicalKeyboardKey.arrowUp) ||
         _pressedKeys.contains(LogicalKeyboardKey.keyW)) {
-      dy -= GameplayConstants.playerSpeed;
+      dy -= PlayerConstants.speed;
     }
     if (_pressedKeys.contains(LogicalKeyboardKey.arrowDown) ||
         _pressedKeys.contains(LogicalKeyboardKey.keyS)) {
-      dy += GameplayConstants.playerSpeed;
+      dy += PlayerConstants.speed;
     }
 
     if (dx != 0 || dy != 0) {

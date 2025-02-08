@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'asteroid_painter.dart';
-import 'config/asteroid_visual_config.dart';
 import 'controllers/asteroid_controller.dart';
 
 /// Widget for rendering an asteroid with animations

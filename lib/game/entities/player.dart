@@ -10,20 +10,29 @@ class Player {
   final bool useSvg;
   final Color primaryColor;
   final Color accentColor;
+  ShipSkin? skin;
 
   Player({
     this.position = const Offset(0, 0),
     this.useSvg = true,
     this.primaryColor = Colors.blue,
     this.accentColor = Colors.lightBlueAccent,
+    this.skin,
   });
 
   void move(Offset delta, Size screenSize) {
     position += delta;
     position = Offset(
-      position.dx.clamp(GameplayConstants.playAreaPadding,
-          screenSize.width - GameplayConstants.playAreaPadding),
-      position.dy.clamp(0, screenSize.height),
+      position.dx.clamp(
+        GameplayConstants.playAreaPadding + PlayerConstants.size / 2,
+        screenSize.width -
+            GameplayConstants.playAreaPadding -
+            PlayerConstants.size / 2,
+      ),
+      position.dy.clamp(
+        PlayerConstants.size / 2,
+        screenSize.height - PlayerConstants.size / 2,
+      ),
     );
   }
 
@@ -31,10 +40,11 @@ class Player {
     return Projectile(
       position: Offset(
         position.dx,
-        position.dy - GameplayConstants.projectileOffset,
+        position.dy - PlayerConstants.projectileOffset,
       ),
-      speed: GameplayConstants.projectileSpeed,
+      speed: PlayerConstants.projectileSpeed,
       isEnemy: false,
+      angle: -90,
     );
   }
 

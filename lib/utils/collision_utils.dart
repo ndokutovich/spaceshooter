@@ -108,7 +108,6 @@ class CollisionUtils {
       double projectileSize, Offset otherPos, double otherSize) {
     final dx = otherPos.dx - projectilePos.dx;
     final dy = otherPos.dy - projectilePos.dy;
-    final distanceSquared = dx * dx + dy * dy;
 
     // Use elongated hitbox for projectiles
     final radiusX = projectileSize * 0.6; // Wider horizontally

@@ -29,7 +29,6 @@ import '../../utils/constants/ui_constants.dart';
 import '../../utils/constants/player_constants.dart';
 import '../../utils/constants/gameplay_constants.dart';
 import '../../utils/constants/enemy_constants.dart';
-import '../../utils/constants/style_constants.dart';
 
 class GameScreen extends StatefulWidget {
   const GameScreen({super.key});
@@ -53,8 +52,8 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
   bool _isCountingDown = false;
   String _countdownText = '';
   late Size _screenSize;
-  int _novaBlastsRemaining = GameplayConstants.initialNovaBlasts;
-  int _lives = GameplayConstants.initialLives;
+  int _novaBlastsRemaining = PlayerConstants.initialNovaBlasts;
+  int _lives = PlayerConstants.initialLives;
   bool _isInvulnerable = false;
   final Set<LogicalKeyboardKey> _pressedKeys = {};
   final List<BonusItem> _bonusItems = [];
@@ -121,7 +120,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
       _player.position = Offset(
         (_screenSize.width - 2 * GameplayConstants.playAreaPadding) / 2 +
             GameplayConstants.playAreaPadding,
-        _screenSize.height * GameplayConstants.playerStartHeightRatio,
+        _screenSize.height * PlayerConstants.startHeightRatio,
       );
       _startCountdown();
     });
@@ -192,19 +191,19 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
 
     if (_pressedKeys.contains(LogicalKeyboardKey.keyW) ||
         _pressedKeys.contains(LogicalKeyboardKey.arrowUp)) {
-      dy -= GameplayConstants.playerSpeed;
+      dy -= PlayerConstants.speed;
     }
     if (_pressedKeys.contains(LogicalKeyboardKey.keyS) ||
         _pressedKeys.contains(LogicalKeyboardKey.arrowDown)) {
-      dy += GameplayConstants.playerSpeed;
+      dy += PlayerConstants.speed;
     }
     if (_pressedKeys.contains(LogicalKeyboardKey.keyA) ||
         _pressedKeys.contains(LogicalKeyboardKey.arrowLeft)) {
-      dx -= GameplayConstants.playerSpeed;
+      dx -= PlayerConstants.speed;
     }
     if (_pressedKeys.contains(LogicalKeyboardKey.keyD) ||
         _pressedKeys.contains(LogicalKeyboardKey.arrowRight)) {
-      dx += GameplayConstants.playerSpeed;
+      dx += PlayerConstants.speed;
     }
 
     if (dx != 0 || dy != 0) {
@@ -217,22 +216,20 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
   void _handleJoystickMove(Offset movement) {
     if (_isPaused) return;
     setState(() {
-      final newX =
-          _player.position.dx + movement.dx * GameplayConstants.playerSpeed;
-      final newY =
-          _player.position.dy + movement.dy * GameplayConstants.playerSpeed;
+      final newX = _player.position.dx + movement.dx * PlayerConstants.speed;
+      final newY = _player.position.dy + movement.dy * PlayerConstants.speed;
 
       // Constrain to play area
       _player.position = Offset(
         newX.clamp(
-          GameplayConstants.playAreaPadding + GameplayConstants.playerSize / 2,
+          GameplayConstants.playAreaPadding + PlayerConstants.size / 2,
           _screenSize.width -
               GameplayConstants.playAreaPadding -
-              GameplayConstants.playerSize / 2,
+              PlayerConstants.size / 2,
         ),
         newY.clamp(
-          GameplayConstants.playerSize / 2,
-          _screenSize.height - GameplayConstants.playerSize / 2,
+          PlayerConstants.size / 2,
+          _screenSize.height - PlayerConstants.size / 2,
         ),
       );
     });
@@ -290,9 +287,9 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
     setState(() {
       _projectiles.add(
         Projectile(
-          position: _player.position
-              .translate(0, -GameplayConstants.projectileOffset),
-          speed: GameplayConstants.projectileSpeed,
+          position:
+              _player.position.translate(0, -PlayerConstants.projectileOffset),
+          speed: PlayerConstants.projectileSpeed,
           isEnemy: false,
           angle: -90,
           damage: _damageMultiplier,
@@ -310,7 +307,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
           _projectiles.add(
             Projectile(
               position: _player.position,
-              speed: GameplayConstants.projectileSpeed,
+              speed: PlayerConstants.projectileSpeed,
               isEnemy: false,
               angle: angle,
             ),
@@ -430,7 +427,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
       for (var bonus in _bonusItems) {
         if (CollisionUtils.checkPlayerCollision(
           _player.position,
-          GameplayConstants.playerSize,
+          PlayerConstants.size,
           bonus.position,
           bonus.size,
         )) {
@@ -446,9 +443,9 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
         if (!_isInvulnerable && !playerHit) {
           if (CollisionUtils.checkPlayerCollision(
             _player.position,
-            GameplayConstants.playerSize,
+            PlayerConstants.size,
             projectile.position,
-            GameplayConstants.projectileWidth,
+            PlayerConstants.projectileWidth,
           )) {
             projectilesToRemove.add(projectile);
             playerHit = true;
@@ -463,9 +460,9 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
           _boss!.position,
           EnemyConstants.bossSize,
           projectile.position,
-          GameplayConstants.projectileWidth,
+          PlayerConstants.projectileWidth,
         )) {
-          _boss!.health -= projectile.damage;
+          _boss!.health -= projectile.damage.toInt();
           projectilesToRemove.add(projectile);
           if (_boss!.health <= 0) {
             _score += EnemyConstants.bossScoreValue;
@@ -483,11 +480,11 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
         for (var asteroid in _asteroids) {
           if (CollisionUtils.checkAsteroidCollision(
             asteroid.position,
-            GameplayConstants.asteroidSize,
+            PlayerConstants.size,
             projectile.position,
-            GameplayConstants.projectileWidth,
+            PlayerConstants.projectileWidth,
           )) {
-            asteroid.health -= projectile.damage;
+            asteroid.health -= projectile.damage.toInt();
             projectilesToRemove.add(projectile);
             if (asteroid.health <= 0) {
               asteroidsToRemove.add(asteroid);
@@ -504,11 +501,11 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
           for (var enemy in _enemies) {
             if (CollisionUtils.checkEnemyCollision(
               enemy.position,
-              GameplayConstants.enemySize,
+              PlayerConstants.size,
               projectile.position,
-              GameplayConstants.projectileWidth,
+              PlayerConstants.projectileWidth,
             )) {
-              enemy.health -= projectile.damage;
+              enemy.health -= projectile.damage.toInt();
               projectilesToRemove.add(projectile);
               if (enemy.health <= 0) {
                 enemiesToRemove.add(enemy);
@@ -527,9 +524,9 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
       for (var enemy in _enemies) {
         if (CollisionUtils.checkPlayerCollision(
           _player.position,
-          GameplayConstants.playerSize,
+          PlayerConstants.size,
           enemy.position,
-          GameplayConstants.enemySize,
+          PlayerConstants.size,
         )) {
           playerHit = true;
           break;
@@ -540,9 +537,9 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
         for (var asteroid in _asteroids) {
           if (CollisionUtils.checkPlayerCollision(
             _player.position,
-            GameplayConstants.playerSize,
+            PlayerConstants.size,
             asteroid.position,
-            GameplayConstants.asteroidSize,
+            PlayerConstants.size,
           )) {
             playerHit = true;
             break;
@@ -635,7 +632,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
         _projectiles.add(
           Projectile(
             position: _boss!.position,
-            speed: GameplayConstants.projectileSpeed *
+            speed: PlayerConstants.projectileSpeed *
                 EnemyConstants.bossNovaProjectileSpeedMultiplier,
             isEnemy: true,
             angle: angle,
@@ -701,19 +698,19 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
           // Game objects
           ..._projectiles.map((projectile) => Positioned(
                 left: projectile.position.dx -
-                    GameplayConstants.projectileWidth / 2,
+                    PlayerConstants.projectileWidth / 2,
                 top: projectile.position.dy -
-                    GameplayConstants.projectileHeight / 2,
+                    PlayerConstants.projectileHeight / 2,
                 child: const ProjectileWidget(),
               )),
           ..._enemies.map((enemy) => Positioned(
-                left: enemy.position.dx - GameplayConstants.enemySize / 2,
-                top: enemy.position.dy - GameplayConstants.enemySize / 2,
+                left: enemy.position.dx - PlayerConstants.size / 2,
+                top: enemy.position.dy - PlayerConstants.size / 2,
                 child: const EnemyWidget(),
               )),
           ..._asteroids.map((asteroid) => Positioned(
-                left: asteroid.position.dx - GameplayConstants.asteroidSize / 2,
-                top: asteroid.position.dy - GameplayConstants.asteroidSize / 2,
+                left: asteroid.position.dx - PlayerConstants.size / 2,
+                top: asteroid.position.dy - PlayerConstants.size / 2,
                 child: AsteroidWidget(health: asteroid.health),
               )),
 
