@@ -1,9 +1,10 @@
-import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
-import 'main_menu.dart';
-import '../utils/constants/ui_constants.dart';
-import '../utils/constants/style_constants.dart';
+import 'package:flutter/material.dart';
+
 import '../utils/constants/animation_constants.dart';
+import '../utils/constants/style_constants.dart';
+import '../utils/constants/ui_constants.dart';
+import 'main_menu.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});

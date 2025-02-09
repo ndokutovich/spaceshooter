@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import '../utils/high_scores.dart';
-import '../utils/constants/ui_constants.dart';
+
 import '../utils/constants/style_constants.dart';
+import '../utils/constants/ui_constants.dart';
+import '../utils/high_scores.dart';
 import '../widgets/menu_button.dart';
 
 class HighScoresScreen extends StatelessWidget {

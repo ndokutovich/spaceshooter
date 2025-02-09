@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../widgets/menu_button.dart';
+
+import '../utils/constants/style_constants.dart';
+import '../utils/constants/ui_constants.dart';
+import '../utils/transitions.dart';
 import '../widgets/background.dart';
 import '../widgets/game_logo.dart';
-import '../utils/constants/ui_constants.dart';
-import '../utils/constants/style_constants.dart';
-import '../utils/transitions.dart';
-import 'options_screen.dart';
-import 'high_scores_screen.dart';
+import '../widgets/menu_button.dart';
 import 'game_screen.dart';
+import 'high_scores_screen.dart';
+import 'options_screen.dart';
 
 class MainMenu extends StatelessWidget {
   const MainMenu({super.key});

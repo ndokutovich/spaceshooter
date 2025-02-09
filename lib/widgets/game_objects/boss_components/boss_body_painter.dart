@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../base_game_painter.dart';
 
 class BossBodyPainter extends BaseGamePainter {

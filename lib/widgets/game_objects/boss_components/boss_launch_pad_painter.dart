@@ -1,5 +1,7 @@
 import 'dart:math';
+
 import 'package:flutter/material.dart';
+
 import '../base_game_painter.dart';
 
 class BossLaunchPadPainter extends BaseGamePainter {

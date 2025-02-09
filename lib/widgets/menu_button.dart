@@ -1,7 +1,9 @@
-import 'package:flutter/material.dart';
-import '../utils/constants/ui_constants.dart';
-import '../utils/constants/style_constants.dart';
 import 'dart:math' as math;
+
+import 'package:flutter/material.dart';
+
+import '../utils/constants/style_constants.dart';
+import '../utils/constants/ui_constants.dart';
 
 class MenuButton extends StatelessWidget {
   final String text;

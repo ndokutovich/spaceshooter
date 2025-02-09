@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../../../../entities/bonus_item.dart';
 
 /// Configuration for bonus item visual properties

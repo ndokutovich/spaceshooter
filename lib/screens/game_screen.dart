@@ -1,35 +1,33 @@
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'dart:async';
 import 'dart:math' as math;
 
-import '../../utils/constants/asteroid_constants.dart';
-import '../../utils/constants/bonus_constants.dart';
-import '../../widgets/controls.dart';
-import '../../widgets/menu_button.dart';
-import '../../widgets/performance_overlay.dart';
-import '../../widgets/background.dart';
-import '../../widgets/game_objects.dart';
-import '../../widgets/round_space_button.dart' as space_buttons;
-
-import '../entities/player.dart';
-import '../entities/enemy.dart';
-import '../entities/projectile.dart';
-import '../entities/asteroid.dart';
-import '../entities/boss.dart';
-import '../entities/bonus_item.dart';
-
-import '../utils/painters.dart' as game_painters;
-import '../../utils/high_scores.dart';
-import '../../utils/transitions.dart';
-import '../../utils/collision_utils.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../../screens/main_menu.dart';
-import '../../utils/constants/ui_constants.dart';
-import '../../utils/constants/player_constants.dart';
-import '../../utils/constants/gameplay_constants.dart';
+import '../../utils/collision_utils.dart';
+import '../../utils/constants/asteroid_constants.dart';
+import '../../utils/constants/bonus_constants.dart';
 import '../../utils/constants/enemy_constants.dart';
+import '../../utils/constants/gameplay_constants.dart';
+import '../../utils/constants/player_constants.dart';
 import '../../utils/constants/style_constants.dart';
+import '../../utils/constants/ui_constants.dart';
+import '../../utils/high_scores.dart';
+import '../../utils/transitions.dart';
+import '../../widgets/background.dart';
+import '../../widgets/controls.dart';
+import '../../widgets/game_objects.dart';
+import '../../widgets/menu_button.dart';
+import '../../widgets/performance_overlay.dart';
+import '../../widgets/round_space_button.dart' as space_buttons;
+import '../entities/asteroid.dart';
+import '../entities/bonus_item.dart';
+import '../entities/boss.dart';
+import '../entities/enemy.dart';
+import '../entities/player.dart';
+import '../entities/projectile.dart';
+import '../utils/painters.dart' as game_painters;
 
 class GameScreen extends StatefulWidget {
   const GameScreen({super.key});

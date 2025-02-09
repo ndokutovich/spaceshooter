@@ -1,7 +1,9 @@
-import 'package:flutter/material.dart';
 import 'dart:math' as math;
-import '../boss_components/base/cached_game_painter.dart';
+
+import 'package:flutter/material.dart';
+
 import '../../../entities/bonus_item.dart';
+import '../boss_components/base/cached_game_painter.dart';
 import 'config/bonus_visual_config.dart';
 
 class BonusPainter extends CachedGamePainter {

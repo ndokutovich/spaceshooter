@@ -1,5 +1,7 @@
-import 'package:flutter/material.dart';
 import 'dart:math' as math;
+
+import 'package:flutter/material.dart';
+
 import '../base_game_painter.dart';
 
 class BossShieldPainter extends BaseGamePainter {

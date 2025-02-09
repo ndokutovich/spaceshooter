@@ -1,5 +1,7 @@
 import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
+
 import '../config/asteroid_visual_config.dart';
 
 /// Controller for managing asteroid animations and visual state

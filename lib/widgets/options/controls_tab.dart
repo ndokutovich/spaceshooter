@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
 import '../../models/key_binding.dart';
-import '../../utils/options_constants.dart';
 import '../../utils/constants/style_constants.dart';
+import '../../utils/options_constants.dart';
 
 class ControlsTab extends StatefulWidget {
   final Map<String, KeyBinding> bindings;

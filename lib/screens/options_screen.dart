@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+
+import '../models/key_binding.dart';
+import '../utils/constants/style_constants.dart';
+import '../utils/constants/ui_constants.dart';
+import '../utils/options_constants.dart';
 import '../widgets/menu_button.dart';
 import '../widgets/options/controls_tab.dart';
 import '../widgets/options/misc_tab.dart';
-import '../utils/constants/ui_constants.dart';
-import '../utils/constants/style_constants.dart';
-import '../utils/options_constants.dart';
-import '../models/key_binding.dart';
 
 class OptionsScreen extends StatefulWidget {
   const OptionsScreen({super.key});

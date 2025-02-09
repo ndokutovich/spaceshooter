@@ -1,11 +1,13 @@
+import 'dart:io' show Platform;
+
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
-import 'dart:io' show Platform;
 import 'package:window_size/window_size.dart';
+
 import 'screens/splash_screen.dart';
-import 'utils/constants/ui_constants.dart';
 import 'utils/constants/style_constants.dart';
+import 'utils/constants/ui_constants.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();

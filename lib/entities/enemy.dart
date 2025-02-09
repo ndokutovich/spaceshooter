@@ -1,6 +1,8 @@
-import 'package:flutter/material.dart';
-import '../../widgets/ship_skins.dart';
 import 'dart:math' as math;
+
+import 'package:flutter/material.dart';
+
+import '../../widgets/ship_skins.dart';
 
 class Enemy {
   Offset position;

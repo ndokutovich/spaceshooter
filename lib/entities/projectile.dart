@@ -1,6 +1,8 @@
-import 'package:flutter/material.dart';
-import '../../widgets/game_objects.dart';
 import 'dart:math' as math;
+
+import 'package:flutter/material.dart';
+
+import '../../widgets/game_objects.dart';
 
 class Projectile {
   Offset position;

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+
 import '../utils/constants/style_constants.dart';
 
 class GamePerformanceOverlay extends StatefulWidget {

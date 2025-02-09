@@ -1,7 +1,9 @@
-import 'package:flutter/material.dart';
 import 'dart:math' as math;
-import 'enemy.dart';
+
+import 'package:flutter/material.dart';
+
 import '../../utils/constants/gameplay_constants.dart';
+import 'enemy.dart';
 
 enum BossAttackType {
   nova,

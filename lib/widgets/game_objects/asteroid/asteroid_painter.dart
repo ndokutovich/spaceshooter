@@ -1,5 +1,7 @@
-import 'package:flutter/material.dart';
 import 'dart:math' as math;
+
+import 'package:flutter/material.dart';
+
 import '../boss_components/base/cached_game_painter.dart';
 import 'config/asteroid_visual_config.dart';
 
