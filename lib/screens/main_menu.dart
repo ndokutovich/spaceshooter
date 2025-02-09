@@ -8,7 +8,7 @@ import '../utils/constants/style_constants.dart';
 import '../utils/transitions.dart';
 import 'options_screen.dart';
 import 'high_scores_screen.dart';
-import '../game/screens/game_screen.dart';
+import 'game_screen.dart';
 
 class MainMenu extends StatelessWidget {
   const MainMenu({super.key});

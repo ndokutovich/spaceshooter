@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
-import '../../game/entities/bonus_item.dart';
+import '../../entities/bonus_item.dart';
 
 class BonusPainter extends CustomPainter {
   final BonusType type;

@@ -1,6 +1,6 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
-import '../../../../game/entities/bonus_item.dart';
+import '../../../../entities/bonus_item.dart';
 import '../config/bonus_visual_config.dart';
 
 /// Controller for managing bonus item animations and visual state
